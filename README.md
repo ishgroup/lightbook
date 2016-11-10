@@ -1,0 +1,2 @@
+# lightbook
+LDAP addressbook
