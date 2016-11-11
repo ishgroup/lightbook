@@ -1,0 +1,50 @@
+/**
+*
+* settings.scss
+*
+* Contains all settings
+*
+*/
+
+/* Bootstrap */
+$grid-columns: 24;
+//$enable-flex: true;
+
+$basePath: './src';
+$black: #000;
+$white: #fff;
+
+$primaryColor: #f7941d;
+$secondaryColor: #37caad;
+
+$imgPath: $basePath + '/assets/img/';
+$images-bxslider: $imgPath + 'bxslider';
+$icheck-img-path: $imgPath + 'icheck/flat/';
+
+// Our variables
+$base-font-family: 'Merriweather', serif;
+$base-font-size:   16px;
+$base-font-weight: 300;
+$small-font-size:  $base-font-size * 0.875;
+$base-line-height: 1.8;
+
+$xsmall-screen: 544px;
+$small-screen: 768px;
+$tablet-screen: 992px;
+$desktop-screen: 1200px;
+$custom-screen-1400: 1400px;
+$custom-screen-1600: 1600px;
+
+$container-max-widths: (
+  sm: 768px,
+  md: 992px,
+  lg: 1200px,
+  xl: 1630px
+);
+
+$media-xsmall: 'xsmall';
+$media-small: 'small';
+$media-tablet: 'tablet';
+$media-desktop: 'desktop';
+$media-custom: 'custom';
+

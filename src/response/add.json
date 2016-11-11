@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "output": {
+    "message": "User added successfully",
+    "user": {
+      "name": "Chintan Kotadia",
+      "username":"chintankotadia13@gmail.com",
+      "company": "ish",
+      "company_role":"html/css coder",
+      "phone":"49874646",
+      "notes":"My notes",
+      "mobile":"9497654654"
+    }
+  }
+}

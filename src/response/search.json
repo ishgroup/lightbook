@@ -1,0 +1,32 @@
+{
+  "status" : "success",
+  "output" : [
+    {
+      "name" : "Chintan Kotadia",
+      "username" :"chintankotadia13@gmail.com",
+      "company" : "ish",
+      "company_role" :"html/css coder",
+      "phone" :"49874646",
+      "notes" :"My notes",
+      "mobile" :"9497654654"
+    },
+    {
+      "name" : "Marcus Hodgson",
+      "username" :"marcus@ish.com",
+      "company" : "ish",
+      "company_role" :"developer",
+      "phone" :"987897544",
+      "notes" :"Not available",
+      "mobile" :"9797464876"
+    },
+    {
+      "name" : "Stephen McIlwaine",
+      "username" :"Stephen@ish.com",
+      "company" : "ish",
+      "company_role" :"java developer",
+      "phone" :"5464979646",
+      "notes" :"Busy",
+      "mobile" :"9797464797"
+    }
+  ]
+}

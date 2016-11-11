@@ -1,0 +1,142 @@
+/**
+*
+* mixins.scss
+*
+* Contains different type of functions
+*
+*/
+
+/**
+ * Following mixin handles responsive media screen from mobile first to desktop
+ */
+
+@mixin responsive($media, $custom-width: '') {
+  @if $media == xsmall {
+    @media only screen and (min-width: $xsmall-screen) {
+      @content;
+    }
+  }
+  @else if $media == small {
+    @media only screen and (min-width: $small-screen) {
+      @content;
+    }
+  }
+  @else if $media == tablet {
+    @media only screen and (min-width: $tablet-screen) {
+      @content;
+    }
+  }
+  @else if $media == desktop {
+    @media only screen and (min-width: $desktop-screen) {
+      @content;
+    }
+  }
+  @else if $media == custom {
+    @media only screen and (min-width: $custom-width) {
+      @content;
+    }
+  }
+}
+
+@mixin _transition($transition: none) {
+  @include _prefixer(transition, $transition, webkit moz ms o spec);
+}
+
+@mixin responsive-image() {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  display: block;
+  overflow: hidden;
+  img {
+    position: relative;
+    left: 50%;
+    min-height: 100%;
+    min-width: 100%;
+    width: auto;
+    max-width: none;
+    @include _transform(translateX(-50%));
+    display: block;
+    height: auto;
+  }
+}
+
+@mixin _transform($property: none) {
+  // none | <transform-function>
+  @include _prefixer(transform, $property, webkit moz ms o spec);
+}
+
+@mixin _prefixer($property, $value, $prefixes: webkit moz ms o spec) {
+  @each $prefix in $prefixes {
+    @if $prefix == webkit {
+      -webkit-#{$property}: $value;
+    } @else if $prefix == moz {
+      -moz-#{$property}: $value;
+    } @else if $prefix == ms {
+      -ms-#{$property}: $value;
+    } @else if $prefix == o {
+      -o-#{$property}: $value;
+    } @else if $prefix == spec {
+      #{$property}: $value;
+    } @else  {
+      @warn "Unrecognized prefix: #{$prefix}";
+    }
+  }
+}
+
+@mixin arrow($arrow, $width, $color: '', $position: absolute) {
+  $border: $width solid $color;
+  @if $color == '' {
+    $border: $width solid;
+  }
+
+  content: "";
+  position: $position;
+  @if $arrow == 'top' or $arrow == 'bottom' {
+    border-right: $width solid transparent;
+    border-#{$arrow}: $border;
+    border-left: $width solid transparent;
+  } @else if $arrow == 'left' or $arrow == 'right' {
+    border-top: $width solid transparent;
+    border-#{$arrow}: $border;
+    border-bottom: $width solid transparent;
+  } @else {
+    border-style: solid;
+    border-width: $width;
+    border-color: $color;
+  }
+}
+
+@mixin opacity($value) {
+  $ie: $value*100;
+
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=#{$ie})";
+
+  /* This works in IE 8 & 9 */
+  /* ... but also 5, 6, 7 */
+  filter: alpha(opacity=#{$ie}); // IE 5-7
+
+  /* Older than Firefox 0.9 */
+  -moz-opacity: $value;
+
+  /* Safari 1.x (pre WebKit!) */
+  -khtml-opacity: $value;
+
+  /* Modern Browsers */
+  opacity: $value;
+}
+
+@mixin app-btn($color: #7d7d7d, $bcolor: #cbcbcb, $padd: 18px 31.77px, $font-size: 16px, $radius: 35px) {
+  color: $color;
+  border-radius: $radius;
+  border: 2px solid $bcolor;
+  padding: $padd;
+  font-size: $font-size;
+  font-weight: bold;
+}
+
+@mixin _font-size($size) {
+  font-size: #{$size}px;
+  font-size: #{($size/16)}em;
+}
