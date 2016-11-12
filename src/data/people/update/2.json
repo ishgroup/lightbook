@@ -1,0 +1,16 @@
+{
+  "status": "success",
+  "output": {
+    "message": "People updated successfully",
+    "people": {
+      "id": "2",
+      "name" : "Marcus Hodgson",
+      "username" :"marcus@ish.com",
+      "company" : "ish",
+      "company_role" :"developer",
+      "phone" :"987897544",
+      "notes" :"Not available",
+      "mobile" :"9797464876"
+    }
+  }
+}

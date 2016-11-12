@@ -1,0 +1,16 @@
+{
+  "status": "success",
+  "output": {
+    "message": "Companies fetched successfully",
+    "output": [
+      {
+        "id": "1",
+        "name": "ish"
+      },
+      {
+        "id": "2",
+        "name": "weasydney"
+      }
+    ]
+  }
+}
