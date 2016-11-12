@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Icon from 'react-fa';
 
 class Company extends Component {
   constructor(props) {
@@ -6,8 +7,15 @@ class Company extends Component {
     this.props = props;
   }
 
-  handleRemoveCompany() {
+  handleRemoveCompany(e) {
+    e.preventDefault();
     this.props.onCompanyDelete( this.props.company );
+    return false;
+  }
+
+  handleEditCompany(e) {
+    e.preventDefault();
+    this.props.onCompanyEdit( this.props.company );
     return false;
   }
 
@@ -21,7 +29,14 @@ class Company extends Component {
         <td>{this.props.company.phone}</td>
         <td>{this.props.company.notes}</td>
         <td>{this.props.company.mobile}</td>
-        <td><input type="button"  className="btn btn-primary" value="Remove" onClick={this.handleRemoveCompany}/></td>
+        <td>
+          <a href="" onClick={this.handleEditCompany.bind(this)} style={{marginRight: '5px'}}>
+            <Icon name="edit" />
+          </a>
+          <a href="" onClick={this.handleRemoveCompany.bind(this)} style={{marginRight: '5px'}}>
+            <Icon name="remove" />
+          </a>
+        </td>
       </tr>
     );
   }

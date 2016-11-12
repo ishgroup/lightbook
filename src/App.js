@@ -6,7 +6,6 @@ import defCompanies from './response/search.json';
 
 class App extends Component {
   render() {
-    console.log(defCompanies.output);
     return (
       <div className="App">
         <CompanyApp companies={defCompanies.output} />

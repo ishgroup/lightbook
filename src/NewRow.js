@@ -10,7 +10,6 @@ class NewRow extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    console.log(e.target.name.value);
     var name = e.target.name.value;
     var username = e.target.username.value;
     var company = e.target.company.value;
@@ -42,6 +41,10 @@ class NewRow extends Component {
     return false;
   }
 
+  hideAddForm() {
+    this.props.block.closeAddForm();
+  }
+
   render() {
     var inputStyle = {padding:'12px'};
 
@@ -71,7 +74,8 @@ class NewRow extends Component {
             <input type="text"  className="form-control col-md-8" placeholder="Mobile" name="mobile"/>
           </div>
           <div className="input-group input-group-lg" style={inputStyle}>
-            <input type="submit"  className="btn btn-primary" value="Add Company"/>
+            <input type="submit" className="btn btn-primary" value="Add Company"/>&nbsp;
+            <input type="button" className="btn btn-primary" value="Close" onClick={this.hideAddForm.bind(this)} />
           </div>
         </form>
       </div>
