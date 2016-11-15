@@ -9,7 +9,7 @@
 
 module.exports = function(grunt) {
     var paths = {
-        'proj': './src/',
+        'proj': './static/',
         'assets': '<%= paths.proj %>assets/',
         'scss': '<%= paths.proj %>assets/scss/',
         'css': '<%= paths.proj %>assets/css/',
