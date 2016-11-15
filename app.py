@@ -20,6 +20,12 @@ def view_person(id):
 	      mobile="9497654654"
 	)
 
+@app.route('/data/people/delete/<int:id>')
+def delete_person(id):
+    return jsonify(  { 'status':"success",
+	  	'output':{
+	    'message':"People deleted successfully"
+  	}})
 
 if __name__ == '__main__':
     app.run(debug=True)
