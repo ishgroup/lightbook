@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
+    "axios": "^0.15.2",
     "extract-text-webpack-plugin": "^1.0.1",
     "grunt": "~0.4.5",
     "grunt-contrib-concat": "^1.0.1",

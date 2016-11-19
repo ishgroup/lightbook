@@ -8,7 +8,6 @@ class SearchBox extends Component {
 
   showAddForm(e) {
     e.preventDefault();
-    console.log(this);
     this.props.block.showAddForm();
   }
 
@@ -19,7 +18,7 @@ class SearchBox extends Component {
       <div className="row">
         <div className="col-xs-20">
           <div className="input-group input-group-lg" style={inputStyle}>
-            <input type="text" ref="searchInput" className="form-control col-md-8"  placeholder="Saerch..." value={this.props.filterString} name="search_input" onChange={this.doSearch.bind(this)} />
+            <input type="text" ref="searchInput" className="form-control col-md-8"  placeholder="Search..." value={this.props.filterString} name="search_input" onChange={this.doSearch.bind(this)} />
           </div>
         </div>
         <div className="col-xs-4 add-link" style={{padding: '23px'}}>
