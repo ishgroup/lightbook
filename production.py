@@ -8,3 +8,7 @@ app = Flask(__name__)
 
 server = wsgi.WSGIServer(('203.29.62.211', 5050), app)
 server.serve_forever()
+
+@app.route('/')
+def index():
+  return render_template('index.html')
