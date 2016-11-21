@@ -3,7 +3,7 @@
 class Config {
 
     static baseUrl() {
-        return 'https://localhost:5000'
+        return 'https://people.ish.com.au'
     }
 }
 export default Config;
