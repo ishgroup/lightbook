@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from flask import Flask, render_template, jsonify, make_response, request, current_app
 from gevent import monkey
 from gevent import wsgi

@@ -1,8 +1,8 @@
+#!/usr/bin/env python
+
 from flask import Flask, render_template, jsonify, make_response, request, current_app
 from datetime import timedelta
 from functools import update_wrapper
-
-execfile('./server/crossdomain.py')
 
 app = Flask(__name__, static_folder='build', static_url_path='')
 
@@ -11,7 +11,6 @@ def root():
   return app.send_static_file('index.html')
 
 @app.route('/peoples', methods=['GET', 'OPTIONS'])
-@crossdomain(origin='http://localhost:3000')
 def get_persons():
   return jsonify({
     "status" : "success",
