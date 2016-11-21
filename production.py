@@ -11,7 +11,6 @@ def index():
   return render_template('index.html')
 
 @app.route('/peoples', methods=['GET', 'OPTIONS'])
-@crossdomain(origin='http://localhost:3000')
 def get_persons():
   return jsonify({
     "status" : "success",
