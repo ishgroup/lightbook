@@ -4,11 +4,11 @@ from functools import update_wrapper
 
 execfile('./server/crossdomain.py')
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='build', static_url_path='')
 
 @app.route('/')
-def index():
-  return render_template('index.html')
+def root():
+  return app.send_static_file('index.html')
 
 @app.route('/peoples', methods=['GET', 'OPTIONS'])
 @crossdomain(origin='http://localhost:3000')
