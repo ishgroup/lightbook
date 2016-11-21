@@ -38,11 +38,13 @@ class NewRow extends Component {
     e.target.notes.value = '';
     e.target.mobile.value = '';
 
+    this.props.block.showAddressBook();
+
     return false;
   }
 
   hideAddForm() {
-    this.props.block.closeAddForm();
+    this.props.block.showAddressBook();
   }
 
   render() {
@@ -51,7 +53,6 @@ class NewRow extends Component {
     return (
       this.props.show ?
         <div className="well">
-          <h3>Add People</h3>
           <form onSubmit={this.handleSubmit} className="ContactForm" noValidate="true">
             <div className="input-group input-group-lg" style={inputStyle}>
               <input type="text"  className="form-control col-md-8"  placeholder="Name" name="name" />

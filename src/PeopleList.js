@@ -35,20 +35,7 @@ class PeopleList extends Component {
 
     return (
       <div>
-        <h3>List of People</h3>
         <table className="table table-striped">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Username</th>
-              <th>Company</th>
-              <th>Company Role</th>
-              <th>Phone</th>
-              <th>Notes</th>
-              <th>Mobile</th>
-              <th>Action</th>
-            </tr>
-          </thead>
           <tbody>{peoples}</tbody>
         </table>
       </div>
