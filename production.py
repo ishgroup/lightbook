@@ -6,12 +6,12 @@ from gevent import wsgi
 import app
 
 monkey.patch_all()
-app = Flask(__name__)
+app = Flask(__name__, static_folder='build', static_url_path='')
 
 @app.route('/')
-def index():
-  return render_template('index.html')
-
+def root():
+  return app.send_static_file('index.html')
+ 
 @app.route('/peoples', methods=['GET', 'OPTIONS'])
 def get_persons():
   return jsonify({
