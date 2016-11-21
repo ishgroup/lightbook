@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env /usr/local/bin/python2
 
 from flask import Flask, render_template, jsonify, make_response, request, current_app
 from gevent import monkey
