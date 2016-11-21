@@ -1,17 +1,16 @@
 from flask import Flask, render_template, jsonify, make_response, request, current_app
-from datetime import timedelta
-from functools import update_wrapper
+from gevent import monkey
+from gevent import wsgi
+import app
 
-execfile('./server/crossdomain.py')
-
-app = Flask(__name__, static_folder='build', static_url_path='')
+monkey.patch_all()
+app = Flask(__name__)
 
 @app.route('/')
-def root():
-  return app.send_static_file('index.html')
+def index():
+  return render_template('index.html')
 
 @app.route('/peoples', methods=['GET', 'OPTIONS'])
-@crossdomain(origin='http://localhost:3000')
 def get_persons():
   return jsonify({
     "status" : "success",
@@ -128,5 +127,7 @@ def search_company(search):
   }
   )
 
-if __name__ == '__main__':
-  app.run(debug=True)
+
+
+server = wsgi.WSGIServer(('203.29.62.211', 5050), app)
+server.serve_forever()
