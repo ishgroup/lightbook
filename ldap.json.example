@@ -1,0 +1,5 @@
+{
+  "ldap_url": "ldap://ldap.domain.com",
+  "username": "ldap_username",
+  "password": "password"
+}
