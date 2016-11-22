@@ -5,6 +5,7 @@ import SearchBox from './SearchBox';
 import axios from 'axios';
 import Config from './config';
 import Icon from 'react-fa';
+import Container from './components/Container';
 
 class PeopleApp extends Component {
   constructor(props) {
@@ -13,13 +14,14 @@ class PeopleApp extends Component {
 
      this.state = {
         peoplelist: [],
-        pageName: this.pageName('search'),
         filterString: '',
         filteredData: [],
         showAddForm: false,
         showAddressBook: false,
         showSearchForm: true,
      }
+
+     Container.setPageName('search');
 
      axios.get('/peoples', { baseURL: Config.baseUrl() })
       .then(function(response){
@@ -31,10 +33,6 @@ class PeopleApp extends Component {
      this.onRowSubmit = this.handleNewRowSubmit.bind(this);
      this.onPeopleRemove = this.handlePeopleRemove.bind(this);
      this.onPeopleEdits = this.handlePeopleEdit.bind(this);
-  }
-
-  pageName($pageName) {
-    return 'page-' + $pageName;
   }
 
   handleNewRowSubmit(newPeople) {
@@ -91,13 +89,13 @@ class PeopleApp extends Component {
     })
   }
 
-  showAddForm(e) {
-    e.preventDefault();
+  showAddForm() {
     this.setState({
       showAddForm: true,
       filterString: '',
-      pageName: this.pageName('add-form'),
     });
+
+    Container.setPageName('add-form');
 
     this.closeAddressBook();
     this.closeSearchForm();
@@ -107,7 +105,6 @@ class PeopleApp extends Component {
     this.setState({
       showAddForm: false,
       showSearchForm: true,
-      pageName: this.pageName('search'),
     });
   }
 
@@ -115,8 +112,9 @@ class PeopleApp extends Component {
     this.setState({
       showAddressBook: true,
       filterString: '',
-      pageName: this.pageName('address-book'),
     });
+
+    Container.setPageName('address-book');
 
     this.closeAddForm();
     this.closeSearchForm();
@@ -130,12 +128,12 @@ class PeopleApp extends Component {
     });
   }
 
-  showSearchForm(e) {
-    e.preventDefault();
+  showSearchForm() {
     this.setState({
       showSearchForm: true,
-      pageName: this.pageName('search'),
     });
+
+    Container.setPageName('search');
 
     this.closeAddForm();
     this.closeAddressBook();
@@ -163,9 +161,7 @@ class PeopleApp extends Component {
     if(this.state.showAddForm) {
       _leftBlock = 'col-lg-16';
     }
-console.log(this.state.filterString.length);
-console.log(this.state.showSearchForm);
-console.log((this.state.showSearchForm && this.state.filterString.length === 0));
+
     var _hide_peoples = (this.state.showAddForm || (!this.state.showAddForm && this.state.showSearchForm && this.state.filterString.length === 0)) ? {display: 'none'} : null;
     var _hide_search = this.state.showAddForm ? {display: 'none'} : null;
 
@@ -174,13 +170,13 @@ console.log((this.state.showSearchForm && this.state.filterString.length === 0))
     var _active_search_form = 'search-link' + (this.state.showSearchForm ? " active" : "");
 
     return (
-      <div className={'page-wrapper col-lg-24 ' + this.state.pageName}>
+      <Container>
         <header id="header" className="row">
           <div className="container">
             <div className="row header-links">
               <div className="col-xs-8">
                 <div className="row">
-                  <a href="#" onClick={this.showAddForm.bind(this)} className={"nav-item " + _active_add_form}>
+                  <a href="#add-people" onClick={this.showAddForm.bind(this)} className={"nav-item " + _active_add_form}>
                     <Icon name="user-plus" />
                   </a>
                 </div>
@@ -188,7 +184,7 @@ console.log((this.state.showSearchForm && this.state.filterString.length === 0))
 
               <div className="col-xs-8">
                 <div className="row">
-                  <a href="#" onClick={this.showAddressBook.bind(this)} className={"nav-item " + _active_address_book}>
+                  <a href="#list-people" onClick={this.showAddressBook.bind(this)} className={"nav-item " + _active_address_book}>
                     <Icon name="address-book" />
                   </a>
                 </div>
@@ -196,7 +192,7 @@ console.log((this.state.showSearchForm && this.state.filterString.length === 0))
 
               <div className="col-xs-8">
                 <div className="row">
-                  <a href="#" onClick={this.showSearchForm.bind(this)} className={"nav-item " + _active_search_form}>
+                  <a href="#search-people" onClick={this.showSearchForm.bind(this)} className={"nav-item " + _active_search_form}>
                     <Icon name="search" />
                   </a>
                 </div>
@@ -222,7 +218,7 @@ console.log((this.state.showSearchForm && this.state.filterString.length === 0))
             </div>
           </div>
         </div>
-      </div>
+      </Container>
     );
   }
 };
