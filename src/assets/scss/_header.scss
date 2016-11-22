@@ -1,0 +1,55 @@
+/**
+*
+* header.scss
+*
+* Contains all the styles of header contents
+*
+* This file is copyright ish group, Australia.
+* It is licensed to you under the Apache License, version 2.0
+* and is part of ish onCourse.
+*
+* Author: Chintan Kotadia
+*/
+
+header#header {
+  background: $header-background;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 99;
+  .header-links {
+    a {
+      display: block;
+      padding: 15px;
+      text-align: center;
+      color: $header-tab-color;
+
+      text-decoration:none;
+      background-color: $header-tab-background;
+      background-image: -webkit-gradient(linear, left top, left bottom, from($header-tab-background), to($header-tab-background-end));
+      background-image: -webkit-linear-gradient(top, $header-tab-background, $header-tab-background-end);
+      background-image: -moz-linear-gradient(top, $header-tab-background, $header-tab-background-end);
+      background-image: -ms-linear-gradient(top, $header-tab-background, $header-tab-background-end);
+      background-image: -o-linear-gradient(top, $header-tab-background, $header-tab-background-end);
+      background-image: linear-gradient(to bottom, $header-tab-background, $header-tab-background-end);
+      filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=$header-tab-background, endColorstr=$header-tab-background-end);
+    }
+    .nav-item {
+      &::after {
+        content: "";
+        position: absolute;
+        height: 4px;
+        background: $header-tab-active-background;
+        left: 0;
+        bottom: 0;
+        @include _transition(all 0.5s ease-in-out);
+      }
+      &:hover, &.active {
+        color: $header-tab-active-color;
+        &::after {
+          right: 0;
+        }
+      }
+    }
+  }
+}

@@ -8,7 +8,6 @@
 
 /* Bootstrap */
 $grid-columns: 24;
-//$enable-flex: true;
 
 $basePath: './src/assets';
 
@@ -19,15 +18,14 @@ $primaryColor: #f7941d;
 $secondaryColor: #37caad;
 
 $imgPath: $basePath + '/img/';
-$images-bxslider: $imgPath + 'bxslider';
-$icheck-img-path: $imgPath + 'icheck/flat/';
 
 // Our variables
-$base-font-family: 'Merriweather', serif;
+$base-font-family: Arial, sans-serif;
 $base-font-size:   16px;
 $base-font-weight: 300;
-$small-font-size:  $base-font-size * 0.875;
-$base-line-height: 1.8;
+$base-line-height: 1.5;
+$base-background-color: $white;
+$base-text-color: #333;
 
 $xsmall-screen: 544px;
 $small-screen: 768px;
@@ -48,4 +46,13 @@ $media-small: 'small';
 $media-tablet: 'tablet';
 $media-desktop: 'desktop';
 $media-custom: 'custom';
+
+$header-background: #ece7d2;
+$header-tab-color: #d89c12;
+
+$header-tab-background: #F5F0DF;
+$header-tab-background-end: #D4CEBB;
+
+$header-tab-active-background: #69524a;
+$header-tab-active-color: #69524a;
 

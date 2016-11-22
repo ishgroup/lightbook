@@ -1,5 +1,22 @@
+/**
+*
+* layout.scss
+*
+* Contains all the styles of different contents
+*
+* This file is copyright ish group, Australia.
+* It is licensed to you under the Apache License, version 2.0
+* and is part of ish onCourse.
+*
+* Author: Chintan Kotadia
+*/
+
 body {
-  background: #F5F0DF;
+  background: $base-background-color;
+  color: $base-text-color;
+  font-family: $base-font-family;
+  font-size: $base-font-size;
+  line-height: $base-line-height;
 }
 .page-wrapper {
   margin-top: 54px;
@@ -8,48 +25,6 @@ body {
     margin-top: 129px;
   }
 }
-header#header {
-  background: #ece7d2;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 99;
-  .header-links {
-    a {
-      display: block;
-      padding: 15px;
-      text-align: center;
-      color: #d89c12;
-
-      text-decoration:none;
-      background-color: #F5F0DF; background-image: -webkit-gradient(linear, left top, left bottom, from(#F5F0DF), to(#D4CEBB));
-      background-image: -webkit-linear-gradient(top, #F5F0DF, #D4CEBB);
-      background-image: -moz-linear-gradient(top, #F5F0DF, #D4CEBB);
-      background-image: -ms-linear-gradient(top, #F5F0DF, #D4CEBB);
-      background-image: -o-linear-gradient(top, #F5F0DF, #D4CEBB);
-      background-image: linear-gradient(to bottom, #F5F0DF, #D4CEBB);
-      filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#F5F0DF, endColorstr=#D4CEBB);
-    }
-    .nav-item {
-      &::after {
-        content: "";
-        position: absolute;
-        height: 4px;
-        background: #69524a;
-        left: 0;
-        bottom: 0;
-        @include _transition(all 0.5s ease-in-out);
-      }
-      &:hover, &.active {
-        color: #69524a;
-        &::after {
-          right: 0;
-        }
-      }
-    }
-  }
-}
-
 .people-list {
   a.link-people {
     text-decoration: none;
