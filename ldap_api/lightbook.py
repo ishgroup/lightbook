@@ -1,14 +1,17 @@
 import json
 import ldap
+import os
 from ldap.controls import SimplePagedResultsControl
 
 SIZELIMIT = 10
 
 def connect_to_ldap():
-  with open('ldap.json') as data_file:
+  ldap_config = '%s/../ldap.json' % os.path.dirname(os.path.realpath(__file__))
+
+  with open(ldap_config) as data_file:
     ldap_config = json.load(data_file)
   ish_ldap = ldap.initialize(ldap_config['ldap_url'])
-  ish_ldap.simple_bind_s(ldap_config['username'], ldap_config['password'])
+  ish_ldap.simple_bind_s('', '')
   return ish_ldap
 
 def transform_person(ldap_person):
