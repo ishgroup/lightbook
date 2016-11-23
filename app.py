@@ -70,26 +70,21 @@ def view_person(id):
     }
   })
 
-@app.route('/data/people/update/<int:id>')
+@app.route('/data/people/update/<int:id>', methods=['PATCH'])
 def update_person(id):
-  return jsonify(
-  {
+  result = modify_person(ish_ldap, id, request.json)
+  if result == None:
+    return jsonify({
+      "status": "error",
+      "message": "Person not found"
+    })
+  return jsonify({
     "status": "success",
     "output": {
-    "message": "People updated successfully",
-    "people": {
-      "id": "1",
-      "name": "Chintan Kotadia",
-      "username":"chintankotadia13@gmail.com",
-      "company": "ish",
-      "company_role":"html/css coder",
-      "phone":"49874646",
-      "notes":"My notes",
-      "mobile":"9497654654"
-    }
-    }
-  }
-  )
+      "message": "People updated successfully",
+      "people": result
+      }
+  })
 
 @app.route('/data/people/delete/<int:id>')
 def delete_person(id):

@@ -78,7 +78,7 @@ def search_in_ldap(ldap_client, base, cn):
 def get_company(ldap_client, id):
   response = ldap_client.search_s('ou=Companies,dc=ish,dc=com,dc=au', ldap.SCOPE_SUBTREE, '(uniqueIdentifier=%d)' % id)
   if response != None and len(response) > 0:
-    return response[0][1]
+    return response[0]
   else:
     return None
 
@@ -87,7 +87,7 @@ def get_company_people_from_ldap(ldap_client, id):
   if company == None:
     return None
 
-  company_name = company.get('cn')[0]
+  company_name = company[1].get('cn')[0]
   ldap_filter = '(o=%s)' % company_name
 
   ldap_response = ldap_client.search_ext_s('ou=Customers,ou=People,dc=ish,dc=com,dc=au', ldap.SCOPE_SUBTREE, ldap_filter)
@@ -100,12 +100,27 @@ def get_company_people_from_ldap(ldap_client, id):
 def get_person(ldap_client, id):
   response = ldap_client.search_s('ou=Customers,ou=People,dc=ish,dc=com,dc=au',ldap.SCOPE_SUBTREE,'(uidNumber=%d)' % id)
   if response != None and len(response) > 0:
-    return response[0][1]
+    return response[0]
   else:
     return None
 
 def get_person_from_ldap(ldap_client, id):
-  return transform_person(get_person(ldap_client, id))
+  return transform_person(get_person(ldap_client, id)[1])
 
 def get_company_from_ldap(ldap_client, id):
-  return transform_company(get_company(ldap_client, id))
+  return transform_company(get_company(ldap_client, id)[1])
+
+def modify_person(ldap_client, id, attributes):
+  person = get_person(ldap_client, id)
+  if person == None:
+    return None
+  dn = person[0]
+  print make_modify_list(attributes)
+  ldap_client.modify_s(dn, make_modify_list(attributes))
+  return get_person_from_ldap(ldap_client, id)
+
+def make_modify_list(attributes):
+  return map(lambda x: (ldap.MOD_REPLACE, clear_param(x[0]), clear_param(x[1])), attributes.items())
+
+def clear_param(param):
+  return param.encode('ascii','ignore')
