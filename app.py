@@ -3,7 +3,7 @@
 from flask import Flask, render_template, jsonify, make_response, request, current_app
 from datetime import timedelta
 from functools import update_wrapper
-from ldap_api import connect_to_ldap, search_in_ldap, get_company_people_from_ldap, get_person
+from ldap_api import *
 
 app = Flask(__name__, static_folder='build', static_url_path='')
 
@@ -66,7 +66,7 @@ def view_person(id):
   return jsonify({
     "status": "success",
     "output": {
-      "people": get_person(ish_ldap, id)
+      "people": get_person_from_ldap(ish_ldap, id)
     }
   })
 
@@ -122,6 +122,15 @@ def company_people(id):
       "status": "success",
       "people": result
     })
+
+@app.route('/data/company/view/<int:id>')
+def view_company(id):
+  return jsonify({
+    "status": "success",
+    "output": {
+      "company": get_company_from_ldap(ish_ldap, id)
+    }
+  })
 
 if __name__ == '__main__':
   app.run(debug=True)

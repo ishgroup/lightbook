@@ -26,6 +26,17 @@ def transform_person(ldap_person):
     'mobile': ldap_person.get('mobile')
   }
 
+def transform_company(ldap_company):
+  return {
+    'id': ldap_company['uniqueIdentifier'][0],
+    'name': ldap_company['cn'][0],
+    'notes': ldap_company.get('description', [None])[0],
+    'fax': ldap_company.get('facsimileTelephoneNumber'),
+    'phone': ldap_company.get('telephoneNumber'),
+    'mobile': ldap_company.get('mobile'),
+    'abn': ldap_company.get('abn', [None])[0],
+  }
+
 def type_of_entry(ldap_entry):
   if ldap_entry.get('uniqueIdentifier') == None:
     if ldap_entry.get('uidNumber') != None:
@@ -89,6 +100,12 @@ def get_company_people_from_ldap(ldap_client, id):
 def get_person(ldap_client, id):
   response = ldap_client.search_s('ou=Customers,ou=People,dc=ish,dc=com,dc=au',ldap.SCOPE_SUBTREE,'(uidNumber=%d)' % id)
   if response != None and len(response) > 0:
-    return transform_person(response[0][1])
+    return response[0][1]
   else:
     return None
+
+def get_person_from_ldap(ldap_client, id):
+  return transform_person(get_person(ldap_client, id))
+
+def get_company_from_ldap(ldap_client, id):
+  return transform_company(get_company(ldap_client, id))
