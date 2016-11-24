@@ -86,6 +86,22 @@ def update_person(id):
       }
   })
 
+@app.route('/data/companies/update/<int:id>', methods=['PATCH'])
+def update_company(id):
+  result = modify_company(ish_ldap, id, request.json)
+  if result == None:
+    return jsonify({
+      "status": "error",
+      "message": "Company not found"
+    })
+  return jsonify({
+    "status": "success",
+    "output": {
+      "message": "Company updated successfully",
+      "people": result
+      }
+  })
+
 @app.route('/data/people/delete/<int:id>')
 def delete_person(id):
   return jsonify(  { 'status':"success",

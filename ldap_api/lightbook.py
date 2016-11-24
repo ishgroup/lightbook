@@ -14,6 +14,9 @@ def connect_to_ldap():
   ish_ldap.simple_bind_s('', '')
   return ish_ldap
 
+def compact_dict(dict):
+  return { k: v for k, v in dict.items() if not v is None }
+
 def transform_person(ldap_person):
   return {
     'id': ldap_person['uidNumber'][0],
@@ -26,6 +29,18 @@ def transform_person(ldap_person):
     'mobile': ldap_person.get('mobile')
   }
 
+def person_to_ldap_attrs(person):
+  return compact_dict({
+    'uidNumber': person.get('id'),
+    'cn': person.get('name'),
+    'uid': person.get('username'),
+    'o': person.get('company'),
+    'title': person.get('company_role'),
+    'telephoneNumber': person.get('phone'),
+    'description': person.get('notes'),
+    'mobile': person.get('mobile')
+  })
+
 def transform_company(ldap_company):
   return {
     'id': ldap_company['uniqueIdentifier'][0],
@@ -35,7 +50,19 @@ def transform_company(ldap_company):
     'phone': ldap_company.get('telephoneNumber'),
     'mobile': ldap_company.get('mobile'),
     'abn': ldap_company.get('abn', [None])[0],
+    'active': ldap_company.get('active', [None])[0]
   }
+
+def company_to_ldap_attrs(company):
+  return compact_dict({
+    'uniqueIdentifier': company.get('id'),
+    'cn': company.get('name'),
+    'description': company.get('notes'),
+    'facsimileTelephoneNumber': company.get('fax'),
+    'telephoneNumber': company.get('phone'),
+    'mobile': company.get('mobile'),
+    'abn': company.get('abn')
+  })
 
 def type_of_entry(ldap_entry):
   if ldap_entry.get('uniqueIdentifier') == None:
@@ -115,12 +142,39 @@ def modify_person(ldap_client, id, attributes):
   if person == None:
     return None
   dn = person[0]
-  print make_modify_list(attributes)
-  ldap_client.modify_s(dn, make_modify_list(attributes))
+  print make_modify_list(person_to_ldap_attrs(attributes))
+  ldap_client.modify_s(dn, make_modify_list(person_to_ldap_attrs(attributes)))
   return get_person_from_ldap(ldap_client, id)
 
-def make_modify_list(attributes):
-  return map(lambda x: (ldap.MOD_REPLACE, clear_param(x[0]), clear_param(x[1])), attributes.items())
+def modify_company(ldap_client, id, attributes):
+  company = get_company(ldap_client, id)
+  if company == None:
+    return None
+  dn = company[0]
+  print make_modify_list(company_to_ldap_attrs(attributes))
+  ldap_client.modify_s(dn, make_modify_list(company_to_ldap_attrs(attributes)))
+  return get_company_from_ldap(ldap_client, id)
 
-def clear_param(param):
-  return param.encode('ascii','ignore')
+def make_operation(attribute):
+  key = clear_param(attribute[0])
+  value = clear_param(attribute[1])
+
+  if type(value) is list and len(value) == 0:
+    return (ldap.MOD_DELETE, key, None)
+  else:
+    return (ldap.MOD_REPLACE, key, value)
+
+def make_modify_list(attributes):
+  return map(make_operation, attributes.items())
+
+def clear_param(param, first_level=True):
+  if not first_level:
+    return None
+  if type(param) is list:
+    return map(lambda x: clear_param(x), param)
+  elif type(param) is unicode:
+    return param.encode('ascii','ignore')
+  elif type(param) is str:
+    return param
+  else:
+    return None
