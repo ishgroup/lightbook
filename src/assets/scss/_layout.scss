@@ -32,3 +32,58 @@ body {
     color: $black;
   }
 }
+.input-group {
+  .input-box {
+    float: left;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    .input-tag {
+      position: absolute;
+      z-index: 1;
+      width: 100%;
+      top: -100%;
+    }
+    &.input-active {
+      .input-edited {
+        display: none;
+      }
+      .input-tag {
+        position: relative;
+        top: 0;
+        display: table-cell;
+        border-radius: .3rem;
+        padding: .75rem 1.5rem;
+        font-size: 1.25rem;
+      }
+    }
+  }
+
+  .input-edited {
+    cursor: text;
+    padding: .594rem 1.5rem;
+    font-size: 1.25rem;
+    border-radius: .3rem;
+    position: relative;
+    z-index: 2;
+    float: left;
+    width: 100%;
+    margin-bottom: 0;
+    display: block;
+    color: #55595c;
+    background-color: #fff;
+    background-image: none;
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,0.15);
+    &.text-empty {
+      color: #999;
+    }
+    a {
+      color: #55595c;
+      text-decoration: none;
+      &:hover {
+        color: darken(#014c8c, 15%);
+      }
+    }
+  }
+}

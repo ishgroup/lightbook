@@ -17,6 +17,9 @@ header#header {
   top: 0;
   width: 100%;
   z-index: 99;
+  .bg-inverse {
+    background: $base-text-color;
+  }
   .header-links {
     a {
       display: block;

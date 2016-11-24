@@ -6,6 +6,7 @@ import axios from 'axios';
 import Config from './config';
 import Icon from 'react-fa';
 import Container from './components/Container';
+import ishLogo from './assets/img/ish-logo.png'
 
 class PeopleApp extends Component {
   constructor(props) {
@@ -172,33 +173,22 @@ class PeopleApp extends Component {
     return (
       <Container>
         <header id="header" className="row">
-          <div className="container">
-            <div className="row header-links">
-              <div className="col-xs-8">
-                <div className="row">
-                  <a href="#add-people" onClick={this.showAddForm.bind(this)} className={"nav-item " + _active_add_form}>
-                    <Icon name="user-plus" />
-                  </a>
-                </div>
-              </div>
-
-              <div className="col-xs-8">
-                <div className="row">
-                  <a href="#list-people" onClick={this.showAddressBook.bind(this)} className={"nav-item " + _active_address_book}>
-                    <Icon name="address-book" />
-                  </a>
-                </div>
-              </div>
-
-              <div className="col-xs-8">
-                <div className="row">
-                  <a href="#search-people" onClick={this.showSearchForm.bind(this)} className={"nav-item " + _active_search_form}>
-                    <Icon name="search" />
-                  </a>
-                </div>
+          <nav className="navbar navbar-dark bg-inverse">
+            <div className="nav navbar-nav">
+              <a className="navbar-brand" href="#">
+                <img src={ishLogo} alt="ish" />
+              </a>
+              <div className="pull-xs-right">
+                <a href="#add-people" onClick={this.showAddForm.bind(this)} className={"nav-item nav-link " + _active_add_form}>
+                  <Icon name="user-plus" />
+                </a>
+                <a href="#search-people" onClick={this.showSearchForm.bind(this)} className={"nav-item nav-link " + _active_search_form}>
+                  <Icon name="search" />
+                </a>
               </div>
             </div>
-
+          </nav>
+          <div className="container">
             <div className="search-wrapper" style={_hide_search}>
                <SearchBox filterString={this.state.filterString} doSearch={this.doSearch} block={this} />
             </div>
