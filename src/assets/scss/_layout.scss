@@ -22,8 +22,14 @@ body {
 .page-wrapper {
   margin-top: 54px;
   padding-top: 15px;
-  &.page-search, &.page-address-book {
-    margin-top: 129px;
+}
+.list-rows {
+  >.row{
+    border-top: 1px solid #eceeef;
+    padding: 0.75rem;
+    &:nth-of-type(odd) {
+      background: rgba(0,0,0,.05);;
+    }
   }
 }
 .people-list {
@@ -83,6 +89,33 @@ body {
       text-decoration: none;
       &:hover {
         color: darken(#014c8c, 15%);
+      }
+    }
+  }
+}
+
+.modal-full-page {
+  .modal-backdrop {
+    background: $white;
+  }
+  .modal-dialog {
+    max-width: 100%;
+    margin: 0;
+    .modal-content {
+      border-radius: 0;
+      border: 0 none;
+    }
+  }
+}
+.search-wrapper {
+  >.row {
+    background: $white;
+    box-shadow: 1px 1px 10px #ddd;
+    .input-group {
+      padding: 7px !important;
+      .form-control {
+        border: 0 none;
+        padding: 6px 16px;
       }
     }
   }

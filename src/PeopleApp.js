@@ -1,35 +1,39 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+
+import People from './People';
+import Company from './Company';
+import PeopleEdit from './PeopleEdit';
 import PeopleList from './PeopleList';
-import NewRow from './NewRow';
-import SearchBox from './SearchBox';
-import axios from 'axios';
-import Config from './config';
-import Icon from 'react-fa';
+
+import SearchModel from './model/SearchModel';
+import ViewPeopleModel from './model/ViewPeopleModel';
+
 import Container from './components/Container';
-import ishLogo from './assets/img/ish-logo.png'
+import ListView from './components/ListView';
+import SearchBox from './components/SearchBox';
 
 class PeopleApp extends Component {
   constructor(props) {
      super(props);
-     var that = this;
 
      this.state = {
         peoplelist: [],
+        companylist: [],
         filterString: '',
         filteredData: [],
         showAddForm: false,
-        showAddressBook: false,
         showSearchForm: true,
      }
 
      Container.setPageName('search');
 
-     axios.get('/peoples', { baseURL: Config.baseUrl() })
+     /*axios.get('/peoples', { baseURL: Config.baseUrl() })
       .then(function(response){
         that.setState({
           peoplelist: response.data.output
         });
-      });
+      });*/
 
      this.onRowSubmit = this.handleNewRowSubmit.bind(this);
      this.onPeopleRemove = this.handlePeopleRemove.bind(this);
@@ -37,6 +41,8 @@ class PeopleApp extends Component {
   }
 
   handleNewRowSubmit(newPeople) {
+    var _total = this.block.state.peoplelist.length;
+    newPeople['id'] = ++_total;
     this.block.setState({ peoplelist: this.block.state.peoplelist.concat([newPeople]) });
   }
 
@@ -67,19 +73,28 @@ class PeopleApp extends Component {
     this.block.setState({ peoplelist: this.block.state.peoplelist });
   }
 
+  getSearchResponse(that, response) {
+    that.setState({
+      companylist: response.data.output.companies,
+      peoplelist: response.data.output.people
+    });
+  }
+
   doSearch(filterString) {
     var filteredData = [];
     var _queryText = filterString.toLowerCase();
 
+    SearchModel.search(this.block, _queryText,
+      function(that, response) {
+        that.setState({
+          companylist: response.data.output.companies,
+          peoplelist: response.data.output.people
+        });
+      }
+    );
+
     this.block.state.peoplelist.forEach(function(people) {
-      if(people.name.toLowerCase().indexOf(_queryText) !== -1
-        || people.username.toLowerCase().indexOf(_queryText) !== -1
-        || people.company.toLowerCase().indexOf(_queryText) !== -1
-        || people.company_role.toLowerCase().indexOf(_queryText) !== -1
-        || people.phone.toLowerCase().indexOf(_queryText) !== -1
-        || people.notes.toLowerCase().indexOf(_queryText) !== -1
-        || people.mobile.toLowerCase().indexOf(_queryText) !== -1
-      ) {
+      if(people.name.toLowerCase().indexOf(_queryText) !== -1) {
         filteredData.push(people);
       }
     });
@@ -98,7 +113,6 @@ class PeopleApp extends Component {
 
     Container.setPageName('add-form');
 
-    this.closeAddressBook();
     this.closeSearchForm();
   }
 
@@ -106,26 +120,6 @@ class PeopleApp extends Component {
     this.setState({
       showAddForm: false,
       showSearchForm: true,
-    });
-  }
-
-  showAddressBook() {
-    this.setState({
-      showAddressBook: true,
-      filterString: '',
-    });
-
-    Container.setPageName('address-book');
-
-    this.closeAddForm();
-    this.closeSearchForm();
-    return false;
-  }
-
-  closeAddressBook() {
-    this.setState({
-      showAddressBook: false,
-      filterString: ''
     });
   }
 
@@ -137,7 +131,6 @@ class PeopleApp extends Component {
     Container.setPageName('search');
 
     this.closeAddForm();
-    this.closeAddressBook();
   }
 
   closeSearchForm() {
@@ -150,65 +143,55 @@ class PeopleApp extends Component {
     this.setState({ showModal: false });
   }
 
+  handlePeopleEditOpen(item) {
+    console.log(item.id);
+    ViewPeopleModel.getPeople(this, item.id, function(that, response) {
+      console.log(response.data.output.people);
+      ReactDOM.render(
+        <PeopleEdit people={response.data.output.people} block={that} onPeopleEditSubmit={that.handlePeopleEdit} />,
+        document.getElementById('react-modal')
+      );
+    });
+  }
+
+  renderPeople(block, item) {
+    return <People people={item} onPeopleDelete={block.handleRemove.bind(block)} onPeopleEdit={block.handleEditOpen.bind(block)} />;
+  }
+
+  renderCompany(block, item) {
+    return <Company company={item} onPeopleDelete={block.handleRemove.bind(block)} onPeopleEdit={block.handleEditOpen.bind(block)} />;
+  }
+
+  handleCompanyList(item) {
+
+  }
+
   render() {
-    var _clist = [];
-    if(this.state.filterString.length > 0) {
-      _clist = this.state.filteredData;
-    } else {
-      _clist = this.state.peoplelist;
-    }
-
-    var _leftBlock = 'col-lg-24';
-    if(this.state.showAddForm) {
-      _leftBlock = 'col-lg-16';
-    }
-
-    var _hide_peoples = (this.state.showAddForm || (!this.state.showAddForm && this.state.showSearchForm && this.state.filterString.length === 0)) ? {display: 'none'} : null;
-    var _hide_search = this.state.showAddForm ? {display: 'none'} : null;
-
-    var _active_add_form = 'add-link' + (this.state.showAddForm ? " active" : "");
-    var _active_address_book = 'address-book-link' + (this.state.showAddressBook ? " active" : "");
-    var _active_search_form = 'search-link' + (this.state.showSearchForm ? " active" : "");
+    var _plist = this.state.peoplelist, _clist = this.state.companylist;
+    var _hide_peoples = (_plist.length === 0 ? {display: 'none'} : null);
 
     return (
-      <Container>
-        <header id="header" className="row">
-          <nav className="navbar navbar-dark bg-inverse">
-            <div className="nav navbar-nav">
-              <a className="navbar-brand" href="#">
-                <img src={ishLogo} alt="ish" />
-              </a>
-              <div className="pull-xs-right">
-                <a href="#add-people" onClick={this.showAddForm.bind(this)} className={"nav-item nav-link " + _active_add_form}>
-                  <Icon name="user-plus" />
-                </a>
-                <a href="#search-people" onClick={this.showSearchForm.bind(this)} className={"nav-item nav-link " + _active_search_form}>
-                  <Icon name="search" />
-                </a>
-              </div>
-            </div>
-          </nav>
-          <div className="container">
-            <div className="search-wrapper" style={_hide_search}>
-               <SearchBox filterString={this.state.filterString} doSearch={this.doSearch} block={this} />
-            </div>
-          </div>
-
-        </header>
+      <div>
+        <div className="col-xs-24 search-wrapper">
+           <SearchBox filterString={this.state.filterString} doSearch={this.doSearch} block={this} />
+        </div>
 
         <div className="row">
           <div className="col-lg-24">
             <div className="row">
-              <div className={'people-list ' + _leftBlock} style={_hide_peoples}>
-                <PeopleList clist={_clist} onPeopleRemove={this.handlePeopleRemove} onPeopleEdits={this.handlePeopleEdit} block={this} />
+              <div className="people-list col-lg-24" style={_hide_peoples}>
+                <ListView list={_plist} onRemove={this.handlePeopleRemove} onEdits={this.handlePeopleEditOpen.bind(this)} block={this} item={this.renderPeople} />
               </div>
-              <div className="col-lg-24">
-                <NewRow show={this.state.showAddForm} onRowSubmit={this.handleNewRowSubmit} block={this} />
+
+              <div className="company-list col-lg-24" style={_hide_peoples}>
+                <br /><hr /><br />
+                <ListView list={_clist} onRemove={this.handlePeopleRemove} onEdits={this.handleCompanyList.bind(this)} block={this} item={this.renderCompany} />
               </div>
+
             </div>
           </div>
         </div>
-      </Container>
+      </div>
     );
   }
 };

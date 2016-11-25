@@ -37,7 +37,7 @@ class PeopleEdit extends Component {
     var inputStyle = {padding:'12px'};
 
     return (
-      <Modal id="people-edit-modal">
+      <Modal id="people-edit-modal" fullPage={true}>
         <ModalHeader title="Edit People" />
         <form onSubmit={this.handleSubmit.bind(this)} className="ContactForm edit-people" noValidate="true">
           <div className="input-group input-group-lg" style={inputStyle}>

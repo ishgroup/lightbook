@@ -29,8 +29,13 @@ class Modal extends Component {
   }
 
   render() {
+    var _fullPage = '';
+    console.log(this);
+    if(this.props.fullPage !== undefined && this.props.fullPage === true)
+      _fullPage = ' modal-full-page';
+
     return (
-      <div role="dialog" id={this.props.id}>
+      <div role="dialog" id={this.props.id} className={_fullPage}>
         <div className="modal-backdrop fade in"></div>
         <div role="dialog" tabIndex="-1" className="fade in modal" style={{ display: 'block' }}>
           <div className="modal-dialog">

@@ -30,19 +30,19 @@ class TextInputEdited extends Component {
   }
 
   getText(valiadte, text) {
-    if(valiadte !== undefined) {
+    if(valiadte !== undefined && text !== '') {
       if(valiadte === 'email')
         return '<a href="mailto:'+ text +'">'+ text +'</a>';
       if(valiadte === 'phone')
         return '<a href="tel:'+ text +'">'+ text +'</a>';
-    }
-    return text;
+    } else
+      return text;
   }
 
   render() {
     var textValue = this.getText(this.props.validate, this.state.value);
     var inputTextEmpty = '';
-    if(textValue.length === 0) {
+    if(textValue === null || (textValue !== null && textValue.length === 0)) {
       inputTextEmpty = ' text-empty';
       textValue = this.props.placeholder;
     }

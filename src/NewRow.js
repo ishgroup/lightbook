@@ -38,50 +38,48 @@ class NewRow extends Component {
     e.target.notes.value = '';
     e.target.mobile.value = '';
 
-    this.props.block.showAddressBook();
+    this.hideAddForm();
 
     return false;
   }
 
   hideAddForm() {
-    this.props.block.showAddressBook();
+    this.props.router.goBack();
   }
 
   render() {
     var inputStyle = {padding:'12px'};
 
     return (
-      this.props.show ?
-        <div className="well">
-          <form onSubmit={this.handleSubmit} className="ContactForm" noValidate="true">
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <input type="text"  className="form-control col-md-8"  placeholder="Name" name="name" />
-            </div>
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <input type="text"  className="form-control col-md-8" placeholder="Username" name="username"/>
-            </div>
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <input type="text"  className="form-control col-md-8" placeholder="Company" name="company"/>
-            </div>
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <input type="text"  className="form-control col-md-8" placeholder="Company Role" name="company_role"/>
-            </div>
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <input type="text"  className="form-control col-md-8" placeholder="Phone" name="phone"/>
-            </div>
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <input type="text"  className="form-control col-md-8" placeholder="Notes" name="notes"/>
-            </div>
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <input type="text"  className="form-control col-md-8" placeholder="Mobile" name="mobile"/>
-            </div>
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <input type="submit" className="btn btn-primary" value="Add People"/>&nbsp;
-              <input type="button" className="btn btn-primary" value="Close" onClick={this.hideAddForm.bind(this)} />
-            </div>
-          </form>
-        </div>
-        : null
+      <div className="well">
+        <form onSubmit={this.handleSubmit} className="ContactForm" noValidate="true">
+          <div className="input-group input-group-lg" style={inputStyle}>
+            <input type="text"  className="form-control col-md-8"  placeholder="Name" name="name" />
+          </div>
+          <div className="input-group input-group-lg" style={inputStyle}>
+            <input type="text"  className="form-control col-md-8" placeholder="Username" name="username"/>
+          </div>
+          <div className="input-group input-group-lg" style={inputStyle}>
+            <input type="text"  className="form-control col-md-8" placeholder="Company" name="company"/>
+          </div>
+          <div className="input-group input-group-lg" style={inputStyle}>
+            <input type="text"  className="form-control col-md-8" placeholder="Company Role" name="company_role"/>
+          </div>
+          <div className="input-group input-group-lg" style={inputStyle}>
+            <input type="text"  className="form-control col-md-8" placeholder="Phone" name="phone"/>
+          </div>
+          <div className="input-group input-group-lg" style={inputStyle}>
+            <input type="text"  className="form-control col-md-8" placeholder="Notes" name="notes"/>
+          </div>
+          <div className="input-group input-group-lg" style={inputStyle}>
+            <input type="text"  className="form-control col-md-8" placeholder="Mobile" name="mobile"/>
+          </div>
+          <div className="input-group input-group-lg" style={inputStyle}>
+            <input type="submit" className="btn btn-primary" value="Add People"/>&nbsp;
+            <input type="button" className="btn btn-primary" value="Close" onClick={this.hideAddForm.bind(this)} />
+          </div>
+        </form>
+      </div>
     );
   }
 }

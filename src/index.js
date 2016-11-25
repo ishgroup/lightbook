@@ -1,8 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
+import NewRow from './NewRow';
+import PeopleApp from './PeopleApp';
+import PeopleList from './PeopleList';
 
-ReactDOM.render(
-  <App />,
-  document.getElementById('page-content')
-);
+import { Router, Route, browserHistory, IndexRoute  } from 'react-router';
+
+ReactDOM.render((
+   <Router history={browserHistory}>
+      <Route path="/" component={App}>
+         <IndexRoute component={PeopleApp} />
+         <Route name="add-people" path="add-people" component={NewRow} />
+         <Route name="search" path="search" component={PeopleApp} />
+         <Route name="company" path="company/:id" component={PeopleList} />
+      </Route>
+   </Router>
+
+), document.getElementById('page-content'))

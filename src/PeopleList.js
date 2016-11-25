@@ -1,46 +1,102 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+
 import People from './People';
 import PeopleEdit from './PeopleEdit';
-import ReactDOM from 'react-dom';
+
+import ViewPeopleModel from './model/ViewPeopleModel';
+import PeopleListModel from './model/PeopleListModel';
+
+import ListView from './components/ListView';
 
 class PeopleList extends Component {
   constructor(props) {
     super(props);
-    this.props = props;
+
+    this.state = {
+      peoplelist: []
+    };
+
+    if(this.props.params.id !== undefined) {
+      PeopleListModel.getList(this, this.props.params.id, function(that, response) {
+        if(response.data.people !== undefined) {
+          that.state = {
+            peoplelist: response.data.people
+          };
+        }
+      });
+    } else {
+      this.state = {
+        peoplelist: this.props.list
+      };
+    }
+
+    this.onRowSubmit = this.handleNewRowSubmit.bind(this);
+    this.onPeopleRemove = this.handlePeopleRemove.bind(this);
+    this.onPeopleEdits = this.handlePeopleEdit.bind(this);
+  }
+
+  handleNewRowSubmit(newPeople) {
+    var _total = this.block.state.peoplelist.length;
+    newPeople['id'] = ++_total;
+    this.block.setState({ peoplelist: this.block.state.peoplelist.concat([newPeople]) });
   }
 
   handlePeopleRemove(people) {
-    this.props.onPeopleRemove(people);
+    if(!confirm('Are you sure you want to delete this people?'))
+      return false;
+
+    var index = -1;
+    var clength = this.block.state.peoplelist.length;
+    for (var i = 0; i < clength; i++) {
+      if (this.block.state.peoplelist[i].name === people.name) {
+      index = i;
+      break;
+      }
+    }
+    this.block.state.peoplelist.splice(index, 1);
+    this.block.setState({ peoplelist: this.block.state.peoplelist });
   }
 
-  handleOnPeopleEditSubmit(newRow) {
-    this.block.props.onPeopleEdits(newRow);
+  handlePeopleEdit(people) {
+    var clength = this.block.state.peoplelist.length;
+    for (var i = 0; i < clength; i++) {
+      if (this.block.state.peoplelist[i].id === people.id) {
+        this.block.state.peoplelist[i] = people;
+        break;
+      }
+    }
+    this.block.setState({ peoplelist: this.block.state.peoplelist });
   }
 
-  handlePeopleEditOpen(people) {
-    ReactDOM.render(
-      <PeopleEdit people={people} block={this} onPeopleEditSubmit={this.handleOnPeopleEditSubmit} />,
-      document.getElementById('react-modal')
-    );
+  close() {
+    this.setState({ showModal: false });
+  }
 
-    this.props.onPeopleEdits(people);
+  handlePeopleEditOpen(item) {
+    console.log(item.id);
+    ViewPeopleModel.getPeople(this, item.id, function(that, response) {
+      ReactDOM.render(
+        <PeopleEdit people={response.data.output.people} block={that} onPeopleEditSubmit={that.handlePeopleEdit} />,
+        document.getElementById('react-modal')
+      );
+    });
+  }
+
+  renderPeople(block, item) {
+    return <People people={item} onPeopleDelete={block.handleRemove.bind(block)} onPeopleEdit={block.handleEditOpen.bind(block)} />;
   }
 
   render() {
-    var peoples = [];
-    var that = this; // TODO: Needs to find out why that = this made it work; Was getting error that onPeopleDelete is not undefined
-    this.props.clist.forEach(function(people) {
-      peoples.push([<People people={people} onPeopleDelete={that.handlePeopleRemove.bind(that)} onPeopleEdit={that.handlePeopleEditOpen.bind(that)} />]);
-    });
+    var _plist = this.state.peoplelist;
+    var _hide_peoples = (_plist.length === 0 ? {display: 'none'} : null);
 
     return (
-      <div>
-        <table className="table table-striped">
-          <tbody>{peoples}</tbody>
-        </table>
+      <div className="people-list col-lg-24" style={_hide_peoples}>
+        <ListView list={_plist} onRemove={this.handlePeopleRemove} onEdits={this.handlePeopleEditOpen.bind(this)} block={this} item={this.renderPeople} />
       </div>
     );
   }
-}
+};
 
 export default PeopleList;
