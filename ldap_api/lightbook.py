@@ -90,7 +90,7 @@ def get_id(ldap_entry):
 def to_search_entry(ldap_entry):
   return {
     'id': get_id(ldap_entry),
-    'name': ldap_entry.get('cn', [None])[0]
+    'name': squash_spaces(ldap_entry.get('cn', [None])[0])
   }
 
 
