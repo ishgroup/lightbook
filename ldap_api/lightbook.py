@@ -1,9 +1,14 @@
 import json
 import ldap
 import os
+import re
 from ldap.controls import SimplePagedResultsControl
 
 SIZELIMIT = 10
+SPACES_REGEX = re.compile(r"\s+", re.IGNORECASE)
+
+def squash_spaces(line):
+  return SPACES_REGEX.sub(' ', line).strip(' ')
 
 def connect_to_ldap():
   ldap_config = '%s/../ldap.json' % os.path.dirname(os.path.realpath(__file__))
@@ -20,9 +25,9 @@ def compact_dict(dict):
 def transform_person(ldap_person):
   return {
     'id': ldap_person['uidNumber'][0],
-    'name': ldap_person['cn'][0],
-    'username': ldap_person['uid'][0],
-    'company': ldap_person['o'][0],
+    'name': squash_spaces(ldap_person['cn'][0]),
+    'username': squash_spaces(ldap_person['uid'][0]),
+    'company': squash_spaces(ldap_person['o'][0]),
     'company_role': ldap_person.get('title', [None])[0],
     'phone': ldap_person.get('telephoneNumber'),
     'notes': ldap_person.get('description', [None])[0],
@@ -44,7 +49,7 @@ def person_to_ldap_attrs(person):
 def transform_company(ldap_company):
   return {
     'id': ldap_company['uniqueIdentifier'][0],
-    'name': ldap_company['cn'][0],
+    'name': squash_spaces(ldap_company['cn'][0]),
     'notes': ldap_company.get('description', [None])[0],
     'fax': ldap_company.get('facsimileTelephoneNumber'),
     'phone': ldap_company.get('telephoneNumber'),
