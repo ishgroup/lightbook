@@ -17,16 +17,13 @@ class PeopleList extends Component {
       peoplelist: []
     };
 
-    console.log('Debug: PeopleList');
-    console.log(this);
-
     if(this.props.params.id !== undefined) {
       PeopleListModel.getList(this, this.props.params.id, function(that, response) {
         console.log(response);
         if(response.data.peoples !== undefined) {
-          that.state = {
+          that.setState({
             peoplelist: response.data.peoples
-          };
+          });
         }
       });
     } else {
