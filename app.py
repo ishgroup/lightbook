@@ -131,7 +131,7 @@ def company_people(id):
   else:
     return jsonify({
       "status": "success",
-      "people": result
+      "peoples": result
     })
 
 @app.route('/data/company/view/<int:id>')
