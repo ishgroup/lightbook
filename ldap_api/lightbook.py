@@ -7,8 +7,10 @@ from ldap.controls import SimplePagedResultsControl
 SIZELIMIT = 10
 SPACES_REGEX = re.compile(r"\s+", re.IGNORECASE)
 
+
 def squash_spaces(line):
   return SPACES_REGEX.sub(' ', line).strip(' ')
+
 
 def connect_to_ldap():
   ldap_config = '%s/../ldap.json' % os.path.dirname(os.path.realpath(__file__))
@@ -19,8 +21,10 @@ def connect_to_ldap():
   ish_ldap.simple_bind_s('', '')
   return ish_ldap
 
-def compact_dict(dict):
-  return { k: v for k, v in dict.items() if not v is None }
+
+def compact_dict(d):
+  return {k: v for k, v in d.items() if v is not None}
+
 
 def transform_person(ldap_person):
   return {
@@ -34,6 +38,7 @@ def transform_person(ldap_person):
     'mobile': ldap_person.get('mobile')
   }
 
+
 def person_to_ldap_attrs(person):
   return compact_dict({
     'uidNumber': person.get('id'),
@@ -45,6 +50,7 @@ def person_to_ldap_attrs(person):
     'description': person.get('notes'),
     'mobile': person.get('mobile')
   })
+
 
 def transform_company(ldap_company):
   return {
@@ -58,6 +64,7 @@ def transform_company(ldap_company):
     'active': ldap_company.get('active', [None])[0]
   }
 
+
 def company_to_ldap_attrs(company):
   return compact_dict({
     'uniqueIdentifier': company.get('id'),
@@ -69,14 +76,16 @@ def company_to_ldap_attrs(company):
     'abn': company.get('abn')
   })
 
+
 def type_of_entry(ldap_entry):
-  if ldap_entry.get('uniqueIdentifier') == None:
-    if ldap_entry.get('uidNumber') != None:
+  if ldap_entry.get('uniqueIdentifier') is None:
+    if ldap_entry.get('uidNumber') is not None:
       return 'Person'
     else:
       return None
   else:
     return 'Company'
+
 
 def get_id(ldap_entry):
   entry_type = type_of_entry(ldap_entry)
@@ -86,6 +95,7 @@ def get_id(ldap_entry):
     return ldap_entry['uniqueIdentifier'][0]
   else:
     return None
+
 
 def to_search_entry(ldap_entry):
   return {
@@ -97,80 +107,95 @@ def to_search_entry(ldap_entry):
 def ldap_page_ctrl():
   return SimplePagedResultsControl(True, size=SIZELIMIT, cookie='')
 
+
 def search_in_ldap(ldap_client, base, cn):
   ldap_filter = '(cn=*%s*)' % cn
 
-  ldap_response = ldap_client.search_ext_s('%sdc=ish,dc=com,dc=au' % base, ldap.SCOPE_SUBTREE, ldap_filter, serverctrls=[ldap_page_ctrl()])
+  ldap_response = ldap_client.search_ext_s('%sdc=ish,dc=com,dc=au' % base, ldap.SCOPE_SUBTREE, ldap_filter,
+                                           serverctrls=[ldap_page_ctrl()])
 
-  if ldap_response == None:
+  if ldap_response is None:
     return []
   else:
     return map(lambda x: to_search_entry(x[1]), ldap_response)
 
-def get_company(ldap_client, id):
-  response = ldap_client.search_s('ou=Companies,dc=ish,dc=com,dc=au', ldap.SCOPE_SUBTREE, '(uniqueIdentifier=%d)' % id)
-  if response != None and len(response) > 0:
+
+def get_company(ldap_client, unique_identifier):
+  response = ldap_client.search_s('ou=Companies,dc=ish,dc=com,dc=au', ldap.SCOPE_SUBTREE,
+                                  '(uniqueIdentifier=%d)' % unique_identifier)
+  if response:
     return response[0]
   else:
     return None
 
-def get_company_people_from_ldap(ldap_client, id):
-  company = get_company(ldap_client, id)
-  if company == None:
+
+def get_company_people_from_ldap(ldap_client, unique_identifier):
+  company = get_company(ldap_client, unique_identifier)
+  if company is None:
     return None
 
   company_name = company[1].get('cn')[0]
   ldap_filter = '(o=%s)' % company_name
 
-  ldap_response = ldap_client.search_ext_s('ou=Customers,ou=People,dc=ish,dc=com,dc=au', ldap.SCOPE_SUBTREE, ldap_filter)
+  ldap_response = ldap_client.search_ext_s('ou=Customers,ou=People,dc=ish,dc=com,dc=au',
+                                           ldap.SCOPE_SUBTREE, ldap_filter)
 
-  if ldap_response == None:
+  if ldap_response is None:
     return []
   else:
     return map(lambda x: to_search_entry(x[1]), ldap_response)
 
-def get_person(ldap_client, id):
-  response = ldap_client.search_s('ou=Customers,ou=People,dc=ish,dc=com,dc=au',ldap.SCOPE_SUBTREE,'(uidNumber=%d)' % id)
-  if response != None and len(response) > 0:
+
+def get_person(ldap_client, uid_number):
+  response = ldap_client.search_s('ou=Customers,ou=People,dc=ish,dc=com,dc=au', ldap.SCOPE_SUBTREE,
+                                  '(uidNumber=%d)' % uid_number)
+  if response:
     return response[0]
   else:
     return None
 
-def get_person_from_ldap(ldap_client, id):
-  return transform_person(get_person(ldap_client, id)[1])
 
-def get_company_from_ldap(ldap_client, id):
-  return transform_company(get_company(ldap_client, id)[1])
+def get_person_from_ldap(ldap_client, uid_number):
+  return transform_person(get_person(ldap_client, uid_number)[1])
 
-def modify_person(ldap_client, id, attributes):
-  person = get_person(ldap_client, id)
-  if person == None:
+
+def get_company_from_ldap(ldap_client, unique_identifier):
+  return transform_company(get_company(ldap_client, unique_identifier)[1])
+
+
+def modify_person(ldap_client, uid_number, attributes):
+  person = get_person(ldap_client, uid_number)
+  if person is None:
     return None
   dn = person[0]
   print make_modify_list(person_to_ldap_attrs(attributes))
   ldap_client.modify_s(dn, make_modify_list(person_to_ldap_attrs(attributes)))
-  return get_person_from_ldap(ldap_client, id)
+  return get_person_from_ldap(ldap_client, uid_number)
 
-def modify_company(ldap_client, id, attributes):
-  company = get_company(ldap_client, id)
-  if company == None:
+
+def modify_company(ldap_client, unique_identifier, attributes):
+  company = get_company(ldap_client, unique_identifier)
+  if company is None:
     return None
   dn = company[0]
   print make_modify_list(company_to_ldap_attrs(attributes))
   ldap_client.modify_s(dn, make_modify_list(company_to_ldap_attrs(attributes)))
-  return get_company_from_ldap(ldap_client, id)
+  return get_company_from_ldap(ldap_client, unique_identifier)
+
 
 def make_operation(attribute):
   key = clear_param(attribute[0])
   value = clear_param(attribute[1])
 
   if type(value) is list and len(value) == 0:
-    return (ldap.MOD_DELETE, key, None)
+    return ldap.MOD_DELETE, key, None
   else:
-    return (ldap.MOD_REPLACE, key, value)
+    return ldap.MOD_REPLACE, key, value
+
 
 def make_modify_list(attributes):
   return map(make_operation, attributes.items())
+
 
 def clear_param(param, first_level=True):
   if not first_level:
@@ -178,7 +203,7 @@ def clear_param(param, first_level=True):
   if type(param) is list:
     return map(lambda x: clear_param(x), param)
   elif type(param) is unicode:
-    return param.encode('ascii','ignore')
+    return param.encode('ascii', 'ignore')
   elif type(param) is str:
     return param
   else:
