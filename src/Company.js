@@ -8,15 +8,14 @@ class Company extends Component {
     this.props = props;
   }
 
-  handleRemovePeople(e) {
+  handleRemoveCompany(e) {
     e.preventDefault();
-    this.props.onPeopleDelete(this.props.company);
+    this.props.onCompanyDelete(this.props.company);
     return false;
   }
 
-  handleEditPeople(e) {
-    e.preventDefault();
-    this.props.onPeopleEdit(this.props.company);
+  handleEditCompany() {
+    this.props.onCompanyEdit(this.props.company);
     return false;
   }
 
@@ -30,7 +29,7 @@ class Company extends Component {
         </div>
 
         <div className="col-xs-6">
-          <a href="" onClick={this.handleRemovePeople.bind(this)} style={{marginRight: '5px'}}>
+          <a href="" onClick={this.handleRemoveCompany.bind(this)} style={{marginRight: '5px'}}>
             <Icon name="remove" />
           </a>
         </div>

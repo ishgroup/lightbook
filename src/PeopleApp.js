@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom';
 import People from './People';
 import Company from './Company';
 import PeopleEdit from './PeopleEdit';
-import PeopleList from './PeopleList';
 
 import SearchModel from './model/SearchModel';
 import ViewPeopleModel from './model/ViewPeopleModel';
@@ -62,6 +61,22 @@ class PeopleApp extends Component {
     this.block.setState({ peoplelist: this.block.state.peoplelist });
   }
 
+  handleCompanyRemove(company) {
+    if(!confirm('Are you sure you want to delete this company?'))
+      return false;
+
+    var index = -1;
+    var clength = this.block.state.companylist.length;
+    for (var i = 0; i < clength; i++) {
+      if (this.block.state.companylist[i].name === company.name) {
+        index = i;
+        break;
+      }
+    }
+    this.block.state.companylist.splice(index, 1);
+    this.block.setState({ companylist: this.block.state.companylist });
+  }
+
   handlePeopleEdit(people) {
     var clength = this.block.state.peoplelist.length;
     for (var i = 0; i < clength; i++) {
@@ -88,7 +103,7 @@ class PeopleApp extends Component {
       function(that, response) {
         that.setState({
           companylist: response.data.output.companies,
-          peoplelist: response.data.output.people
+          peoplelist: response.data.output.peoples
         });
       }
     );
@@ -159,10 +174,10 @@ class PeopleApp extends Component {
   }
 
   renderCompany(block, item) {
-    return <Company company={item} onPeopleDelete={block.handleRemove.bind(block)} onPeopleEdit={block.handleEditOpen.bind(block)} />;
+    return <Company company={item} onCompanyDelete={block.handleRemove.bind(block)} onCompanyEdit={block.handleEditOpen.bind(block)} />;
   }
 
-  handleCompanyList(item) {
+  handleCompanyEditOpen(item) {
 
   }
 
@@ -185,7 +200,7 @@ class PeopleApp extends Component {
 
               <div className="company-list col-lg-24" style={_hide_peoples}>
                 <br /><hr /><br />
-                <ListView list={_clist} onRemove={this.handlePeopleRemove} onEdits={this.handleCompanyList.bind(this)} block={this} item={this.renderCompany} />
+                <ListView list={_clist} onRemove={this.handleCompanyRemove.bind(this)} onEdits={this.handleCompanyEditOpen.bind(this)} block={this} item={this.renderCompany} />
               </div>
 
             </div>
