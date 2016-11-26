@@ -13,30 +13,48 @@ import ListView from './components/ListView';
 import SearchBox from './components/SearchBox';
 
 class PeopleApp extends Component {
+
   constructor(props) {
-     super(props);
+    super(props);
 
-     this.state = {
-        peoplelist: [],
-        companylist: [],
-        filterString: '',
-        filteredData: [],
-        showAddForm: false,
-        showSearchForm: true,
-     }
+    this.state = {
+      peoplelist: [],
+      companylist: [],
+      filterString: '',
+      filteredData: [],
+      showAddForm: false,
+      showSearchForm: true,
+    }
 
-     Container.setPageName('search');
+    Container.setPageName('search');
 
-     /*axios.get('/peoples', { baseURL: Config.baseUrl() })
-      .then(function(response){
-        that.setState({
-          peoplelist: response.data.output
-        });
-      });*/
+    var _has_search = this.props.location.query;
 
-     this.onRowSubmit = this.handleNewRowSubmit.bind(this);
-     this.onPeopleRemove = this.handlePeopleRemove.bind(this);
-     this.onPeopleEdits = this.handlePeopleEdit.bind(this);
+    if(_has_search.q !== undefined) {
+      if(_has_search.q.length > 0) {
+        var _search_query = _has_search.q;
+        var getSearchResponse =  localStorage.getItem(this.peopleStorageKey());
+
+        if(getSearchResponse !== undefined && getSearchResponse !== null) {
+          var _parseResponse = JSON.parse(getSearchResponse);
+          if(_parseResponse.companies !== undefined && _parseResponse.peoples !== undefined) {
+            this.state = {
+              companylist: _parseResponse.companies,
+              peoplelist: _parseResponse.peoples,
+              filterString: _search_query
+            };
+          }
+        }
+      }
+    }
+
+    this.onRowSubmit = this.handleNewRowSubmit.bind(this);
+    this.onPeopleRemove = this.handlePeopleRemove.bind(this);
+    this.onPeopleEdits = this.handlePeopleEdit.bind(this);
+  }
+
+  peopleStorageKey() {
+    return 'searchResponse';
   }
 
   handleNewRowSubmit(newPeople) {
@@ -88,19 +106,15 @@ class PeopleApp extends Component {
     this.block.setState({ peoplelist: this.block.state.peoplelist });
   }
 
-  getSearchResponse(that, response) {
-    that.setState({
-      companylist: response.data.output.companies,
-      peoplelist: response.data.output.people
-    });
-  }
-
   doSearch(filterString) {
     var filteredData = [];
     var _queryText = filterString.toLowerCase();
 
+    this.block.props.router.replace('/search?q='+ filterString);
+
     SearchModel.search(this.block, _queryText,
       function(that, response) {
+        localStorage.setItem(that.peopleStorageKey(), JSON.stringify(response.data.output));
         that.setState({
           companylist: response.data.output.companies,
           peoplelist: response.data.output.peoples
@@ -113,6 +127,15 @@ class PeopleApp extends Component {
         filteredData.push(people);
       }
     });
+
+    if(_queryText.length === 0) {
+      this.block.props.router.replace('/search');
+      localStorage.setItem(this.block.peopleStorageKey(), JSON.stringify([]));
+      this.block.setState({
+        companylist: [],
+        peoplelist: []
+      });
+    }
 
     this.block.setState({
       filterString: filterString,
