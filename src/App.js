@@ -26,7 +26,7 @@ class App extends Component {
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link to="/search" className="nav-link" activeClassName="active"><Icon name="search" /></Link>
+                    <Link to="search" className="nav-link" activeClassName="active"><Icon name="search" /></Link>
                   </li>
                 </div>
               </div>

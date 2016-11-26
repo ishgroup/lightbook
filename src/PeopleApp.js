@@ -110,7 +110,7 @@ class PeopleApp extends Component {
     var filteredData = [];
     var _queryText = filterString.toLowerCase();
 
-    this.block.props.router.replace('/search?q='+ filterString);
+    this.block.props.router.replace('search?q='+ filterString);
 
     SearchModel.search(this.block, _queryText,
       function(that, response) {
@@ -129,7 +129,7 @@ class PeopleApp extends Component {
     });
 
     if(_queryText.length === 0) {
-      this.block.props.router.replace('/search');
+      this.block.props.router.replace('search');
       localStorage.setItem(this.block.peopleStorageKey(), JSON.stringify([]));
       this.block.setState({
         companylist: [],
