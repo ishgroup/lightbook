@@ -22,9 +22,9 @@ class PeopleList extends Component {
 
     if(this.props.params.id !== undefined) {
       PeopleListModel.getList(this, this.props.params.id, function(that, response) {
-        if(response.data.people !== undefined) {
+        if(response.data.peoples !== undefined) {
           that.state = {
-            peoplelist: response.data.people
+            peoplelist: response.data.peoples
           };
         }
       });
