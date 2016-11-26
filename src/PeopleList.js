@@ -22,6 +22,7 @@ class PeopleList extends Component {
 
     if(this.props.params.id !== undefined) {
       PeopleListModel.getList(this, this.props.params.id, function(that, response) {
+        console.log(response);
         if(response.data.peoples !== undefined) {
           that.state = {
             peoplelist: response.data.peoples
@@ -93,6 +94,8 @@ class PeopleList extends Component {
   render() {
     var _plist = this.state.peoplelist;
     var _hide_peoples = (_plist.length === 0 ? {display: 'none'} : null);
+
+    console.log(_plist);
 
     return (
       <div className="people-list col-lg-24" style={_hide_peoples}>
