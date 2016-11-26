@@ -30,7 +30,7 @@ class TextInputEdited extends Component {
   }
 
   getText(valiadte, text) {
-    if(valiadte !== undefined && text !== '') {
+    if(valiadte !== undefined && text !== '' && text !== null) {
       if(valiadte === 'email')
         return '<a href="mailto:'+ text +'">'+ text +'</a>';
       if(valiadte === 'phone')

@@ -5,10 +5,10 @@ import NewRow from './NewRow';
 import PeopleApp from './PeopleApp';
 import PeopleList from './PeopleList';
 
-import { Router, Route, browserHistory, IndexRoute  } from 'react-router';
+import { Router, Route, hashHistory, IndexRoute  } from 'react-router';
 
 ReactDOM.render((
-   <Router history={browserHistory}>
+   <Router history={hashHistory}>
       <Route path="/" component={App}>
          <IndexRoute component={PeopleApp} />
          <Route name="add-people" path="add-people" component={NewRow} />
