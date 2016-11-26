@@ -97,6 +97,7 @@ body {
 .modal-full-page {
   .modal-backdrop {
     background: $white;
+    opacity: 1;
   }
   .modal-dialog {
     max-width: 100%;
