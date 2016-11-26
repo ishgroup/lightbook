@@ -17,6 +17,9 @@ class PeopleList extends Component {
       peoplelist: []
     };
 
+    console.log('Debug: PeopleList');
+    console.log(this);
+
     if(this.props.params.id !== undefined) {
       PeopleListModel.getList(this, this.props.params.id, function(that, response) {
         if(response.data.people !== undefined) {
