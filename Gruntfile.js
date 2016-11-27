@@ -19,7 +19,7 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        paths: paths,
+        paths: paths
     });
 
     //Loads all the tasks
