@@ -1,7 +1,10 @@
 #!/usr/bin/env /usr/local/bin/python2
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from ldap_api import *
+import logging
+
+log = logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__, static_folder='build', static_url_path='')
 
@@ -10,7 +13,8 @@ ish_ldap = connect_to_ldap()
 
 @app.route('/')
 def root():
-  return app.send_static_file('index.html')
+  logging.debug("Index page request")
+  return render_template('index.html')
 
 
 @app.route('/peoples', methods=['GET', 'OPTIONS'])
