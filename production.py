@@ -23,7 +23,7 @@ ish_ldap = connect_to_ldap(config.get_ldap_url())
 
 @app.route('/')
 def root():
-  return render_template('index.html')
+  return app.send_static_file('index.html')
 
 
 @app.route('/data/people/view/<int:person_id>')
