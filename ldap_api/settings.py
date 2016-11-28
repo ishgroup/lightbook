@@ -1,6 +1,7 @@
 #!/usr/bin/env python2
 
 import json
+import os
 
 
 class SiteSettings:

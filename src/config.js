@@ -6,7 +6,7 @@ class Config {
         if(Config.getMode() === 'development')
             return 'http://localhost:5000';
         else
-            return 'https://people.ish.com.au';
+            return Config.getEnv('BACKEND_URL');
     }
 
     static getEnv(name) {
