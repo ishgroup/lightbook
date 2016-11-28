@@ -73,11 +73,11 @@ def view_person(person_id):
     "output": {
       "people": {
         "company": "Niche Publishing",
-        "company_role": null,
+        "company_role": "null",
         "id": "317",
-        "mobile": null,
+        "mobile": "null",
         "name": "Joanne Davies",
-        "notes": null,
+        "notes": "null",
         "phone": [
           "0243695933 homeoffice",
           "0395255566 melbheadoff",
