@@ -13,19 +13,22 @@ from logstash_formatter import LogstashFormatterV1
 config = SiteSettings()
 app = Flask(__name__, static_folder='build', static_url_path='')
 
-logger = logging.getLogger()
-handler = logging.StreamHandler()
-formatter = LogstashFormatterV1()
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
+try:
+  file_handler = logging.FileHandler('/var/log/lightbook/lightbook.log')
+  file_handler.setFormatter(LogstashFormatterV1())
+
+  app.logger.addHandler(file_handler)
+except:
+  None
+  # Just keep going
 
 ish_ldap = connect_to_ldap(config.get_ldap_url())
 
 
 @app.route('/')
 def root():
-  logger.debug("The index page was accessed.")
+  app.logger.debug("The index page was accessed.")
   return app.send_static_file('index.html')
 
 
