@@ -17,4 +17,4 @@ ReactDOM.render((
       </Route>
    </Router>
 
-), document.getElementById('page-content'))
+), document.getElementById('page-content'));

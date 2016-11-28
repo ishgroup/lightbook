@@ -11,7 +11,7 @@ class Modal extends Component {
 
     this.state = {
       showModal: false
-    }
+    };
 
     var className = document.getElementsByTagName('body')[0].className.replace('modal-open', '').replace('  ', ' ');
     className = className.trim() + 'modal-open';
@@ -64,7 +64,7 @@ class Modal extends Component {
 export class ModalHeader extends Component {
   propTypes: {
     title: React.PropTypes.string.isRequired
-  }
+  };
 
   render() {
     return (

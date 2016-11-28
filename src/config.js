@@ -18,10 +18,7 @@ class Config {
   }
 
   static isDevelopment() {
-    if(Config.getMode() === 'development')
-      return true;
-    else
-      return false;
+    return Config.getMode() === 'development';
   }
 }
 export default Config;

@@ -24,7 +24,7 @@ class PeopleApp extends Component {
       filteredData: [],
       showAddForm: false,
       showSearchForm: true,
-    }
+    };
 
     Container.setPageName('search');
 
