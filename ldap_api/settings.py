@@ -12,10 +12,10 @@ class SiteSettings:
             self.config = json.load(data_file)
 
     def get_ldap_url(self):
-        return self.config['ldap_url']
+        return self.config.get('ldap_url')
 
     def get_bind_ip(self):
-        return self.config['bind_ip'] if self.config['bind_ip'] else "localhost"
+        return self.config.get('bind_ip', 'localhost')
 
     def get_bind_port(self):
-        return self.config['bind_port'] if self.config['bind_port'] else 5050
+        return self.config.get('bind_port', 5050)
