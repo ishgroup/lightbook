@@ -88,11 +88,12 @@ def delete_person(person_id):
 
 @app.route('/data/search/get/<search>')
 def search_entry(search):
+  get_disabled = request.args.get('disabled') is not None
   return jsonify({
     "status": "success",
     "output": {
-      'peoples': search_in_ldap(ish_ldap, 'ou=Customers,ou=People', search),
-      'companies': search_in_ldap(ish_ldap, 'ou=Companies', search)
+      'peoples': search_in_ldap(ish_ldap, 'ou=Customers,ou=People', search, get_disabled),
+      'companies': search_in_ldap(ish_ldap, 'ou=Companies', search, get_disabled)
     }
   })
 

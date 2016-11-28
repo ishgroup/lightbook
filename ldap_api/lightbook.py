@@ -109,8 +109,10 @@ def ldap_page_ctrl():
   return SimplePagedResultsControl(True, size=SIZELIMIT, cookie='')
 
 
-def search_in_ldap(ldap_client, base, cn):
-  ldap_filter = '(cn~=%s)' % cn
+def search_in_ldap(ldap_client, base, cn, get_disabled):
+  ldap_filter = '&(cn~=%s)' % cn
+  if not get_disabled:
+    ldap_filter += '&(active=true)'
   ldap_response = ldap_client.search_ext_s('%s,dc=ish,dc=com,dc=au' % base, ldap.SCOPE_SUBTREE, ldap_filter,
                                            serverctrls=[ldap_page_ctrl()])
 
@@ -135,7 +137,7 @@ def get_company_people_from_ldap(ldap_client, unique_identifier):
     return None
 
   company_name = company[1].get('cn')[0]
-  ldap_filter = '(o=%s)' % company_name
+  ldap_filter = '&(o=%s)&(active=true)' % company_name
 
   ldap_response = ldap_client.search_ext_s('ou=Customers,ou=People,dc=ish,dc=com,dc=au',
                                            ldap.SCOPE_SUBTREE, ldap_filter)
