@@ -3,8 +3,6 @@
 from flask import Flask, jsonify, request, render_template, make_response
 import logging
 
-execfile('./server/crossdomain.py')
-
 logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__, static_folder='build', static_url_path='')
@@ -16,7 +14,6 @@ def root():
 
 
 @app.route('/peoples', methods=['GET', 'OPTIONS'])
-@crossdomain(origin='*')
 def get_persons():
   return jsonify({
     "status": "success",
@@ -66,7 +63,6 @@ def get_persons():
 
 
 @app.route('/data/people/view/<int:person_id>')
-@crossdomain(origin='*')
 def view_person(person_id):
   return jsonify({
     "status": "success",
@@ -90,7 +86,6 @@ def view_person(person_id):
 
 
 @app.route('/data/people/update/<int:person_id>', methods=['PATCH'])
-@crossdomain(origin='*')
 def update_person(person_id):
   return jsonify({
     "status": "success",
@@ -102,7 +97,6 @@ def update_person(person_id):
 
 
 @app.route('/data/companies/update/<int:company_id>', methods=['PATCH'])
-@crossdomain(origin='*')
 def update_company(company_id):
   return jsonify({
     "status": "success",
@@ -114,7 +108,6 @@ def update_company(company_id):
 
 
 @app.route('/data/people/delete/<int:person_id>')
-@crossdomain(origin='*')
 def delete_person(person_id):
   return jsonify({
     'status': "success",
@@ -125,7 +118,6 @@ def delete_person(person_id):
 
 
 @app.route('/data/search/get/<search>')
-@crossdomain(origin='*')
 def search_entry(search):
   return jsonify({
     "status": "success",
@@ -218,7 +210,6 @@ def search_entry(search):
   })
 
 @app.route('/data/company/<int:company_id>/people')
-@crossdomain(origin='*')
 def company_people(company_id):
   return jsonify({
     "status": "success",
@@ -456,7 +447,6 @@ def company_people(company_id):
 
 
 @app.route('/data/company/view/<int:company_id>')
-@crossdomain(origin='*')
 def view_company(company_id):
   return jsonify({
     "status": "success",
