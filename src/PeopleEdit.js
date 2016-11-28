@@ -7,16 +7,16 @@ class PeopleEdit extends Component {
   handleSubmit(e) {
     e.preventDefault();
 
-    var id = this.props.people.id;
-    var name = e.target.name.value;
-    var username = e.target.username.value;
-    var company = e.target.company.value;
-    var company_role = e.target.company_role.value;
-    var phone = e.target.phone.value;
-    var notes = e.target.notes.value;
-    var mobile = e.target.mobile.value;
+    const id = this.props.people.id;
+    const name = e.target.name.value;
+    const username = e.target.username.value;
+    const company = e.target.company.value;
+    const company_role = e.target.company_role.value;
+    const phone = e.target.phone.value;
+    const notes = e.target.notes.value;
+    const mobile = e.target.mobile.value;
 
-    var newrow = {
+    const newrow = {
       id: id,
       name: name,
       username: username,
@@ -34,7 +34,7 @@ class PeopleEdit extends Component {
   }
 
   render() {
-    var inputStyle = {padding:'12px'};
+    const inputStyle = {padding: '12px'};
 
     return (
       <Modal id="people-edit-modal" fullPage={true}>

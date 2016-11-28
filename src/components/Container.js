@@ -11,7 +11,7 @@ class Container extends Component {
   }
 
   render() {
-    var className = this.props.className !== undefined ? ' '+ this.props.className : '';
+    const className = this.props.className !== undefined ? ' ' + this.props.className : '';
     return (
       <div className={'page-wrapper col-lg-24 ' + Container.getPageName() + className}>
         {this.props.children}

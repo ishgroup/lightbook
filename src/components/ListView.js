@@ -23,8 +23,8 @@ class ListView extends Component {
   }
 
   render() {
-    var lists = [];
-    var that = this;
+    const lists = [];
+    const that = this;
     this.props.list.forEach(function(list) {
       lists.push([that.renderContent(that, list)]);
     });

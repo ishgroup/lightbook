@@ -10,15 +10,15 @@ class NewRow extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    var name = e.target.name.value;
-    var username = e.target.username.value;
-    var company = e.target.company.value;
-    var company_role = e.target.company_role.value;
-    var phone = e.target.phone.value;
-    var notes = e.target.notes.value;
-    var mobile = e.target.mobile.value;
+    const name = e.target.name.value;
+    const username = e.target.username.value;
+    const company = e.target.company.value;
+    const company_role = e.target.company_role.value;
+    const phone = e.target.phone.value;
+    const notes = e.target.notes.value;
+    const mobile = e.target.mobile.value;
 
-    var newrow = {
+    const newrow = {
       name: name,
       username: username,
       company: company,
@@ -48,7 +48,7 @@ class NewRow extends Component {
   }
 
   render() {
-    var inputStyle = {padding:'12px'};
+    const inputStyle = {padding: '12px'};
 
     return (
       <div className="well">

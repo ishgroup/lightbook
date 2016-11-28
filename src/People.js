@@ -21,7 +21,7 @@ class People extends Component {
   }
 
   render() {
-    var _name = this.props.people.name.split(' ');
+    const _name = this.props.people.name.split(' ');
 
     return (
       <div className="row">

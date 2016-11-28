@@ -37,7 +37,7 @@ class PeopleList extends Component {
   }
 
   handleNewRowSubmit(newPeople) {
-    var _total = this.block.state.peoplelist.length;
+    let _total = this.block.state.peoplelist.length;
     newPeople['id'] = ++_total;
     this.block.setState({ peoplelist: this.block.state.peoplelist.concat([newPeople]) });
   }
@@ -46,9 +46,9 @@ class PeopleList extends Component {
     if(!confirm('Are you sure you want to delete this people?'))
       return false;
 
-    var index = -1;
-    var clength = this.block.state.peoplelist.length;
-    for (var i = 0; i < clength; i++) {
+    let index = -1;
+    const clength = this.block.state.peoplelist.length;
+    for (let i = 0; i < clength; i++) {
       if (this.block.state.peoplelist[i].name === people.name) {
       index = i;
       break;
@@ -59,8 +59,8 @@ class PeopleList extends Component {
   }
 
   handlePeopleEdit(people) {
-    var clength = this.block.state.peoplelist.length;
-    for (var i = 0; i < clength; i++) {
+    const clength = this.block.state.peoplelist.length;
+    for (let i = 0; i < clength; i++) {
       if (this.block.state.peoplelist[i].id === people.id) {
         this.block.state.peoplelist[i] = people;
         break;
@@ -88,8 +88,8 @@ class PeopleList extends Component {
   }
 
   render() {
-    var _plist = this.state.peoplelist;
-    var _hide_peoples = (_plist.length === 0 ? {display: 'none'} : null);
+    const _plist = this.state.peoplelist;
+    const _hide_peoples = (_plist.length === 0 ? {display: 'none'} : null);
 
     console.log(_plist);
 

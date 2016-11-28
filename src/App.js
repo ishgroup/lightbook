@@ -9,8 +9,8 @@ import ishLogo from './assets/img/ish-logo.png';
 
 class App extends Component {
   render() {
-    var _active_add_form = 'add-link';
-    var _active_search_form = 'search-link';
+    let _active_add_form = 'add-link';
+    let _active_search_form = 'search-link';
 
     return (
       <div className="App clearfix">

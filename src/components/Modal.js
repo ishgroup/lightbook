@@ -13,7 +13,7 @@ class Modal extends Component {
       showModal: false
     };
 
-    var className = document.getElementsByTagName('body')[0].className.replace('modal-open', '').replace('  ', ' ');
+    let className = document.getElementsByTagName('body')[0].className.replace('modal-open', '').replace('  ', ' ');
     className = className.trim() + 'modal-open';
     document.getElementsByTagName('body')[0].setAttribute('class', className.replace('  ', ' ').trim());
   }
@@ -24,12 +24,12 @@ class Modal extends Component {
     else if(document.getElementById('react-modal') !== null)
       document.getElementById('react-modal').getElementsByTagName('div')[0].remove();
 
-    var className = document.getElementsByTagName('body')[0].className.replace('modal-open', '').replace('  ', ' ');
+    const className = document.getElementsByTagName('body')[0].className.replace('modal-open', '').replace('  ', ' ');
     document.getElementsByTagName('body')[0].setAttribute('class', className.trim());
   }
 
   render() {
-    var _fullPage = '';
+    let _fullPage = '';
     console.log(this);
     if(this.props.fullPage !== undefined && this.props.fullPage === true)
       _fullPage = ' modal-full-page';

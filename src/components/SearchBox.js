@@ -6,7 +6,7 @@ class SearchBox extends Component {
   }
 
   render() {
-    var inputStyle = {padding:'10px'};
+    const inputStyle = {padding: '10px'};
 
     return (
       <div className="row">

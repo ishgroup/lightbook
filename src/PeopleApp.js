@@ -28,15 +28,15 @@ class PeopleApp extends Component {
 
     Container.setPageName('search');
 
-    var _has_search = this.props.location.query;
+    const _has_search = this.props.location.query;
 
     if(_has_search.q !== undefined) {
       if(_has_search.q.length > 0) {
-        var _search_query = _has_search.q;
-        var getSearchResponse =  localStorage.getItem(this.peopleStorageKey());
+        const _search_query = _has_search.q;
+        const getSearchResponse = localStorage.getItem(this.peopleStorageKey());
 
         if(getSearchResponse !== undefined && getSearchResponse !== null) {
-          var _parseResponse = JSON.parse(getSearchResponse);
+          const _parseResponse = JSON.parse(getSearchResponse);
           if(_parseResponse.companies !== undefined && _parseResponse.peoples !== undefined) {
             this.state = {
               companylist: _parseResponse.companies,
@@ -58,7 +58,7 @@ class PeopleApp extends Component {
   }
 
   handleNewRowSubmit(newPeople) {
-    var _total = this.block.state.peoplelist.length;
+    let _total = this.block.state.peoplelist.length;
     newPeople['id'] = ++_total;
     this.block.setState({ peoplelist: this.block.state.peoplelist.concat([newPeople]) });
   }
@@ -67,9 +67,9 @@ class PeopleApp extends Component {
     if(!confirm('Are you sure you want to delete this people?'))
       return false;
 
-    var index = -1;
-    var clength = this.block.state.peoplelist.length;
-    for (var i = 0; i < clength; i++) {
+    let index = -1;
+    const clength = this.block.state.peoplelist.length;
+    for (let i = 0; i < clength; i++) {
       if (this.block.state.peoplelist[i].name === people.name) {
       index = i;
       break;
@@ -83,9 +83,9 @@ class PeopleApp extends Component {
     if(!confirm('Are you sure you want to delete this company?'))
       return false;
 
-    var index = -1;
-    var clength = this.block.state.companylist.length;
-    for (var i = 0; i < clength; i++) {
+    let index = -1;
+    const clength = this.block.state.companylist.length;
+    for (let i = 0; i < clength; i++) {
       if (this.block.state.companylist[i].name === company.name) {
         index = i;
         break;
@@ -96,8 +96,8 @@ class PeopleApp extends Component {
   }
 
   handlePeopleEdit(people) {
-    var clength = this.block.state.peoplelist.length;
-    for (var i = 0; i < clength; i++) {
+    const clength = this.block.state.peoplelist.length;
+    for (let i = 0; i < clength; i++) {
       if (this.block.state.peoplelist[i].id === people.id) {
         this.block.state.peoplelist[i] = people;
         break;
@@ -107,8 +107,8 @@ class PeopleApp extends Component {
   }
 
   doSearch(filterString) {
-    var filteredData = [];
-    var _queryText = filterString.toLowerCase();
+    const filteredData = [];
+    const _queryText = filterString.toLowerCase();
 
     this.block.props.router.replace('search?q='+ filterString);
 
@@ -205,8 +205,8 @@ class PeopleApp extends Component {
   }
 
   render() {
-    var _plist = this.state.peoplelist, _clist = this.state.companylist;
-    var _hide_peoples = (_plist.length === 0 ? {display: 'none'} : null);
+    const _plist = this.state.peoplelist, _clist = this.state.companylist;
+    const _hide_peoples = (_plist.length === 0 ? {display: 'none'} : null);
 
     return (
       <div>
