@@ -7,16 +7,16 @@ from ldap_api import *
 import logging
 from ldap_api.settings import SiteSettings
 
+config = SiteSettings()
+app = Flask(__name__, static_folder='build', static_url_path='')
+
 logging.basicConfig(level=logging.DEBUG)
 try:
   file_handler = logging.FileHandler('/var/log/lightbook/lightbook.log')
   file_handler.setLevel(logging.NOTSET)
-  logging.addHandler(file_handler)
+  app.logger.addHandler(file_handler)
 except:
   None
-
-config = SiteSettings()
-app = Flask(__name__, static_folder='build', static_url_path='')
 
 ish_ldap = connect_to_ldap(config.get_ldap_url())
 
