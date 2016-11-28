@@ -1,12 +1,8 @@
-import axios from 'axios';
-import Config from '../config';
+import BaseModel from './BaseModel';
 
-class PeopleListModel {
+class PeopleListModel extends BaseModel {
   static getList(that, id, callback) {
-    axios.get('/data/company/'+ id +'/people', { baseURL: Config.baseUrl() })
-      .then(function(response) {
-        callback(that, response);
-      });
+    BaseModel.get(that, '/data/company/'+ id +'/people', callback);
   }
 }
 
