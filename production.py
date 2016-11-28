@@ -4,25 +4,28 @@ from gevent import monkey
 from gevent import wsgi
 from flask import Flask, jsonify, request, render_template
 from ldap_api import *
-import logging
 from ldap_api.settings import SiteSettings
+
+import logging
+from logstash_formatter import LogstashFormatterV1
+
 
 config = SiteSettings()
 app = Flask(__name__, static_folder='build', static_url_path='')
 
-logging.basicConfig(level=logging.DEBUG)
-try:
-  file_handler = logging.FileHandler('/var/log/lightbook/lightbook.log')
-  file_handler.setLevel(logging.NOTSET)
-  app.logger.addHandler(file_handler)
-except:
-  None
+logger = logging.getLogger()
+handler = logging.StreamHandler()
+formatter = LogstashFormatterV1()
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+logger.setLevel(logging.DEBUG)
 
 ish_ldap = connect_to_ldap(config.get_ldap_url())
 
 
 @app.route('/')
 def root():
+  logger.debug("The index page was accessed.")
   return app.send_static_file('index.html')
 
 
