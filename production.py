@@ -85,8 +85,8 @@ def search_entry(search):
   return jsonify({
     "status": "success",
     "output": {
-      'peoples': search_in_ldap(ish_ldap, 'ou=Customers,ou=People,', search),
-      'companies': search_in_ldap(ish_ldap, 'ou=Companies,', search)
+      'peoples': search_in_ldap(ish_ldap, 'ou=Customers,ou=People', search),
+      'companies': search_in_ldap(ish_ldap, 'ou=Companies', search)
     }
   })
 

@@ -110,9 +110,8 @@ def ldap_page_ctrl():
 
 
 def search_in_ldap(ldap_client, base, cn):
-  ldap_filter = '(cn=*%s*)' % cn
-
-  ldap_response = ldap_client.search_ext_s('%sdc=ish,dc=com,dc=au' % base, ldap.SCOPE_SUBTREE, ldap_filter,
+  ldap_filter = '(cn~=%s)' % cn
+  ldap_response = ldap_client.search_ext_s('%s,dc=ish,dc=com,dc=au' % base, ldap.SCOPE_SUBTREE, ldap_filter,
                                            serverctrls=[ldap_page_ctrl()])
 
   if ldap_response is None:
