@@ -8,7 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/assets/scss" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/assets/css" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/assets/img" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/tasks" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/grunt/tasks" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/templates" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/public" type="java-resource" />
     </content>

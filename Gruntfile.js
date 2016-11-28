@@ -1,12 +1,3 @@
-/**
- * gruntfile.js
- *
- * Manages all the assets having features like minifying,
- * concating and uglifying
- *
- * @author Chintan Kotadia <chintankotadia13@gmail.com>
- */
-
 module.exports = function(grunt) {
     var paths = {
         'proj': './src/',
@@ -18,19 +9,18 @@ module.exports = function(grunt) {
     };
 
     grunt.initConfig({
-        pkg: grunt.file.readJSON('package.json'),
+        pkg: grunt.file.readJSON('grunt/config/package.json'),
         paths: paths
     });
 
-    //Loads all the tasks
-    grunt.loadTasks('./tasks');
+    // Load all the tasks from the folder
+    grunt.loadTasks('grunt/tasks');
 
-    //Registration of different tasks
+    // Build CSS, JS and minify everything by default
     grunt.registerTask('build', [
         'sass',
         'concat',
         'jshint'
     ]);
-
     grunt.registerTask('default', ['build']);
 };
