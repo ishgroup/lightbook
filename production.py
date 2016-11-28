@@ -119,5 +119,5 @@ def view_company(company_id):
 
 if __name__ == '__main__':
   monkey.patch_all()
-  server = wsgi.WSGIServer(('203.29.62.211', 5050), app)
+  server = wsgi.WSGIServer((config.get_bind_ip(), config.get_bind_port()), app)
   server.serve_forever()

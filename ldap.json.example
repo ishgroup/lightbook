@@ -2,5 +2,6 @@
   "ldap_url": "ldap://ldap.domain.com",
   "username": "ldap_username",
   "password": "password",
-  "bind_ip": "1.1.1.1"
+  "bind_ip": "1.1.1.1",
+  "bind_port": 5050
 }

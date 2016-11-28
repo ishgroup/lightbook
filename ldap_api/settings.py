@@ -15,3 +15,6 @@ class SiteSettings:
 
     def get_bind_ip(self):
         return self.config['bind_ip'] if self.config['bind_ip'] else "localhost"
+
+    def get_bind_port(self):
+        return self.config['bind_port'] if self.config['bind_port'] else 5050
