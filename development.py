@@ -16,7 +16,8 @@ def root():
 
 
 @app.route('/peoples', methods=['GET', 'OPTIONS'])
-@crossdomain(origin='http://localhost:3000')def get_persons():
+@crossdomain(origin='*')
+def get_persons():
   return jsonify({
     "status": "success",
     "output": [
@@ -65,7 +66,8 @@ def root():
 
 
 @app.route('/data/people/view/<int:person_id>')
-@crossdomain(origin='*')def view_person(person_id):
+@crossdomain(origin='*')
+def view_person(person_id):
   return jsonify({
     "status": "success",
     "output": {
@@ -88,7 +90,8 @@ def root():
 
 
 @app.route('/data/people/update/<int:person_id>', methods=['PATCH'])
-@crossdomain(origin='*')def update_person(person_id):
+@crossdomain(origin='*')
+def update_person(person_id):
   return jsonify({
     "status": "success",
     "output": {
@@ -99,7 +102,8 @@ def root():
 
 
 @app.route('/data/companies/update/<int:company_id>', methods=['PATCH'])
-@crossdomain(origin='*')def update_company(company_id):
+@crossdomain(origin='*')
+def update_company(company_id):
   return jsonify({
     "status": "success",
     "output": {
@@ -110,7 +114,8 @@ def root():
 
 
 @app.route('/data/people/delete/<int:person_id>')
-@crossdomain(origin='*')def delete_person(person_id):
+@crossdomain(origin='*')
+def delete_person(person_id):
   return jsonify({
     'status': "success",
     'output': {
@@ -451,7 +456,8 @@ def company_people(company_id):
 
 
 @app.route('/data/company/view/<int:company_id>')
-@crossdomain(origin='*')def view_company(company_id):
+@crossdomain(origin='*')
+def view_company(company_id):
   return jsonify({
     "status": "success",
     "output": {
