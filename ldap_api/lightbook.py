@@ -1,4 +1,5 @@
-import json
+#!/usr/bin/env python2
+
 import ldap
 import os
 import re
@@ -12,12 +13,12 @@ def squash_spaces(line):
   return SPACES_REGEX.sub(' ', line).strip(' ')
 
 
-def connect_to_ldap():
-  ldap_config = '%s/../ldap.json' % os.path.dirname(os.path.realpath(__file__))
-
-  with open(ldap_config) as data_file:
-    ldap_config = json.load(data_file)
-  ish_ldap = ldap.initialize(ldap_config['ldap_url'])
+def connect_to_ldap(url):
+  """
+  :param url: string
+  :return:
+  """
+  ish_ldap = ldap.initialize(url)
   ish_ldap.simple_bind_s('', '')
   return ish_ldap
 
