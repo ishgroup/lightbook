@@ -121,3 +121,10 @@ body {
     }
   }
 }
+.view-people {
+  >.row {
+    margin-top: 13px;
+    background: #f9f9f9;
+    box-shadow: 1px 1px 10px #ddd;
+  }
+}
