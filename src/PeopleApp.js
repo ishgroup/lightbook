@@ -182,9 +182,7 @@ class PeopleApp extends Component {
   }
 
   handlePeopleEditOpen(item) {
-    console.log(item.id);
     ViewPeopleModel.getPeople(this, item.id, function(that, response) {
-      console.log(response.data.output.people);
       ReactDOM.render(
         <PeopleEdit people={response.data.output.people} block={that} onPeopleEditSubmit={that.handlePeopleEdit} />,
         document.getElementById('react-modal')

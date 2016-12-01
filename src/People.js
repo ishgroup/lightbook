@@ -27,7 +27,6 @@ class People extends Component {
   }
 
   handlePeopleViewToggle() {
-    console.log('test');
     var _toggleState = this.state.peopleViewToggle;
     this.setState({
       'peopleViewToggle': _toggleState === true ? false : true
@@ -35,8 +34,6 @@ class People extends Component {
   }
 
   handleCheckFetched(check, people=[]) {
-    console.log('handleCheckFetched');
-    console.log(check);
     if(check !== undefined) {
       this.setState({
         fetch: false,
@@ -48,9 +45,6 @@ class People extends Component {
 
   render() {
     const _name = this.props.people.name.split(' ');
-
-    console.log(this.state.peopleViewToggle);
-
     const _people = this.state.people.length !== 0 ? this.state.people : this.props.people;
 
     return (

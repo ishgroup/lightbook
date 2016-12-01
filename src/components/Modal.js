@@ -30,7 +30,6 @@ class Modal extends Component {
 
   render() {
     let _fullPage = '';
-    console.log(this);
     if(this.props.fullPage !== undefined && this.props.fullPage === true)
       _fullPage = ' modal-full-page';
 

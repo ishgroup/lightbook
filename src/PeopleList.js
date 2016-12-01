@@ -74,7 +74,6 @@ class PeopleList extends Component {
   }
 
   handlePeopleEditOpen(item) {
-    console.log(item.id);
     ViewPeopleModel.getPeople(this, item.id, function(that, response) {
       ReactDOM.render(
         <PeopleEdit people={response.data.output.people} block={that} onPeopleEditSubmit={that.handlePeopleEdit} />,
@@ -90,8 +89,6 @@ class PeopleList extends Component {
   render() {
     const _plist = this.state.peoplelist;
     const _hide_peoples = (_plist.length === 0 ? {display: 'none'} : null);
-
-    console.log(_plist);
 
     return (
       <div className="people-list col-lg-24" style={_hide_peoples}>
