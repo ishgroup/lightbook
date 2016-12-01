@@ -21,7 +21,8 @@ class LdapApi:
     SHORT_INFO = {
         'people': {
             'uidNumber': 'id',
-            'cn': 'name'
+            'cn': 'name',
+            'uniqueIdentifier': 'username'
         },
         'companies': {
             'uniqueIdentifier': 'id',

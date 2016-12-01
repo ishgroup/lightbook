@@ -7,8 +7,9 @@ class People extends Component {
   constructor(props) {
     super(props);
     this.props = props;
+
     this.state = {
-      'peopleViewToggle': false,
+      'viewToggle': false,
       fetch: true,
       people: []
     }
@@ -26,10 +27,10 @@ class People extends Component {
     return false;
   }
 
-  handlePeopleViewToggle() {
-    var _toggleState = this.state.peopleViewToggle;
+  handleViewToggle() {
+    var _toggleState = this.state.viewToggle;
     this.setState({
-      'peopleViewToggle': _toggleState === true ? false : true
+      'viewToggle': _toggleState === true ? false : true
     });
   }
 
@@ -49,25 +50,28 @@ class People extends Component {
 
     return (
       <div className="row">
-        <div className="col-xs-24" onClick={this.handlePeopleViewToggle.bind(this)}>
-          <div className="col-xs-18">
-            <a href="" onClick={this.handleEditPeople.bind(this)} className="link-people">
-              {this.props.people.name}
-            </a>
-          </div>
+        <div className="col-xs-24" onClick={this.handleViewToggle.bind(this)}>
+          <div className="row">
+            <div className="col-xs-18">
+              <a href="" onClick={this.handleEditPeople.bind(this)} className="link-people">
+                {this.props.people.name}
+              </a>
+              {this.props.people.username !== undefined ? <span> - <a href={"mailto:"+ this.props.people.username}>{this.props.people.username}</a></span> : ''}
+            </div>
 
-          <div className="col-xs-6">
-            <a href={"https://squish.ish.com.au/issues/?jql=reporter%20%3D%20"+ _name[0] +"%20and%20resolution%20%3D%20Unresolved"} style={{marginRight: '5px'}} target="_blank">
-              <img src={squish_logo} width="38px" height="25px" alt="Squish Logo" />
-            </a>
-            <a href="" onClick={this.handleRemovePeople.bind(this)} style={{marginRight: '5px'}}>
-              <Icon name="remove" />
-            </a>
+            <div className="col-xs-6">
+              <a href={"https://squish.ish.com.au/issues/?jql=reporter%20%3D%20"+ _name[0] +"%20and%20resolution%20%3D%20Unresolved"} style={{marginRight: '5px'}} target="_blank">
+                <img src={squish_logo} width="38px" height="25px" alt="Squish Logo" />
+              </a>
+              <a href="" onClick={this.handleRemovePeople.bind(this)} style={{marginRight: '5px'}}>
+                <Icon name="remove" />
+              </a>
+            </div>
           </div>
         </div>
-        {this.state.peopleViewToggle ?
+        {this.state.viewToggle ?
           <div className="view-people col-xs-24">
-            <PeopleView people={_people} checkFetched={this.handleCheckFetched.bind(this)} fetch={this.state.peopleViewToggle} />
+            <PeopleView people={_people} checkFetched={this.handleCheckFetched.bind(this)} fetch={this.state.viewToggle} />
           </div> : ''}
       </div>
     );

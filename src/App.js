@@ -26,6 +26,11 @@ class App extends Component {
                     </Link>
                   </li>
                   <li className="nav-item">
+                    <Link to="add-company" className="nav-link" activeClassName="active">
+                      <Icon name="building-o" />
+                    </Link>
+                  </li>
+                  <li className="nav-item">
                     <Link to="search" className="nav-link" activeClassName="active"><Icon name="search" /></Link>
                   </li>
                 </div>

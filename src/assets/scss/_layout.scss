@@ -26,7 +26,9 @@ body {
 .list-rows {
   >.row{
     border-top: 1px solid #eceeef;
-    padding: 0.75rem;
+    padding: 0.25rem;
+    font-size: 14px;
+    cursor: pointer;
     &:nth-of-type(odd) {
       background: rgba(0,0,0,.05);;
     }
@@ -113,7 +115,7 @@ body {
     background: $white;
     box-shadow: 1px 1px 10px #ddd;
     .input-group {
-      padding: 7px !important;
+      padding: 3px !important;
       .form-control {
         border: 0 none;
         padding: 6px 16px;
@@ -121,10 +123,15 @@ body {
     }
   }
 }
-.view-people {
+.view-people, .view-company {
   >.row {
-    margin-top: 13px;
+    cursor: default;
+    margin-top: 10px;
     background: #f9f9f9;
     box-shadow: 1px 1px 10px #ddd;
   }
+}
+.input-group-lg .form-control {
+  padding: .65rem 1rem;
+  font-size: 1rem;
 }

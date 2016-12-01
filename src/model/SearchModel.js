@@ -3,7 +3,7 @@ import BaseModel from './BaseModel';
 class SearchModel extends BaseModel {
   static search(that, text, callback) {
     if(text.length > 2) {
-      BaseModel.get(that, '/data/search/get/' + text, callback);
+      BaseModel.fetch(that, '/data/search/get/' + text, callback);
     }
   }
 }
