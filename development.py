@@ -117,6 +117,16 @@ def delete_person(person_id):
   })
 
 
+@app.route('/data/companies/delete/<int:company_id>')
+def delete_company(company_id):
+  return jsonify({
+    'status': "success",
+    'output': {
+      'message': "Company %s deleted successfully" % company_id
+    }
+  })
+
+
 @app.route('/data/search/get/<search>')
 def search_entry(search):
   return jsonify({

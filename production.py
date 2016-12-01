@@ -86,6 +86,24 @@ def delete_person(person_id):
   })
 
 
+@app.route('/data/companies/delete/<int:company_id>', methods=['DELETE'])
+def delete_company(company_id):
+  if get_ldap_api().delete_company(company_id):
+    return jsonify({
+      'status': "success",
+      'output': {
+         'message': "Company %s deleted successfully" % company_id
+      }
+    })
+  else:
+    return jsonify({
+      'status': "error",
+      'output': {
+         'message': "Company %s wasn't deleted" % company_id
+      }
+    })
+
+
 @app.route('/data/search/get/<search>')
 def search_entry(search):
   get_disabled = request.args.get('disabled') is not None

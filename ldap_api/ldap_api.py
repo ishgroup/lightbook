@@ -59,7 +59,9 @@ class LdapApi:
 
         if ldap_response is None:
             return []
-        return map(lambda x: self.__extract_value_from_array(self.__remap_dict(x[1], self.SHORT_INFO['people'])), ldap_response)
+        people = map(lambda x: self.__extract_value_from_array(self.__remap_dict(x[1], self.SHORT_INFO['people'])), ldap_response)
+
+        return sorted(people, key=lambda k: k['name'].lower())
 
     def search(self, name, base, get_disabled=False):
         ldap_filter = '(cn~=%s)' % name
@@ -89,6 +91,22 @@ class LdapApi:
 
         self.__modify_ldap_entry(company, attributes)
         return self.get_company(company_id)
+
+    def delete_company(self, company_id):
+        dn = 'uniqueIdentifier={},{}'.format(company_id, self.LDAP_BASES['companies'])
+        try:
+            self.__ldap_client.delete_s(dn)
+            return True if self.get_company(company_id) is None else False
+        except:
+            return False
+
+    def delete_person(self, person_id):
+        dn = 'uidNumber={},{}'.format(person_id, self.LDAP_BASES['people'])
+        try:
+            self.__ldap_client.delete_s(dn)
+            return True if self.get_person(person_id) is None else False
+        except:
+            return False
 
     # private
 
@@ -134,7 +152,7 @@ class LdapApi:
         if not first_level:
             return None
         if type(param) is list:
-            return map(lambda x: clear_param(x), param)
+            return map(lambda x: self.__clear_param(x), param)
         elif type(param) is unicode:
             return param.encode('ascii', 'ignore')
         elif type(param) is str:
@@ -150,9 +168,6 @@ class LdapApi:
 
     def __clear_str(self, line):
         return self.SPACES_REGEX.sub(' ', line).strip(' ')
-
-    def __compact_dict(self, d):
-        return {k: v for k, v in d.items() if v is not None}
 
     def __get_first_result(self, response):
         return response[0] if response else None
