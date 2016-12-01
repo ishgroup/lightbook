@@ -3,7 +3,7 @@
 from gevent import monkey
 from gevent import wsgi
 from flask import Flask, jsonify, request, render_template, g
-from ldap_api import *
+from ldap_api import requires_auth, SiteSettings
 import logging
 from logstash_formatter import LogstashFormatterV1
 
@@ -11,10 +11,7 @@ app = Flask(__name__, static_folder='build', static_url_path='')
 config = SiteSettings()
 
 def get_ldap_api():
-    api = getattr(g, '_ldap_api', None)
-    if api is None:
-        api = g._ldap_api = LdapApi(config.get_ldap_url())
-    return api
+  return getattr(g, '_ldap_api', None)
 
 logging.basicConfig(level=logging.DEBUG)
 try:
@@ -27,12 +24,14 @@ except:
   # Just keep going
 
 @app.route('/')
+@requires_auth
 def root():
   app.logger.debug("The index page was accessed.")
   return app.send_static_file('index.html')
 
 
 @app.route('/data/people/view/<int:person_id>')
+@requires_auth
 def view_person(person_id):
   return jsonify({
     "status": "success",
@@ -43,6 +42,7 @@ def view_person(person_id):
 
 
 @app.route('/data/people/update/<int:person_id>', methods=['PATCH'])
+@requires_auth
 def update_person(person_id):
   result = get_ldap_api().modify_person(person_id, request.json)
   if result is None:
@@ -60,6 +60,7 @@ def update_person(person_id):
 
 
 @app.route('/data/companies/update/<int:company_id>', methods=['PATCH'])
+@requires_auth
 def update_company(company_id):
   result = get_ldap_api().modify_company(company_id, request.json)
   if result is None:
@@ -77,6 +78,7 @@ def update_company(company_id):
 
 
 @app.route('/data/people/delete/<int:person_id>')
+@requires_auth
 def delete_person(person_id):
   return jsonify({
     'status': "success",
@@ -87,6 +89,7 @@ def delete_person(person_id):
 
 
 @app.route('/data/companies/delete/<int:company_id>', methods=['DELETE'])
+@requires_auth
 def delete_company(company_id):
   if get_ldap_api().delete_company(company_id):
     return jsonify({
@@ -105,6 +108,7 @@ def delete_company(company_id):
 
 
 @app.route('/data/search/get/<search>')
+@requires_auth
 def search_entry(search):
   get_disabled = request.args.get('disabled') is not None
   return jsonify({
@@ -117,6 +121,7 @@ def search_entry(search):
 
 
 @app.route('/data/company/<int:company_id>/people')
+@requires_auth
 def company_people(company_id):
   result = get_ldap_api().get_company_people(company_id)
 
@@ -133,6 +138,7 @@ def company_people(company_id):
 
 
 @app.route('/data/company/view/<int:company_id>')
+@requires_auth
 def view_company(company_id):
   return jsonify({
     "status": "success",

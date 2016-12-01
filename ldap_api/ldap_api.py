@@ -33,7 +33,8 @@ class LdapApi:
     INVERSE_ENTRY_MAPPING = {value: key for key, value in ENTRY_MAPPING.items()}
     LDAP_BASES = {
         'people': 'ou=Customers,ou=People,dc=ish,dc=com,dc=au',
-        'companies': 'ou=Companies,dc=ish,dc=com,dc=au'
+        'companies': 'ou=Companies,dc=ish,dc=com,dc=au',
+        'employees': 'ou=Employees,ou=People,dc=ish,dc=com,dc=au'
     }
 
     def __init__(self, url, login='', password=''):
@@ -63,6 +64,13 @@ class LdapApi:
         people = map(lambda x: self.__extract_value_from_array(self.__remap_dict(x[1], self.SHORT_INFO['people'])), ldap_response)
 
         return sorted(people, key=lambda k: k['name'].lower())
+
+    def get_employee_dn_by_uid(self, uid):
+        ldap_filter = '(uid={})'.format(uid)
+        ldap_response = self.__ldap_client.search_ext_s(self.LDAP_BASES['employees'],
+                                                        ldap.SCOPE_SUBTREE, ldap_filter)
+
+        return None if ldap_response is None or len(ldap_response) == 0 else ldap_response[0][0]
 
     def search(self, name, base, get_disabled=False):
         ldap_filter = '(cn~=%s)' % name
