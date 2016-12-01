@@ -12,121 +12,6 @@ def root():
   logging.debug("Index page request")
   return app.send_static_file('index.html')
 
-
-@app.route('/peoples', methods=['GET', 'OPTIONS'])
-def get_persons():
-  return jsonify({
-    "status": "success",
-    "output": [
-      {
-        "id": "1",
-        "name": "Chintan Kotadia",
-        "username": "chintankotadia13@gmail.com",
-        "company": "ish",
-        "company_role": "html/css coder",
-        "phone": "49874646",
-        "notes": "My notes",
-        "mobile": "9497654654"
-      },
-      {
-        "id": "2",
-        "name": "Marcus Hodgson",
-        "username": "marcus@ish.com",
-        "company": "ish",
-        "company_role": "developer",
-        "phone": "987897544",
-        "notes": "Not available",
-        "mobile": "9797464876"
-      },
-      {
-        "id": "3",
-        "name": "Stephen McIlwaine",
-        "username": "Stephen@ish.com",
-        "company": "ish",
-        "company_role": "java developer",
-        "phone": "5464979646",
-        "notes": "Busy",
-        "mobile": "9797464797"
-      },
-      {
-        "id": "4",
-        "name": "Aristedes Maniatis",
-        "username": "ari@ish.com.au",
-        "company": "ish",
-        "company_role": "developer",
-        "phone": "554879645",
-        "notes": "employees scrum",
-        "mobile": "9849476469"
-      }
-    ]
-  })
-
-
-@app.route('/data/people/view/<int:person_id>')
-def view_person(person_id):
-  return jsonify({
-    "status": "success",
-    "output": {
-      "people": {
-        "company": "Niche Publishing",
-        "company_role": "null",
-        "id": "317",
-        "mobile": "null",
-        "name": "Joanne Davies",
-        "notes": "null",
-        "phone": [
-          "0243695933 homeoffice",
-          "0395255566 melbheadoff",
-          "0243690357 homefax"
-        ],
-        "username": "Joanne_157"
-      }
-    }
-  })
-
-
-@app.route('/data/people/update/<int:person_id>', methods=['PATCH'])
-def update_person(person_id):
-  return jsonify({
-    "status": "success",
-    "output": {
-      "message": "People updated successfully",
-      "people": "****"
-      }
-  })
-
-
-@app.route('/data/companies/update/<int:company_id>', methods=['PATCH'])
-def update_company(company_id):
-  return jsonify({
-    "status": "success",
-    "output": {
-      "message": "Company updated successfully",
-      "people": "****"
-      }
-  })
-
-
-@app.route('/data/people/delete/<int:person_id>')
-def delete_person(person_id):
-  return jsonify({
-    'status': "success",
-    'output': {
-      'message': "Person %s deleted successfully" % person_id
-    }
-  })
-
-
-@app.route('/data/companies/delete/<int:company_id>')
-def delete_company(company_id):
-  return jsonify({
-    'status': "success",
-    'output': {
-      'message': "Company %s deleted successfully" % company_id
-    }
-  })
-
-
 @app.route('/data/search/get/<search>')
 def search_entry(search):
   return jsonify({
@@ -218,6 +103,118 @@ def search_entry(search):
       ]
     }
   })
+
+@app.route('/peoples', methods=['GET', 'OPTIONS'])
+def get_persons():
+  return jsonify({
+    "status": "success",
+    "output": [
+      {
+        "id": "1",
+        "name": "Chintan Kotadia",
+        "username": "chintankotadia13@gmail.com",
+        "company": "ish",
+        "company_role": "html/css coder",
+        "phone": "49874646",
+        "notes": "My notes",
+        "mobile": "9497654654"
+      },
+      {
+        "id": "2",
+        "name": "Marcus Hodgson",
+        "username": "marcus@ish.com",
+        "company": "ish",
+        "company_role": "developer",
+        "phone": "987897544",
+        "notes": "Not available",
+        "mobile": "9797464876"
+      },
+      {
+        "id": "3",
+        "name": "Stephen McIlwaine",
+        "username": "Stephen@ish.com",
+        "company": "ish",
+        "company_role": "java developer",
+        "phone": "5464979646",
+        "notes": "Busy",
+        "mobile": "9797464797"
+      },
+      {
+        "id": "4",
+        "name": "Aristedes Maniatis",
+        "username": "ari@ish.com.au",
+        "company": "ish",
+        "company_role": "developer",
+        "phone": "554879645",
+        "notes": "employees scrum",
+        "mobile": "9849476469"
+      }
+    ]
+  })
+
+@app.route('/data/people/add', methods=['PUT', 'OPTIONS'])
+def add_person():
+  return jsonify({
+    "status": "success",
+    "output": {
+      "people": {
+        "company": "Niche Publishing",
+        "company_role": "null",
+        "id": "317",
+        "mobile": "null",
+        "name": "Joanne Davies",
+        "notes": "null",
+        "phone": [
+          "0243695933 homeoffice",
+          "0395255566 melbheadoff",
+          "0243690357 homefax"
+        ],
+        "username": "Joanne_157"
+      }
+    }
+  })
+
+@app.route('/data/people/view/<int:person_id>')
+def view_person(person_id):
+  return jsonify({
+    "status": "success",
+    "output": {
+      "people": {
+        "company": "Niche Publishing",
+        "company_role": "null",
+        "id": "317",
+        "mobile": "null",
+        "name": "Joanne Davies",
+        "notes": "null",
+        "phone": [
+          "0243695933 homeoffice",
+          "0395255566 melbheadoff",
+          "0243690357 homefax"
+        ],
+        "username": "Joanne_157"
+      }
+    }
+  })
+
+@app.route('/data/people/update/<int:person_id>', methods=['PATCH', 'OPTIONS'])
+def update_person(person_id):
+  return jsonify({
+    "status": "success",
+    "output": {
+      "message": "People updated successfully",
+      "people": "****"
+      }
+  })
+
+@app.route('/data/people/delete/<int:person_id>', methods=['DELETE', 'OPTIONS'])
+def delete_person(person_id):
+  return jsonify({
+    'status': "success",
+    'output': {
+      'message': "Person %s deleted successfully" % person_id
+    }
+  })
+
 
 @app.route('/data/company/<int:company_id>/people')
 def company_people(company_id):
@@ -455,6 +452,24 @@ def company_people(company_id):
     ]
   })
 
+@app.route('/data/companies/update/<int:company_id>', methods=['PATCH', 'OPTIONS'])
+def update_company(company_id):
+  return jsonify({
+    "status": "success",
+    "output": {
+      "message": "Company updated successfully",
+      "company": "****"
+      }
+  })
+
+@app.route('/data/companies/delete/<int:company_id>', methods=['DELETE', 'OPTIONS'])
+def delete_company(company_id):
+  return jsonify({
+    'status': "success",
+    'output': {
+      'message': "Company %s deleted successfully" % company_id
+    }
+  })
 
 @app.route('/data/company/view/<int:company_id>')
 def view_company(company_id):
@@ -465,6 +480,25 @@ def view_company(company_id):
     }
   })
 
+@app.route('/data/company/add', methods=['PUT', 'OPTIONS'])
+def add_company():
+  return jsonify({
+    "status": "success",
+    "output": {
+      "company": {
+        "id": "1",
+        "name": "Ish Pty. Ltd",
+        "email": "ish@ish.com.au",
+        "phone": [
+          "12345679"
+        ],
+        "address": "",
+        "suburb": "",
+        "postal": "",
+        "country": ""
+      }
+    }
+  })
 
 if __name__ == '__main__':
   app.run(debug=True)
