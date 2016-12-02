@@ -41,7 +41,7 @@ def view_person(person_id):
   })
 
 
-@app.route('/data/people/update/<int:person_id>', methods=['PATCH'])
+@app.route('/data/people/update/<int:person_id>', methods=['PATCH', 'OPTIONS'])
 @requires_auth
 def update_person(person_id):
   result = get_ldap_api().modify_person(person_id, request.json)
@@ -59,7 +59,7 @@ def update_person(person_id):
   })
 
 
-@app.route('/data/companies/update/<int:company_id>', methods=['PATCH'])
+@app.route('/data/companies/update/<int:company_id>', methods=['PATCH', 'OPTIONS'])
 @requires_auth
 def update_company(company_id):
   result = get_ldap_api().modify_company(company_id, request.json)
@@ -77,7 +77,7 @@ def update_company(company_id):
   })
 
 
-@app.route('/data/people/delete/<int:person_id>')
+@app.route('/data/people/delete/<int:person_id>', methods=['DELETE', 'OPTIONS'])
 @requires_auth
 def delete_person(person_id):
   return jsonify({
@@ -88,7 +88,7 @@ def delete_person(person_id):
   })
 
 
-@app.route('/data/companies/delete/<int:company_id>', methods=['DELETE'])
+@app.route('/data/companies/delete/<int:company_id>', methods=['DELETE', 'OPTIONS'])
 @requires_auth
 def delete_company(company_id):
   if get_ldap_api().delete_company(company_id):
