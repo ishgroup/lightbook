@@ -34,7 +34,13 @@ class LdapApi:
     LDAP_BASES = {
         'people': 'ou=Customers,ou=People,dc=ish,dc=com,dc=au',
         'companies': 'ou=Companies,dc=ish,dc=com,dc=au',
-        'employees': 'ou=Employees,ou=People,dc=ish,dc=com,dc=au'
+        'employees': 'ou=Employees,ou=People,dc=ish,dc=com,dc=au',
+        'counts': 'cn=counts,dc=ish,dc=com,dc=au'
+    }
+
+    OBJECT_CLASSES = {
+        'people': ['ishuser', 'inetOrgPerson'],
+        'companies': ['ishOrganisation', 'organization']
     }
 
     def __init__(self, url, login='', password=''):
@@ -117,7 +123,57 @@ class LdapApi:
         except:
             return False
 
+    def add_person(self, attributes):
+        person_id = self.__increase_max_uidNumber()
+        dn = 'uidNumber={},{}'.format(person_id, self.LDAP_BASES['people'])
+
+        ldap_attributes = self.__remap_dict(attributes, self.INVERSE_ENTRY_MAPPING)
+        ldap_attributes['objectClass'] = self.OBJECT_CLASSES['people']
+        names = ldap_attributes['cn'].split(' ')
+        if len(names) > 1:
+            ldap_attributes['sn'] = names[0]
+            ldap_attributes['givenName'] = names[1]
+        else:
+            ldap_attributes['sn'] = ldap_attributes['cn']
+            ldap_attributes['givenName'] = ldap_attributes['cn']
+
+        ldap_attributes['userPassword'] = attributes['password']
+        self.__add_entry(dn, ldap_attributes)
+        return self.get_person(person_id)
+
+    def add_company(self, attributes):
+        company_id = self.__increase_max_uniqueIdentifier()
+        dn = 'uniqueIdentifier={},{}'.format(company_id, self.LDAP_BASES['companies'])
+
+        ldap_attributes = self.__remap_dict(attributes, self.INVERSE_ENTRY_MAPPING)
+        ldap_attributes['objectClass'] = self.OBJECT_CLASSES['companies']
+
+        self.__add_entry(dn, ldap_attributes)
+        return self.get_company(company_id)
+
     # private
+
+    def __get_max_uniqueIdentifier(self):
+        return self.__get_entry_uid(self.LDAP_BASES['counts'], '(cn=maxUniqueIdentifier)')
+
+    def __increase_max_uniqueIdentifier(self):
+        new_max = self.__get_max_uniqueIdentifier() + 1
+        dn = '{},{}'.format('cn=maxUniqueIdentifier', self.LDAP_BASES['counts'])
+        self.__ldap_client.modify_s(dn, [[ldap.MOD_REPLACE, 'uid', self.__clear_param(new_max)]])
+        return new_max
+
+    def __get_max_uidNumber(self):
+        return self.__get_entry_uid(self.LDAP_BASES['counts'], '(cn=maxUidNumber)')
+
+    def __increase_max_uidNumber(self):
+        new_max = self.__get_max_uidNumber() + 1
+        dn = '{},{}'.format('cn=maxUidNumber',self.LDAP_BASES['counts'])
+        self.__ldap_client.modify_s(dn, [[ldap.MOD_REPLACE, 'uid', self.__clear_param(new_max)]])
+        return new_max
+
+    def __get_entry_uid(self, base, ldap_filter):
+        result = self.__ldap_client.search_s(base, ldap.SCOPE_SUBTREE, ldap_filter, attrlist=['uid'])[0][1]['uid'][0]
+        return int(result)
 
     def __find_person(self, uid_number):
         response = self.__ldap_client.search_s(self.LDAP_BASES['people'], ldap.SCOPE_SUBTREE,
@@ -157,6 +213,10 @@ class LdapApi:
     def __make_modify_list(self, attributes):
         return map(lambda x: self.__make_operation(x), attributes.items())
 
+    def __add_entry(self, dn, ldap_attributes):
+        modify_list = map(lambda x: (self.__clear_param(x[0]), self.__clear_param(x[1])), ldap_attributes.items())
+        return self.__ldap_client.add_s(dn, modify_list)
+
     def __clear_param(self, param, first_level=True):
         if not first_level:
             return None
@@ -166,6 +226,8 @@ class LdapApi:
             return param.encode('ascii', 'ignore')
         elif type(param) is str:
             return param
+        elif type(param) is int:
+            return self.__clear_param(str(param))
         else:
             return None
 

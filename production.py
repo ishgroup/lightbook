@@ -148,6 +148,27 @@ def view_company(company_id):
   })
 
 
+@app.route('/data/people/add', methods=['POST', 'OPTIONS'])
+@requires_auth
+def add_person():
+  return jsonify({
+    "status": "success",
+    "output": {
+      "people": get_ldap_api().add_person(request.json)
+    }
+  })
+
+
+@app.route('/data/company/add', methods=['POST', 'OPTIONS'])
+@requires_auth
+def add_company():
+  return jsonify({
+    "status": "success",
+    "output": {
+      "company": get_ldap_api().add_company(request.json)
+    }
+  })
+
 if __name__ == '__main__':
   monkey.patch_all()
   server = wsgi.WSGIServer((config.get_bind_ip(), config.get_bind_port()), app)
