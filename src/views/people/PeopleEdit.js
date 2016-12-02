@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-//import Modal, { ModalHeader } from './components/Modal';
-import TextInputEdited from './components/TextInputEdited';
-import ViewPeopleModel from './model/ViewPeopleModel';
-import EditPeopleModel from './model/EditPeopleModel';
+import TextInputEdited from '../../components/TextInputEdited';
+import PeopleModel from '../../model/PeopleModel';
 
 class PeopleEdit extends Component {
 
@@ -13,7 +11,7 @@ class PeopleEdit extends Component {
     };
 
     if(this.props.params.id !== undefined) {
-      ViewPeopleModel.getPeople(this, this.props.params.id, function(that, response) {
+      PeopleModel.getPeople(this, this.props.params.id, function(that, response) {
         that.setState({
           people: response.data.output.people
         });
@@ -44,11 +42,9 @@ class PeopleEdit extends Component {
       mobile: mobile
     };
 
-    console.log(newrow);
-
     //this.props.onPeopleEditSubmit(newrow);
 
-    EditPeopleModel.edit(this, newrow, function(that, response) {
+    PeopleModel.edit(this, newrow, function(that, response) {
       alert("People updated successfully");
     });
 

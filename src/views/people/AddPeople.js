@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import AddPeopleModel from './model/AddPeopleModel';
-import Validate from './components/Validate';
+import PeopleModel from '../../model/PeopleModel';
+import Validate from '../../components/Validate';
 
 class AddPeople extends Component {
   constructor(props) {
@@ -31,7 +31,7 @@ class AddPeople extends Component {
 
     if(valiadte.isValidate) {
 
-      AddPeopleModel.add(this, newrow, function(that, response) {
+      PeopleModel.add(this, newrow, function(that, response) {
         that.refs.name.value = '';
         that.refs.username.value = '';
         that.refs.company.value = '';

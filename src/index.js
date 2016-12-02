@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import AddPeople from './AddPeople';
-import PeopleApp from './PeopleApp';
-import PeopleList from './PeopleList';
-import PeopleEdit from './PeopleEdit';
+import AddPeople from './views/people/AddPeople';
+import PeopleApp from './views/people/PeopleApp';
+import PeopleList from './views/people/PeopleList';
+import PeopleEdit from './views/people/PeopleEdit';
 
 import AddCompany from './views/company/AddCompany';
 import EditCompany from './views/company/EditCompany';

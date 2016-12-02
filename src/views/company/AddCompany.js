@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import AddCompanyModel from '../../model/AddCompanyModel';
+import CompanyModel from '../../model/CompanyModel';
 import Validate from '../../components/Validate';
 
 class AddCompany extends Component {
@@ -10,14 +10,14 @@ class AddCompany extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    const valiadte      = new Validate();
-    const name          = valiadte.field('Name', this.refs.name).required().value();
-    const email      = valiadte.field('Email', this.refs.email).required().value();
-    const phone         = this.refs.phone.value;
-    const address       = this.refs.address.value;
-    const suburb  = this.refs.suburb.value;
-    const postal         = this.refs.postal.value;
-    const country        = this.refs.country.value;
+    const valiadte = new Validate();
+    const name     = valiadte.field('Name', this.refs.name).required().value();
+    const email    = valiadte.field('Email', this.refs.email).required().value();
+    const phone    = this.refs.phone.value;
+    const address  = this.refs.address.value;
+    const suburb   = this.refs.suburb.value;
+    const postal   = this.refs.postal.value;
+    const country  = this.refs.country.value;
 
     const newrow = {
       name: name,
@@ -28,10 +28,10 @@ class AddCompany extends Component {
       postal: postal,
       country: country
     };
-console.log(newrow);
+
     if(valiadte.isValidate) {
 
-      AddCompanyModel.add(this, newrow, function(that, response) {
+      CompanyModel.add(this, newrow, function(that, response) {
         that.refs.name.value = '';
         that.refs.email.value = '';
         that.refs.phone.value = '';

@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
-import ViewCompanyModel from '../../model/ViewCompanyModel';
+import CompanyModel from '../../model/CompanyModel';
 import { Link } from 'react-router';
 
 class CompanyView extends Component {
   constructor(props) {
     super(props);
 
-    console.log(this);
-
     if(this.props.checkFetched() !== false && this.props.fetch === true) {
-      ViewCompanyModel.getCompany(this, this.props.company.id, function(that, response) {
+      CompanyModel.getCompany(this, this.props.company.id, function(that, response) {
         that.props.checkFetched(true, response.data.output.company);
       });
     }

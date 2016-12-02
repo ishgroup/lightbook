@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import TextInputEdited from '../../components/TextInputEdited';
 import Validate from '../../components/Validate';
-import EditCompanyModel from '../../model/EditCompanyModel';
-import ViewCompanyModel from '../../model/ViewCompanyModel';
+import CompanyModel from '../../model/CompanyModel';
 
 class EditCompany extends Component {
 
@@ -13,7 +12,7 @@ class EditCompany extends Component {
     };
 
     if(this.props.params.id !== undefined) {
-      ViewCompanyModel.getCompany(this, this.props.params.id, function(that, response) {
+      CompanyModel.getCompany(this, this.props.params.id, function(that, response) {
         that.setState({
           company: response.data.output.company
         });
@@ -46,7 +45,7 @@ class EditCompany extends Component {
       country: country
     };
 
-    EditCompanyModel.edit(this, newrow, function(that, response) {
+    CompanyModel.edit(this, newrow, function(that, response) {
       alert("Company updated successfully");
     });
 

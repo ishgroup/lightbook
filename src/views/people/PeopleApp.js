@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
 import People from './People';
-import Company from './Company';
+import Company from '../company/Company';
 import PeopleEdit from './PeopleEdit';
 
-import SearchModel from './model/SearchModel';
-import ViewPeopleModel from './model/ViewPeopleModel';
+import SearchModel from '../../model/SearchModel';
+import PeopleModel from '../../model/PeopleModel';
 
-import Container from './components/Container';
-import ListView from './components/ListView';
-import SearchBox from './components/SearchBox';
+import Container from '../../components/Container';
+import ListView from '../../components/ListView';
+import SearchBox from '../../components/SearchBox';
 
 class PeopleApp extends Component {
 
@@ -182,7 +182,7 @@ class PeopleApp extends Component {
   }
 
   handlePeopleEditOpen(item) {
-    ViewPeopleModel.getPeople(this, item.id, function(that, response) {
+    PeopleModel.getPeople(this, item.id, function(that, response) {
       ReactDOM.render(
         <PeopleEdit people={response.data.output.people} block={that} onPeopleEditSubmit={that.handlePeopleEdit} />,
         document.getElementById('react-modal')
@@ -205,6 +205,7 @@ class PeopleApp extends Component {
   render() {
     const _plist = this.state.peoplelist, _clist = this.state.companylist;
     const _hide_peoples = (_plist.length === 0 ? {display: 'none'} : null);
+    const _hide_companies = (_clist.length === 0 ? {display: 'none'} : null);
 
     return (
       <div>
@@ -219,8 +220,11 @@ class PeopleApp extends Component {
                 <ListView list={_plist} onRemove={this.handlePeopleRemove} onEdits={this.handlePeopleEditOpen.bind(this)} block={this} item={this.renderPeople} />
               </div>
 
-              <div className="company-list col-lg-24" style={_hide_peoples}>
-                <br /><hr /><br />
+              <div className="col-xs-24" style={ ((_plist.length > 0 && _clist.length > 0) ? {display: 'block'} : {display: 'none'}) }>
+                <hr />
+              </div>
+
+              <div className="company-list col-lg-24" style={_hide_companies}>
                 <ListView list={_clist} onRemove={this.handleCompanyRemove.bind(this)} onEdits={this.handleCompanyEditOpen.bind(this)} block={this} item={this.renderCompany} />
               </div>
 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Icon from 'react-fa';
-import squish_logo from './assets/img/logo.png';
+import squish_logo from '../../assets/img/logo.png';
 import PeopleView from './PeopleView';
 
 class People extends Component {
@@ -18,12 +18,6 @@ class People extends Component {
   handleRemovePeople(e) {
     e.preventDefault();
     this.props.onPeopleDelete(this.props.people);
-    return false;
-  }
-
-  handleEditPeople(e) {
-    e.preventDefault();
-    //this.props.onPeopleEdit(this.props.people);
     return false;
   }
 
@@ -50,12 +44,12 @@ class People extends Component {
 
     return (
       <div className="row">
-        <div className="col-xs-24" onClick={this.handleViewToggle.bind(this)}>
+        <div className="col-xs-24">
           <div className="row">
-            <div className="col-xs-18">
-              <a href="" onClick={this.handleEditPeople.bind(this)} className="link-people">
+            <div className="col-xs-18" onClick={this.handleViewToggle.bind(this)}>
+              <span className="link-people">
                 {this.props.people.name}
-              </a>
+              </span>
               {this.props.people.username !== undefined ? <span> - <a href={"mailto:"+ this.props.people.username}>{this.props.people.username}</a></span> : ''}
             </div>
 
@@ -63,7 +57,7 @@ class People extends Component {
               <a href={"https://squish.ish.com.au/issues/?jql=reporter%20%3D%20"+ _name[0] +"%20and%20resolution%20%3D%20Unresolved"} style={{marginRight: '5px'}} target="_blank">
                 <img src={squish_logo} width="38px" height="25px" alt="Squish Logo" />
               </a>
-              <a href="" onClick={this.handleRemovePeople.bind(this)} style={{marginRight: '5px'}}>
+              <a href="#" onClick={this.handleRemovePeople.bind(this)} style={{marginRight: '5px'}}>
                 <Icon name="remove" />
               </a>
             </div>

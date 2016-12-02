@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Icon from 'react-fa';
 import { Link } from 'react-router';
-import CompanyView from './views/company/CompanyView';
+import CompanyView from './CompanyView';
 
 class Company extends Component {
   constructor(props) {
@@ -45,8 +45,6 @@ class Company extends Component {
 
   render() {
     const _company = this.state.company.length !== 0 ? this.state.company : this.props.company;
-
-    console.log(this);
 
     return (
       <div className="row">

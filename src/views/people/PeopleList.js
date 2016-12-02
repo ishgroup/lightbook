@@ -4,10 +4,9 @@ import ReactDOM from 'react-dom';
 import People from './People';
 import PeopleEdit from './PeopleEdit';
 
-import ViewPeopleModel from './model/ViewPeopleModel';
-import PeopleListModel from './model/PeopleListModel';
+import PeopleModel from '../../model/PeopleModel';
 
-import ListView from './components/ListView';
+import ListView from '../../components/ListView';
 
 class PeopleList extends Component {
   constructor(props) {
@@ -18,7 +17,7 @@ class PeopleList extends Component {
     };
 
     if(this.props.params.id !== undefined) {
-      PeopleListModel.getList(this, this.props.params.id, function(that, response) {
+      PeopleModel.getList(this, this.props.params.id, function(that, response) {
         if(response.data.peoples !== undefined) {
           that.setState({
             peoplelist: response.data.peoples
@@ -74,7 +73,7 @@ class PeopleList extends Component {
   }
 
   handlePeopleEditOpen(item) {
-    ViewPeopleModel.getPeople(this, item.id, function(that, response) {
+    PeopleModel.getPeople(this, item.id, function(that, response) {
       ReactDOM.render(
         <PeopleEdit people={response.data.output.people} block={that} onPeopleEditSubmit={that.handlePeopleEdit} />,
         document.getElementById('react-modal')

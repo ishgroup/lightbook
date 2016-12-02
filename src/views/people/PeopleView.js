@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ViewPeopleModel from './model/ViewPeopleModel';
+import PeopleModel from '../../model/PeopleModel';
 import { Link } from 'react-router';
 
 class PeopleView extends Component {
@@ -7,7 +7,7 @@ class PeopleView extends Component {
     super(props);
 
     if(this.props.checkFetched() !== false && this.props.fetch === true) {
-      ViewPeopleModel.getPeople(this, this.props.people.id, function(that, response) {
+      PeopleModel.getPeople(this, this.props.people.id, function(that, response) {
         that.props.checkFetched(true, response.data.output.people);
       });
     }
