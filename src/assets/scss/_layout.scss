@@ -40,10 +40,9 @@ body {
     color: $black;
   }
 }
-.input-group {
+.form-group {
   .input-box {
     float: left;
-    width: 100%;
     position: relative;
     overflow: hidden;
     .input-tag {
@@ -61,7 +60,8 @@ body {
         top: 0;
         display: table-cell;
         border-radius: .3rem;
-        padding: .65rem 1rem;
+        padding: .5rem .75rem;
+        line-height: 1.25rem;
         font-size: 1rem;
       }
     }
@@ -69,7 +69,8 @@ body {
 
   .input-edited {
     cursor: text;
-    padding: .525rem 1rem;
+    padding: .5rem .75rem;
+    line-height: 1.25rem;
     font-size: 1rem;
     border-radius: .3rem;
     position: relative;

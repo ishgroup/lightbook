@@ -42,6 +42,8 @@ class PeopleEdit extends Component {
       mobile: mobile
     };
 
+    console.log(newrow);
+
     //this.props.onPeopleEditSubmit(newrow);
 
     PeopleModel.edit(this, newrow, function(that, response) {
@@ -52,36 +54,29 @@ class PeopleEdit extends Component {
     return false;
   }
 
+  hideAddForm() {
+    this.props.router.goBack();
+  }
+
   render() {
-    const inputStyle = {padding: '12px'};
 
     return (
       <div className="well">
         {this.state.people.name !== undefined ?
           <form onSubmit={this.handleSubmit.bind(this)} className="ContactForm edit-people" noValidate="true">
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <TextInputEdited type="text" className="form-control col-md-8" placeholder="Name" name="name" ref="name" value={this.state.people.name} />
-            </div>
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <TextInputEdited type="text" className="form-control col-md-8" placeholder="Username" name="username" ref="username" value={this.state.people.username} validate="email" />
-            </div>
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <TextInputEdited type="text" className="form-control col-md-8" placeholder="Company" name="company" ref="company" value={this.state.people.company} />
-            </div>
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <TextInputEdited type="text" className="form-control col-md-8" placeholder="Company Role" name="company_role" ref="company_role" value={this.state.people.company_role} />
-            </div>
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <TextInputEdited type="text" className="form-control col-md-8" placeholder="Phone" name="phone" ref="phone" value={this.state.people.phone} validate="phone" />
-            </div>
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <TextInputEdited type="text" className="form-control col-md-8" placeholder="Notes" name="notes" ref="notes" value={this.state.people.notes} />
-            </div>
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <TextInputEdited type="text" className="form-control col-md-8" placeholder="Mobile" name="mobile" ref="mobile" value={this.state.people.mobile} validate="phone" />
-            </div>
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <input type="submit" className="btn btn-primary" value="Update People"/>
+            <TextInputEdited type="text" className="form-control col-md-8" placeholder="Name" name="name" ref="name" value={this.state.people.name} />
+            <TextInputEdited type="text" className="form-control col-md-8" placeholder="Username" name="username" ref="username" value={this.state.people.username} validate="email" />
+            <TextInputEdited type="text" className="form-control col-md-8" placeholder="Company" name="company" ref="company" value={this.state.people.company} />
+            <TextInputEdited type="text" className="form-control col-md-8" placeholder="Company Role" name="company_role" ref="company_role" value={this.state.people.company_role} />
+            <TextInputEdited type="text" className="form-control col-md-8" placeholder="Phone" name="phone" ref="phone" value={this.state.people.phone} validate="phone" />
+            <TextInputEdited type="text" className="form-control col-md-8" placeholder="Notes" name="notes" ref="notes" value={this.state.people.notes} />
+            <TextInputEdited type="text" className="form-control col-md-8" placeholder="Mobile" name="mobile" ref="mobile" value={this.state.people.mobile} validate="phone" />
+
+            <div className="form-group row">
+              <div className="offset-sm-3 col-sm-21">
+                <input type="submit" className="btn btn-primary" value="Update People"/>&nbsp;
+                <input type="button" className="btn btn-primary" value="Close" onClick={this.hideAddForm.bind(this)} />
+              </div>
             </div>
           </form>
           : '' }

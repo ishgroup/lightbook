@@ -45,6 +45,8 @@ class EditCompany extends Component {
       country: country
     };
 
+    console.log(newrow);
+
     CompanyModel.edit(this, newrow, function(that, response) {
       alert("Company updated successfully");
     });
@@ -52,37 +54,32 @@ class EditCompany extends Component {
     return false;
   }
 
+  hideAddForm() {
+    this.props.router.goBack();
+  }
+
   render() {
-    const inputStyle = {padding: '12px'};
 
     return (
       <div className="well">
         {this.state.company.name !== undefined ?
           <form onSubmit={this.handleSubmit.bind(this)} className="ContactForm edit-company" noValidate="true">
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <TextInputEdited type="text" className="form-control col-md-8" placeholder="Name" name="name" ref="name" value={this.state.company.name} />
+
+            <TextInputEdited type="text" className="form-control" placeholder="Name" name="name" ref="name" value={this.state.company.name} />
+            <TextInputEdited type="text" className="form-control" placeholder="Email" name="email" ref="email" value={this.state.company.email} validate="email" />
+            <TextInputEdited type="text" className="form-control" placeholder="Phone" name="phone" ref="phone" value={this.state.company.phone} validate="phone" />
+            <TextInputEdited type="text" className="form-control" placeholder="Address" name="address" ref="address" value={this.state.company.address} />
+            <TextInputEdited type="text" className="form-control" placeholder="Suburb" name="suburb" ref="suburb" value={this.state.company.suburb} />
+            <TextInputEdited type="text" className="form-control" placeholder="Postal" name="postal" ref="postal" value={this.state.company.postal} />
+            <TextInputEdited type="text" className="form-control" placeholder="country" name="country" ref="country" value={this.state.company.country} />
+
+            <div className="form-group row">
+              <div className="offset-sm-3 col-sm-21">
+                <input type="submit" className="btn btn-primary" value="Update Company"/>&nbsp;
+                <input type="button" className="btn btn-primary" value="Close" onClick={this.hideAddForm.bind(this)} />
+              </div>
             </div>
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <TextInputEdited type="text" className="form-control col-md-8" placeholder="Email" name="email" ref="email" value={this.state.company.email} validate="email" />
-            </div>
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <TextInputEdited type="text" className="form-control col-md-8" placeholder="Phone" name="phone" ref="phone" value={this.state.company.phone} validate="phone" />
-            </div>
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <TextInputEdited type="text" className="form-control col-md-8" placeholder="Address" name="address" ref="address" value={this.state.company.address} />
-            </div>
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <TextInputEdited type="text" className="form-control col-md-8" placeholder="Suburb" name="suburb" ref="suburb" value={this.state.company.suburb} />
-            </div>
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <TextInputEdited type="text" className="form-control col-md-8" placeholder="Postal" name="postal" ref="postal" value={this.state.company.postal} />
-            </div>
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <TextInputEdited type="text" className="form-control col-md-8" placeholder="country" name="country" ref="country" value={this.state.company.country} />
-            </div>
-            <div className="input-group input-group-lg" style={inputStyle}>
-              <input type="submit" className="btn btn-primary" value="Update Company"/>
-            </div>
+
           </form>
         : ''}
       </div>

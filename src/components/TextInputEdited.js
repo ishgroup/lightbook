@@ -48,9 +48,12 @@ class TextInputEdited extends Component {
     }
 
     return (
-      <div className={'input-box'+ (this.state.activeInput ? ' input-active' : '')}>
-        <div className={'input-edited' + inputTextEmpty} onClick={this.hasTextEdited.bind(this)} dangerouslySetInnerHTML={{ __html: textValue }} />
-        <input type={this.props.type} name={this.props.name} id={this.props.name} value={this.state.value} ref="inputEditedName" className={'input-tag ' + this.props.className} placeholder={this.props.placeholder} onChange={this.handleChange.bind(this)} onBlur={this.onBlur.bind(this)} />
+      <div className="form-group row">
+        <label htmlFor={"input-" + this.props.name}  className="col-sm-3 col-form-label text-sm-right">{this.props.placeholder}</label>
+        <div className={'col-sm-21 input-box'+ (this.state.activeInput ? ' input-active' : '')}>
+          <div className={'input-edited' + inputTextEmpty} onClick={this.hasTextEdited.bind(this)} dangerouslySetInnerHTML={{ __html: textValue }} />
+          <input type={this.props.type} name={this.props.name} id={'input-' + this.props.name} value={this.state.value} ref="inputEditedName" className={'input-tag ' + this.props.className} placeholder={this.props.placeholder} onChange={this.handleChange.bind(this)} onBlur={this.onBlur.bind(this)} />
+        </div>
       </div>
     );
   }

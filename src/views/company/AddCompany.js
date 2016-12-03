@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import CompanyModel from '../../model/CompanyModel';
 import Validate from '../../components/Validate';
+import FormField from '../../components/FormField';
 
 class AddCompany extends Component {
   constructor(props) {
@@ -10,14 +11,18 @@ class AddCompany extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
+
+    console.log(this);
+    //console.log(newrow);
+
     const valiadte = new Validate();
-    const name     = valiadte.field('Name', this.refs.name).required().value();
-    const email    = valiadte.field('Email', this.refs.email).required().value();
-    const phone    = this.refs.phone.value;
-    const address  = this.refs.address.value;
-    const suburb   = this.refs.suburb.value;
-    const postal   = this.refs.postal.value;
-    const country  = this.refs.country.value;
+    const name     = valiadte.field('Name', this.refs.name.item).required().value();
+    const email    = valiadte.field('Email', this.refs.email.item).required().value();
+    const phone    = this.refs.phone.item.value;
+    const address  = this.refs.address.item.value;
+    const suburb   = this.refs.suburb.item.value;
+    const postal   = this.refs.postal.item.value;
+    const country  = this.refs.country.item.value;
 
     const newrow = {
       name: name,
@@ -32,13 +37,13 @@ class AddCompany extends Component {
     if(valiadte.isValidate) {
 
       CompanyModel.add(this, newrow, function(that, response) {
-        that.refs.name.value = '';
-        that.refs.email.value = '';
-        that.refs.phone.value = '';
-        that.refs.address.value = '';
-        that.refs.suburb.value = '';
-        that.refs.postal.value = '';
-        that.refs.country.value = '';
+        that.refs.name.item.value = '';
+        that.refs.email.item.value = '';
+        that.refs.phone.item.value = '';
+        that.refs.address.item.value = '';
+        that.refs.suburb.item.value = '';
+        that.refs.postal.item.value = '';
+        that.refs.country.item.value = '';
 
         alert('Company added successfully.');
       });
@@ -52,35 +57,23 @@ class AddCompany extends Component {
   }
 
   render() {
-    const inputStyle = {padding: '12px'};
 
     return (
       <div className="well">
         <form onSubmit={this.handleSubmit} className="ContactForm" noValidate="true">
-          <div className="input-group input-group-lg" style={inputStyle}>
-            <input type="text"  className="form-control col-md-8"  placeholder="Name" name="name" ref="name" />
-          </div>
-          <div className="input-group input-group-lg" style={inputStyle}>
-            <input type="text"  className="form-control col-md-8" placeholder="Email" name="email" ref="email" />
-          </div>
-          <div className="input-group input-group-lg" style={inputStyle}>
-            <input type="text"  className="form-control col-md-8" placeholder="Phone" name="phone" ref="phone"/>
-          </div>
-          <div className="input-group input-group-lg" style={inputStyle}>
-            <input type="text"  className="form-control col-md-8" placeholder="Address" name="address" ref="address"/>
-          </div>
-          <div className="input-group input-group-lg" style={inputStyle}>
-            <input type="text"  className="form-control col-md-8" placeholder="Suburb" name="suburb" ref="suburb"/>
-          </div>
-          <div className="input-group input-group-lg" style={inputStyle}>
-            <input type="text"  className="form-control col-md-8" placeholder="Postal" name="postal" ref="postal"/>
-          </div>
-          <div className="input-group input-group-lg" style={inputStyle}>
-            <input type="text"  className="form-control col-md-8" placeholder="Country" name="country" ref="country"/>
-          </div>
-          <div className="input-group input-group-lg" style={inputStyle}>
-            <input type="submit" className="btn btn-primary" value="Add Company"/>&nbsp;
-            <input type="button" className="btn btn-primary" value="Close" onClick={this.hideAddForm.bind(this)} />
+          <FormField label="Name" name="name" ref="name" />
+          <FormField label="Email" name="email" ref="email" />
+          <FormField label="Phone" name="phone" ref="phone" />
+          <FormField label="Address" name="address" ref="address" />
+          <FormField label="Suburb" name="suburb" ref="suburb" />
+          <FormField label="Postal" name="postal" ref="postal" />
+          <FormField label="Country" name="country" ref="country" />
+
+          <div className="form-group row">
+            <div className="offset-sm-3 col-sm-21">
+              <input type="submit" className="btn btn-primary" value="Add Company"/>&nbsp;
+              <input type="button" className="btn btn-primary" value="Close" onClick={this.hideAddForm.bind(this)} />
+            </div>
           </div>
         </form>
       </div>
