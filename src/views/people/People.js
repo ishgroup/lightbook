@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Icon from 'react-fa';
-import squish_logo from '../../assets/img/logo.png';
+import squish_logo from '../../assets/img/squish.png';
 import PeopleView from './PeopleView';
 
 class People extends Component {

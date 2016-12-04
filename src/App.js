@@ -18,7 +18,7 @@ class App extends Component {
           <header id="header" className="row">
             <nav className="navbar navbar-dark bg-inverse">
               <div className="nav navbar-nav">
-                <Link to="/" className="navbar-brand"><img src={ishLogo} alt="ish" /></Link>
+                <Link to="/" className="navbar-brand"><img src={ishLogo} alt="ish" />ish customer directory</Link>
                 <div className="float-xs-right">
                   <li className="nav-item">
                     <Link to="add-people" className="nav-link" activeClassName="active">
