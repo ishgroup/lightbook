@@ -40,7 +40,8 @@ class LdapApi:
 
     OBJECT_CLASSES = {
         'people': ['ishuser', 'inetOrgPerson'],
-        'companies': ['ishOrganisation', 'organization']
+        'companies': ['ishOrganisation', 'organization'],
+        'role': 'organizationalRole'
     }
 
     def __init__(self, url, login='', password=''):
@@ -49,7 +50,13 @@ class LdapApi:
 
     def get_person(self, person_id):
         ldap_response = self.__find_person(person_id)
-        return self.__extract_value_from_array(self.__person_from_ldap(ldap_response[1])) if ldap_response else None
+        if ldap_response is None:
+            return None
+
+        result = self.__extract_value_from_array(self.__person_from_ldap(ldap_response[1]))
+        result['auto_add_to_task'] = self.__get_auto_add_to_task(ldap_response)
+
+        return result
 
     def get_company(self, company_id):
         ldap_response = self.__find_company(company_id)
@@ -96,6 +103,20 @@ class LdapApi:
         if person is None:
             return None
 
+        if 'auto_add_to_task' in attributes:
+            company_name = None
+            if 'company' in attributes:
+                company_name = attributes['company']
+            elif 'o' in person[1]:
+                company_name = person[1]['o'][0]
+
+            if company_name:
+                if attributes['auto_add_to_task']:
+                    attributes.pop('auto_add_to_task')
+                    self.__set_notify_for(person[0], company_name)
+                else:
+                    self.__unset_notify_for(person[0], company_name)
+
         self.__modify_ldap_entry(person, attributes)
         return self.get_person(person_id)
 
@@ -110,6 +131,10 @@ class LdapApi:
     def delete_company(self, company_id):
         dn = 'uniqueIdentifier={},{}'.format(company_id, self.LDAP_BASES['companies'])
         try:
+            notify = self.__find_notify(dn)
+            if notify:
+                self.__ldap_client.delete_s(notify[0])
+
             self.__ldap_client.delete_s(dn)
             return True if self.get_company(company_id) is None else False
         except:
@@ -138,7 +163,17 @@ class LdapApi:
             ldap_attributes['givenName'] = ldap_attributes['cn']
 
         ldap_attributes['userPassword'] = attributes['password']
+
+        need_auto_add_to_task = False
+        if 'auto_add_to_task' in attributes and attributes['auto_add_to_task']:
+            attributes.pop('auto_add_to_task')
+            if 'company' in attributes:
+                need_auto_add_to_task = True
+
         self.__add_entry(dn, ldap_attributes)
+        if need_auto_add_to_task:
+            self.__set_notify_for(dn, attributes['company'])
+
         return self.get_person(person_id)
 
     def add_company(self, attributes):
@@ -152,6 +187,92 @@ class LdapApi:
         return self.get_company(company_id)
 
     # private
+
+    def __get_auto_add_to_task(self, person):
+        user_dn = person[0]
+        if 'o' not in person[1]:
+            return False
+
+        company_name = person[1]['o'][0]
+        company = self.__find_company_entry_by_name(company_name)
+
+        if company is None:
+            return False
+
+        company_dn = company[0]
+        notify = self.__find_notify(company_dn)
+        if notify is None:
+            return False
+
+        role_occupants = notify[1]['roleOccupant']
+        return user_dn in role_occupants
+
+    def __set_notify_for(self, user_dn, company_name):
+        company = self.__find_company_entry_by_name(company_name)
+        if company is None:
+            return None
+
+        company_dn = company[0]
+        notify = self.__find_notify(company_dn)
+        if notify is None:
+            return self.__create_notify(user_dn, company_dn)
+
+        role_occupants = notify[1]['roleOccupant']
+        if user_dn in role_occupants:
+            return True
+
+        role_occupants.append(user_dn)
+
+        modify_list = [(ldap.MOD_REPLACE, self.__clear_param('roleOccupant'), self.__clear_param(role_occupants))]
+        dn = notify[0]
+        return self.__ldap_client.modify_s(dn, modify_list)
+
+    def __unset_notify_for(self, user_dn, company_name):
+        company = self.__find_company_entry_by_name(company_name)
+        if company is None:
+            return True
+
+        company_dn = company[0]
+        notify = self.__find_notify(company_dn)
+        if notify is None:
+            return True
+
+        role_occupants = notify[1]['roleOccupant']
+        if user_dn not in role_occupants:
+            return True
+
+        role_occupants.remove(user_dn)
+
+        if len(role_occupants) == 0:
+            return self.__ldap_client.delete_s(notify[0])
+
+        modify_list = [(ldap.MOD_REPLACE, self.__clear_param('roleOccupant'), self.__clear_param(role_occupants))]
+        dn = notify[0]
+        return self.__ldap_client.modify_s(dn, modify_list)
+
+    def __create_notify(self, user_dn, company_dn):
+        dn = 'cn=notify,{}'.format(company_dn)
+        ldap_attributes = {
+            'objectClass': self.OBJECT_CLASSES['role'],
+            'roleOccupant': user_dn
+        }
+        return self.__add_entry(dn, ldap_attributes)
+
+    def __find_notify(self, company_dn):
+        ldap_filter = '(cn=notify)'
+        response = self.__ldap_client.search_s(company_dn, ldap.SCOPE_SUBTREE, ldap_filter)
+        if response is None or len(response) == 0:
+            return None
+
+        return response[0]
+
+    def __find_company_entry_by_name(self, name):
+        ldap_filter = '(cn={})'.format(name)
+        response = self.__ldap_client.search_s(self.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE, ldap_filter)
+        if response is None or len(response) == 0:
+            return None
+
+        return response[0]
 
     def __get_max_uniqueIdentifier(self):
         return self.__get_entry_uid(self.LDAP_BASES['counts'], '(cn=maxUniqueIdentifier)')

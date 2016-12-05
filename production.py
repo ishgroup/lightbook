@@ -1,11 +1,13 @@
 #!/usr/bin/env /usr/local/bin/python2
 
-from gevent import monkey
-from gevent import wsgi
-from flask import Flask, jsonify, request, render_template, g
-from ldap_api import requires_auth, SiteSettings
+import sys
 import logging
+from gevent import monkey, wsgi
+from flask import Flask, jsonify, request, render_template, g
 from logstash_formatter import LogstashFormatterV1
+from ldap_api import requires_auth, SiteSettings
+
+debug_mode = '--debug' in sys.argv
 
 app = Flask(__name__, static_folder='build', static_url_path='')
 config = SiteSettings()
@@ -14,14 +16,16 @@ def get_ldap_api():
   return getattr(g, '_ldap_api', None)
 
 logging.basicConfig(level=logging.DEBUG)
-try:
-  file_handler = logging.FileHandler('/var/log/lightbook/lightbook.log')
-  file_handler.setFormatter(LogstashFormatterV1())
 
-  app.logger.addHandler(file_handler)
-except:
-  None
-  # Just keep going
+if not debug_mode:
+  try:
+    file_handler = logging.FileHandler('/var/log/lightbook/lightbook.log')
+    file_handler.setFormatter(LogstashFormatterV1())
+
+    app.logger.addHandler(file_handler)
+  except:
+    None
+    # Just keep going
 
 @app.route('/')
 @requires_auth
@@ -80,12 +84,20 @@ def update_company(company_id):
 @app.route('/data/people/delete/<int:person_id>', methods=['DELETE', 'OPTIONS'])
 @requires_auth
 def delete_person(person_id):
-  return jsonify({
-    'status': "success",
-    'output': {
-      'message': "Person %s deleted successfully" % person_id
-    }
-  })
+  if get_ldap_api().delete_person(person_id):
+      return jsonify({
+        'status': "success",
+        'output': {
+          'message': "Person %s deleted successfully" % person_id
+        }
+      })
+  else:
+    return jsonify({
+      'status': "error",
+      'output': {
+         'message': "Person %s wasn't deleted" % person_id
+       }
+    })
 
 
 @app.route('/data/companies/delete/<int:company_id>', methods=['DELETE', 'OPTIONS'])
@@ -170,6 +182,9 @@ def add_company():
   })
 
 if __name__ == '__main__':
-  monkey.patch_all()
-  server = wsgi.WSGIServer((config.get_bind_ip(), config.get_bind_port()), app)
-  server.serve_forever()
+  if debug_mode:
+    app.run(debug=True)
+  else:
+    monkey.patch_all()
+    server = wsgi.WSGIServer((config.get_bind_ip(), config.get_bind_port()), app)
+    server.serve_forever()
