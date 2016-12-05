@@ -65,12 +65,12 @@ class PeopleEdit extends Component {
         {this.state.people.name !== undefined ?
           <form onSubmit={this.handleSubmit.bind(this)} className="ContactForm edit-people" noValidate="true">
             <TextInputEdited type="text" className="form-control col-md-8" placeholder="Name" name="name" ref="name" value={this.state.people.name} />
-            <TextInputEdited type="text" className="form-control col-md-8" placeholder="Username" name="username" ref="username" value={this.state.people.username} validate="email" />
-            <TextInputEdited type="text" className="form-control col-md-8" placeholder="Company" name="company" ref="company" value={this.state.people.company} />
-            <TextInputEdited type="text" className="form-control col-md-8" placeholder="Company Role" name="company_role" ref="company_role" value={this.state.people.company_role} />
-            <TextInputEdited type="text" className="form-control col-md-8" placeholder="Phone" name="phone" ref="phone" value={this.state.people.phone} validate="phone" />
-            <TextInputEdited type="text" className="form-control col-md-8" placeholder="Notes" name="notes" ref="notes" value={this.state.people.notes} />
-            <TextInputEdited type="text" className="form-control col-md-8" placeholder="Mobile" name="mobile" ref="mobile" value={this.state.people.mobile} validate="phone" />
+            <TextInputEdited type="text" className="form-control col-md-8" placeholder="Username" name="username" ref="username" value={this.state.people.username !== undefined ? this.state.people.username : ''} validate="email" />
+            <TextInputEdited type="text" className="form-control col-md-8" placeholder="Company" name="company" ref="company" value={this.state.people.company !== undefined ? this.state.people.company : ''}  />
+            <TextInputEdited type="text" className="form-control col-md-8" placeholder="Company Role" name="company_role" ref="company_role" value={this.state.people.company_role !== undefined ? this.state.people.company_role : ''} />
+            <TextInputEdited type="text" className="form-control col-md-8" placeholder="Phone" name="phone" ref="phone" value={this.state.people.phone !== undefined ? this.state.people.phone : ''} validate="phone" />
+            <TextInputEdited type="text" className="form-control col-md-8" placeholder="Notes" name="notes" ref="notes" value={this.state.people.notes !== undefined ? this.state.people.notes : ''} />
+            <TextInputEdited type="text" className="form-control col-md-8" placeholder="Mobile" name="mobile" ref="mobile" value={this.state.people.mobile !== undefined ? this.state.people.mobile : ''} validate="phone" />
 
             <div className="form-group row">
               <div className="offset-sm-3 col-sm-21">
