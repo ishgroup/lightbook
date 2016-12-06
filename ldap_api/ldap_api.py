@@ -5,6 +5,7 @@ from ldap.controls import SimplePagedResultsControl
 
 class LdapApi:
     SIZELIMIT = 10
+    MAX_CREATE_ATTEMPTS = 10
     SPACES_REGEX = re.compile(r"\s+", re.IGNORECASE)
     ENTRY_MAPPING = {
         'telephoneNumber': 'phone',
@@ -149,9 +150,6 @@ class LdapApi:
             return False
 
     def add_person(self, attributes):
-        person_id = self.__increase_max_uidNumber()
-        dn = 'uidNumber={},{}'.format(person_id, self.LDAP_BASES['people'])
-
         ldap_attributes = self.__remap_dict(attributes, self.INVERSE_ENTRY_MAPPING)
         ldap_attributes['objectClass'] = self.OBJECT_CLASSES['people']
         names = ldap_attributes['cn'].split(' ')
@@ -170,20 +168,41 @@ class LdapApi:
             if 'company' in attributes:
                 need_auto_add_to_task = True
 
-        self.__add_entry(dn, ldap_attributes)
+        create_attempts = 0
+        while create_attempts < self.MAX_CREATE_ATTEMPTS - 1:
+            try:
+                person_id = self.__increase_max_uidNumber()
+                dn = 'uidNumber={},{}'.format(person_id, self.LDAP_BASES['people'])
+                self.__add_entry(dn, ldap_attributes)
+                break
+            except ldap.ALREADY_EXISTS:
+                create_attempts += 1
+
+        if create_attempts == self.MAX_CREATE_ATTEMPTS - 1:
+            self.__add_entry(dn, ldap_attributes)
+
         if need_auto_add_to_task:
             self.__set_notify_for(dn, attributes['company'])
 
         return self.get_person(person_id)
 
     def add_company(self, attributes):
-        company_id = self.__increase_max_uniqueIdentifier()
-        dn = 'uniqueIdentifier={},{}'.format(company_id, self.LDAP_BASES['companies'])
-
         ldap_attributes = self.__remap_dict(attributes, self.INVERSE_ENTRY_MAPPING)
         ldap_attributes['objectClass'] = self.OBJECT_CLASSES['companies']
 
-        self.__add_entry(dn, ldap_attributes)
+        create_attempts = 0
+        while create_attempts < self.MAX_CREATE_ATTEMPTS - 1:
+            try:
+                company_id = self.__increase_max_uniqueIdentifier()
+                dn = 'uniqueIdentifier={},{}'.format(company_id, self.LDAP_BASES['companies'])
+                self.__add_entry(dn, ldap_attributes)
+                break
+            except ldap.ALREADY_EXISTS:
+                create_attempts += 1
+
+        if create_attempts == self.MAX_CREATE_ATTEMPTS - 1:
+            self.__add_entry(dn, ldap_attributes)
+
         return self.get_company(company_id)
 
     # private
