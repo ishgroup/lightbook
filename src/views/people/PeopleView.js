@@ -14,7 +14,7 @@ class PeopleView extends Component {
   }
 
   isNotNull(text) {
-    return text === 'null' ? '-' : text;
+    return (text === 'null' || text === undefined) ? '-' : text;
   }
 
   render() {
@@ -28,7 +28,7 @@ class PeopleView extends Component {
         </div>
         <div className="col-xs-24" style={inputStyle}>
           <div className="col-sm-6">Email:</div>
-          <div className="col-sm-18">{this.isNotNull(this.props.people.username)}</div>
+          <div className="col-sm-18">{this.isNotNull(this.props.people.email)}</div>
         </div>
         <div className="col-xs-24" style={inputStyle}>
           <div className="col-sm-6">Company:</div>
