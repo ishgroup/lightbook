@@ -152,7 +152,7 @@ def get_persons():
     ]
   })
 
-@app.route('/data/people/add', methods=['PUT', 'OPTIONS'])
+@app.route('/data/people/add', methods=['POST', 'OPTIONS'])
 def add_person():
   return jsonify({
     "status": "success",
@@ -482,7 +482,7 @@ def view_company(company_id):
     }
   })
 
-@app.route('/data/company/add', methods=['PUT', 'OPTIONS'])
+@app.route('/data/company/add', methods=['POST', 'OPTIONS'])
 def add_company():
   return jsonify({
     "status": "success",
