@@ -17,7 +17,8 @@ class LdapApi:
         'mobile': 'mobile',
         'abn': 'abn',
         'active': 'active',
-        'description': 'notes'
+        'description': 'notes',
+        'mail': 'email'
     }
     SHORT_INFO = {
         'people': {
