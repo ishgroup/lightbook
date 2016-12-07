@@ -25,9 +25,9 @@ class EditCompany extends Component {
 
     const id = this.state.company.id;
 
-    const valiadte = new Validate();
-    const name     = valiadte.field('Name', this.refs.name.refs.inputEditedName).required().value();
-    const email    = valiadte.field('Email', this.refs.email.refs.inputEditedName).required().value();
+    const validate = new Validate();
+    const name     = validate.field('Name', this.refs.name.refs.inputEditedName).required().value();
+    const email    = validate.field('Email', this.refs.email.refs.inputEditedName).required().value();
     const phone    = this.refs.phone.refs.inputEditedName.value;
     const address  = this.refs.address.refs.inputEditedName.value;
     const suburb   = this.refs.suburb.refs.inputEditedName.value;
@@ -44,8 +44,6 @@ class EditCompany extends Component {
       postal: postal,
       country: country
     };
-
-    console.log(newrow);
 
     CompanyModel.edit(this, newrow, function(that, response) {
       alert("Company updated successfully");

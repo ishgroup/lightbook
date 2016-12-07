@@ -12,12 +12,9 @@ class AddCompany extends Component {
   handleSubmit(e) {
     e.preventDefault();
 
-    console.log(this);
-    //console.log(newrow);
-
-    const valiadte = new Validate();
-    const name     = valiadte.field('Name', this.refs.name.item).required().value();
-    const email    = valiadte.field('Email', this.refs.email.item).required().value();
+    const validate = new Validate();
+    const name     = validate.field('Name', this.refs.name.item).required().value();
+    const email    = validate.field('Email', this.refs.email.item).required().value();
     const phone    = this.refs.phone.item.value;
     const address  = this.refs.address.item.value;
     const suburb   = this.refs.suburb.item.value;
@@ -34,7 +31,7 @@ class AddCompany extends Component {
       country: country
     };
 
-    if(valiadte.isValidate) {
+    if(validate.isValidate) {
 
       CompanyModel.add(this, newrow, function(that, response) {
         that.refs.name.item.value = '';

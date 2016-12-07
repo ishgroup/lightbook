@@ -17,7 +17,7 @@ class BaseModel {
   }
 
   static post(that, url, data, callback) {
-    axios.post(url, data, { baseURL: Config.baseUrl(), headers: { 'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8' } })
+    axios.post(url, data, { baseURL: Config.baseUrl(), headers: { 'Content-Type' : 'application/json; charset=UTF-8' } })
       .then(function(response) {
         if(response.data.status === 'success')
           callback(that, response);
@@ -31,7 +31,7 @@ class BaseModel {
   }
 
   static put(that, url, data, callback) {
-    axios.put(url, data, { baseURL: Config.baseUrl(), headers: { 'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8' } })
+    axios.put(url, data, { baseURL: Config.baseUrl(), headers: { 'Content-Type' : 'application/json; charset=UTF-8' } })
       .then(function(response) {
         if(response.data.status === 'success')
           callback(that, response);
@@ -45,7 +45,7 @@ class BaseModel {
   }
 
   static patch(that, url, data, callback) {
-    axios.patch(url, data, { baseURL: Config.baseUrl(), headers: { 'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8' } })
+    axios.patch(url, data, { baseURL: Config.baseUrl(), headers: { 'Content-Type' : 'application/json; charset=UTF-8' } })
       .then(function(response) {
         if(response.data.status === 'success')
           callback(that, response);
@@ -59,7 +59,7 @@ class BaseModel {
   }
 
   static delete(that, url, callback) {
-    axios.delete(url, { baseURL: Config.baseUrl(), headers: { 'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8' } })
+    axios.delete(url, { baseURL: Config.baseUrl(), headers: { 'Content-Type' : 'application/json; charset=UTF-8' } })
       .then(function(response) {
         if(response.data.status === 'success')
           callback(that, response);

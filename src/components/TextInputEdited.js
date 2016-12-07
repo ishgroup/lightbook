@@ -12,12 +12,12 @@ class TextInputEdited extends Component {
 
   handleChange() {
     this.setState({
-      value: this.refs.inputEditedName.value
+      value: this.item.value
     });
   }
 
   hasTextEdited(e) {
-    this.refs.inputEditedName.focus();
+    this.item.focus();
     this.setState({
       activeInput: true
     });
@@ -29,11 +29,11 @@ class TextInputEdited extends Component {
     })
   }
 
-  getText(valiadte, text) {
-    if(valiadte !== undefined && text !== '' && text !== null) {
-      if(valiadte === 'email')
+  getText(validate, text) {
+    if(validate !== undefined && text !== '' && text !== null && text !== undefined) {
+      if(validate === 'email')
         return '<a href="mailto:'+ text +'">'+ text +'</a>';
-      if(valiadte === 'phone')
+      if(validate === 'phone')
         return '<a href="tel:'+ text +'">'+ text +'</a>';
     } else
       return text;
@@ -42,7 +42,8 @@ class TextInputEdited extends Component {
   render() {
     let textValue = this.getText(this.props.validate, this.state.value);
     let inputTextEmpty = '';
-    if(textValue === null || (textValue !== null && textValue.length === 0)) {
+
+    if(textValue === null || textValue === undefined || (textValue !== null && textValue.length === 0)) {
       inputTextEmpty = ' text-empty';
       textValue = this.props.placeholder;
     }
@@ -52,7 +53,7 @@ class TextInputEdited extends Component {
         <label htmlFor={"input-" + this.props.name}  className="col-sm-3 col-form-label text-sm-right">{this.props.placeholder}</label>
         <div className={'col-sm-21 input-box'+ (this.state.activeInput ? ' input-active' : '')}>
           <div className={'input-edited' + inputTextEmpty} onClick={this.hasTextEdited.bind(this)} dangerouslySetInnerHTML={{ __html: textValue }} />
-          <input type={this.props.type} name={this.props.name} id={'input-' + this.props.name} value={this.state.value} ref="inputEditedName" className={'input-tag ' + this.props.className} placeholder={this.props.placeholder} onChange={this.handleChange.bind(this)} onBlur={this.onBlur.bind(this)} />
+          <input type={this.props.type} name={this.props.name} id={'input-' + this.props.name} value={this.state.value} ref={(item) => { this.item = item } } className={'input-tag ' + this.props.className} placeholder={this.props.placeholder} onChange={this.handleChange.bind(this)} onBlur={this.onBlur.bind(this)} />
         </div>
       </div>
     );
