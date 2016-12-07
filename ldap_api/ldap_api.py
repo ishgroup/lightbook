@@ -18,7 +18,11 @@ class LdapApi:
         'abn': 'abn',
         'active': 'active',
         'description': 'notes',
-        'mail': 'email'
+        'mail': 'email',
+        'c': 'country',
+        'l': 'suburb',
+        'postalAddress': 'address',
+        'postalCode': 'postal'
     }
     SHORT_INFO = {
         'people': {
@@ -190,7 +194,7 @@ class LdapApi:
     def add_company(self, attributes):
         ldap_attributes = self.__remap_dict(attributes, self.INVERSE_ENTRY_MAPPING)
         ldap_attributes['objectClass'] = self.OBJECT_CLASSES['companies']
-
+        ldap_attributes['o'] = ldap_attributes['cn']
         create_attempts = 0
         while create_attempts < self.MAX_CREATE_ATTEMPTS - 1:
             try:

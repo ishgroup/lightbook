@@ -169,7 +169,8 @@ def add_person():
           "0395255566 melbheadoff",
           "0243690357 homefax"
         ],
-        "username": "Joanne_157"
+        "username": "Joanne_157",
+        "auto_add_to_task": True
       }
     }
   })
@@ -191,7 +192,8 @@ def view_person(person_id):
           "0395255566 melbheadoff",
           "0243690357 homefax"
         ],
-        "username": "Joanne_157"
+        "username": "Joanne_157",
+        "auto_add_to_task": False
       }
     }
   })
