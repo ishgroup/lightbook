@@ -18,40 +18,45 @@ class PeopleView extends Component {
   }
 
   render() {
-    const inputStyle = {padding: '12px'};
-
     return (
       <div className="row">
-        <div className="col-xs-24" style={inputStyle}>
-          <div className="col-sm-6">Name:</div>
-          <div className="col-sm-18">{this.isNotNull(this.props.people.name)}</div>
+        <div className="form-group row">
+          <div className="col-xs-24">
+            {this.props.children}
+          </div>
         </div>
-        <div className="col-xs-24" style={inputStyle}>
-          <div className="col-sm-6">Email:</div>
-          <div className="col-sm-18">{this.isNotNull(this.props.people.email)}</div>
+        <div className="form-group row">
+          <div className="col-sm-3 text-sm-right">Name:</div>
+          <div className="col-sm-21">{this.isNotNull(this.props.people.name)}</div>
         </div>
-        <div className="col-xs-24" style={inputStyle}>
-          <div className="col-sm-6">Company:</div>
-          <div className="col-sm-18">{this.isNotNull(this.props.people.company)}</div>
+        <div className="form-group row">
+          <div className="col-sm-3 text-sm-right">Email:</div>
+          <div className="col-sm-21">{this.isNotNull(this.props.people.email)}</div>
         </div>
-        <div className="col-xs-24" style={inputStyle}>
-          <div className="col-sm-6">Company Role:</div>
-          <div className="col-sm-18">{this.isNotNull(this.props.people.company_role)}</div>
+        <div className="form-group row">
+          <div className="col-sm-3 text-sm-right">Company:</div>
+          <div className="col-sm-21">{this.isNotNull(this.props.people.company)}</div>
         </div>
-        <div className="col-xs-24" style={inputStyle}>
-          <div className="col-sm-6">Phone:</div>
-          <div className="col-sm-18">{this.isNotNull((this.props.people.phone !== undefined && this.props.people.phone !== null) ? this.props.people.phone.join(', ') : '')}</div>
+        <div className="form-group row">
+          <div className="col-sm-3 text-sm-right">Company Role:</div>
+          <div className="col-sm-21">{this.isNotNull(this.props.people.company_role)}</div>
         </div>
-        <div className="col-xs-24" style={inputStyle}>
-          <div className="col-sm-6">Notes:</div>
-          <div className="col-sm-18">{this.isNotNull(this.props.people.notes)}</div>
+        <div className="form-group row">
+          <div className="col-sm-3 text-sm-right">Phone:</div>
+          <div className="col-sm-21">{this.isNotNull((this.props.people.phone !== undefined && this.props.people.phone !== null) ? this.props.people.phone.join(', ') : '')}</div>
         </div>
-        <div className="col-xs-24" style={inputStyle}>
-          <div className="col-sm-6">Mobile:</div>
-          <div className="col-sm-18">{this.isNotNull(this.props.people.mobile)}</div>
+        <div className="form-group row">
+          <div className="col-sm-3 text-sm-right">Notes:</div>
+          <div className="col-sm-21">{this.isNotNull(this.props.people.notes)}</div>
         </div>
-        <div className="col-xs-24" style={inputStyle}>
-          <Link to={"/people/" + this.props.people.id + "/edit"} className="btn btn-primary btn-sm">Edit</Link>
+        <div className="form-group row">
+          <div className="col-sm-3 text-sm-right">Mobile:</div>
+          <div className="col-sm-21">{this.isNotNull(this.props.people.mobile)}</div>
+        </div>
+        <div className="form-group row">
+          <div className="offset-sm-3 col-sm-21">
+            <Link to={"/people/" + this.props.people.id + "/edit"} className="btn btn-primary btn-sm">Edit</Link>
+          </div>
         </div>
       </div>
     );

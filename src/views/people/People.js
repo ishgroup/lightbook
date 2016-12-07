@@ -54,9 +54,6 @@ class People extends Component {
             </div>
 
             <div className="col-xs-6">
-              <a href={"https://squish.ish.com.au/issues/?jql=reporter%20%3D%20"+ _name[0] +"%20and%20resolution%20%3D%20Unresolved"} style={{marginRight: '5px'}} target="_blank">
-                <img src={squish_logo} width="38px" height="25px" alt="Squish Logo" />
-              </a>
               <a href="#" onClick={this.handleRemovePeople.bind(this)} style={{marginRight: '5px'}}>
                 <Icon name="remove" />
               </a>
@@ -65,7 +62,15 @@ class People extends Component {
         </div>
         {this.state.viewToggle ?
           <div className="view-people col-xs-24">
-            <PeopleView people={_people} checkFetched={this.handleCheckFetched.bind(this)} fetch={this.state.viewToggle} />
+            <PeopleView people={_people} checkFetched={this.handleCheckFetched.bind(this)} fetch={this.state.viewToggle}>
+              <h6>
+                People View -
+                <a href={"https://squish.ish.com.au/issues/?jql=reporter%20%3D%20"+ _name[0] +"%20and%20resolution%20%3D%20Unresolved"} style={{marginRight: '5px'}} target="_blank">
+                  <img src={squish_logo} width="38px" height="25px" alt="Squish Logo" />
+                </a>
+              </h6>
+            </PeopleView>
+
           </div> : ''}
       </div>
     );
