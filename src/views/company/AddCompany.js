@@ -26,12 +26,12 @@ class AddCompany extends Component {
 
     const newrow = {
       name: name,
-      email: email,
+      // email: email,
       phone: phone,
       address: address,
       suburb: suburb,
       postal: postal,
-      country: country
+      // country: country
     };
 
     if(valiadte.isValidate) {

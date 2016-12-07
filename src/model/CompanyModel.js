@@ -2,7 +2,7 @@ import BaseModel from './BaseModel';
 
 class CompanyModel {
   static add(that, company, callback) {
-    BaseModel.put(that, '/data/company/add', company, callback);
+    BaseModel.post(that, '/data/company/add', company, callback);
   }
 
   static edit(that, company, callback) {
