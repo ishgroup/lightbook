@@ -30,8 +30,7 @@ class PeopleEdit extends Component {
       company_role: this.refs.company_role.item.value,
       phone: this.refs.phone.item.value,
       notes: this.refs.notes.item.value,
-      mobile: this.refs. mobile.item.value,
-      password: ''
+      mobile: this.refs.mobile.item.value
     };
 
     PeopleModel.edit(this, newrow, function(that, response) {
