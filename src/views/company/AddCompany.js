@@ -14,12 +14,12 @@ class AddCompany extends Component {
 
     const validate = new Validate();
     const name     = validate.field('Name', this.refs.name.item).required().value();
-    const email    = validate.field('Email', this.refs.email.item).required().value();
+    //const email    = validate.field('Email', this.refs.email.item).required().value();
     const phone    = this.refs.phone.item.value;
     const address  = this.refs.address.item.value;
     const suburb   = this.refs.suburb.item.value;
     const postal   = this.refs.postal.item.value;
-    const country  = this.refs.country.item.value;
+    //const country  = this.refs.country.item.value;
 
     const newrow = {
       name: name,

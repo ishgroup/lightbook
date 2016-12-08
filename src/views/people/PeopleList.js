@@ -13,14 +13,16 @@ class PeopleList extends Component {
     super(props);
 
     this.state = {
-      peoplelist: []
+      peoplelist: [],
+      fetched: false
     };
 
     if(this.props.params.id !== undefined) {
       PeopleModel.getList(this, this.props.params.id, function(that, response) {
         if(response.data.peoples !== undefined) {
           that.setState({
-            peoplelist: response.data.peoples
+            peoplelist: response.data.peoples,
+            fetched: true
           });
         }
       });
@@ -87,11 +89,17 @@ class PeopleList extends Component {
 
   render() {
     const _plist = this.state.peoplelist;
-    const _hide_peoples = (_plist.length === 0 ? {display: 'none'} : null);
 
     return (
-      <div className="people-list col-lg-24" style={_hide_peoples}>
-        <ListView list={_plist} onRemove={this.handlePeopleRemove} onEdits={this.handlePeopleEditOpen.bind(this)} block={this} item={this.renderPeople} />
+      <div className="people-list">
+        {_plist.length !== 0 ?
+          <ListView list={_plist} onRemove={this.handlePeopleRemove} onEdits={this.handlePeopleEditOpen.bind(this)} block={this} item={this.renderPeople} />
+        : (this.state.fetched === true ?
+            <div className="alert alert-info" role="alert">
+              People not found under this company.
+            </div>
+          : '')
+        }
       </div>
     );
   }
