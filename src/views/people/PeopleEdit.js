@@ -61,7 +61,7 @@ class PeopleEdit extends Component {
 
             <div className="form-group row">
               <div className="offset-sm-3 col-sm-21">
-                <input type="submit" className="btn btn-primary" value="Update People"/>&nbsp;
+                <input type="submit" className="btn btn-primary" value="Update"/>&nbsp;
                 <input type="button" className="btn btn-primary" value="Close" onClick={this.hideAddForm.bind(this)} />
               </div>
             </div>
