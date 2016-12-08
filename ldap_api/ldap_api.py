@@ -1,4 +1,6 @@
 import re
+import os
+import hashlib
 import ldap
 from ldap.controls import SimplePagedResultsControl
 
@@ -9,7 +11,7 @@ class LdapApi:
     SPACES_REGEX = re.compile(r"\s+", re.IGNORECASE)
     ENTRY_MAPPING = {
         'telephoneNumber': 'phone',
-        'uniqueIdentifier': 'username',
+        'uid': 'username',
         'cn': 'name',
         'title': 'company_role',
         'facsimileTelephoneNumber': 'fax',
@@ -28,7 +30,7 @@ class LdapApi:
         'people': {
             'uidNumber': 'id',
             'cn': 'name',
-            'uniqueIdentifier': 'username'
+            'uid': 'username'
         },
         'companies': {
             'uniqueIdentifier': 'id',
@@ -165,7 +167,7 @@ class LdapApi:
             ldap_attributes['sn'] = ldap_attributes['cn']
             ldap_attributes['givenName'] = ldap_attributes['cn']
 
-        ldap_attributes['userPassword'] = attributes['password']
+        ldap_attributes['userPassword'] = self.__make_password(attributes.get('password', ''))
 
         need_auto_add_to_task = False
         if 'auto_add_to_task' in attributes and attributes['auto_add_to_task']:
@@ -178,6 +180,7 @@ class LdapApi:
             try:
                 person_id = self.__increase_max_uidNumber()
                 dn = 'uidNumber={},{}'.format(person_id, self.LDAP_BASES['people'])
+
                 self.__add_entry(dn, ldap_attributes)
                 break
             except ldap.ALREADY_EXISTS:
@@ -394,3 +397,10 @@ class LdapApi:
             if value is not None and len(value) == 1:
                 attributes_dict[key] = self.__clear_str(value[0])
         return attributes_dict
+
+    def __make_password(self, password):
+        salt = os.urandom(4)
+        sha = hashlib.sha1(password)
+        sha.update(salt)
+        digest_salt_b64 = '{}{}'.format(sha.digest(), salt).encode('base64').strip()
+        return '{{SSHA}}{}'.format(digest_salt_b64)

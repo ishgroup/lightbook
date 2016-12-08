@@ -5,6 +5,7 @@ import logging
 from gevent import monkey, wsgi
 from flask import Flask, jsonify, request, render_template, g
 from logstash_formatter import LogstashFormatterV1
+import ldap
 from ldap_api import requires_auth, SiteSettings
 
 debug_mode = '--debug' in sys.argv
@@ -26,6 +27,16 @@ if not debug_mode:
   except:
     None
     # Just keep going
+
+@app.errorhandler(ldap.LDAPError)
+def ldap_error_handler(e):
+    app.logger.error('Ldap error: %s', (e))
+    # import pdb; pdb.set_trace()
+
+    return jsonify({
+      'status': 'error',
+      'message': e.args[0]['desc'].encode()
+    }), 200
 
 @app.route('/')
 @requires_auth
