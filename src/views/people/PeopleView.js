@@ -38,7 +38,7 @@ class PeopleView extends Component {
     }
 
     return (
-      <div className="row">
+      <div className="row-view">
         <div className="form-group row">
           <div className="col-xs-24">
             {this.props.children}

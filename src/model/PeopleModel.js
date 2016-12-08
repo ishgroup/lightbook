@@ -6,7 +6,7 @@ class PeopleModel {
   }
 
   static edit(that, people, callback) {
-    BaseModel.post(that, '/data/people/update/' + people.id , people, callback);
+    BaseModel.patch(that, '/data/people/update/' + people.id , people, callback);
   }
 
   static getList(that, id, callback) {

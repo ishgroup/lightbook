@@ -17,41 +17,51 @@ class CompanyView extends Component {
     return text === 'null' ? '-' : text;
   }
 
+  getRow(label, item) {
+    if(item !== 'null' && item !== undefined) {
+      return (
+        <div className="form-group row">
+          <div className="col-sm-3 text-sm-right">{label}:</div>
+          <div className="col-sm-21">{item}</div>
+        </div>
+      );
+    }
+  }
+
   render() {
-    const inputStyle = {padding: '12px'};
+
+    let phone = null;
+    if(this.props.company.phone !== undefined && this.props.company.phone !== null) {
+      phone = [];
+      this.props.company.phone.forEach(function(value) {
+        const _phonePart = value.split(' ');
+        if(_phonePart[0] !== null)
+          phone.push(['<a href="tel:'+ _phonePart[0] +'">'+ _phonePart[0] +'</a> ' + _phonePart[1]]);
+        else
+          phone.push([value]);
+      });
+    }
 
     return (
-      <div className="row">
-        <div className="col-xs-24" style={inputStyle}>
-          <div className="col-sm-6">Name:</div>
-          <div className="col-sm-18">{this.isNotNull(this.props.company.name)}</div>
-        </div>
-        <div className="col-xs-24" style={inputStyle}>
-          <div className="col-sm-6">Email:</div>
-          <div className="col-sm-18">{this.isNotNull(this.props.company.email)}</div>
-        </div>
-        <div className="col-xs-24" style={inputStyle}>
-          <div className="col-sm-6">Phone:</div>
-          <div className="col-sm-18">{this.isNotNull((this.props.company.phone !== undefined && this.props.company.phone !== 'null') ? this.props.company.phone.join(', ') : '')}</div>
-        </div>
-        <div className="col-xs-24" style={inputStyle}>
-          <div className="col-sm-6">Address:</div>
-          <div className="col-sm-18">{this.isNotNull(this.props.company.address)}</div>
-        </div>
-        <div className="col-xs-24" style={inputStyle}>
-          <div className="col-sm-6">Suburb:</div>
-          <div className="col-sm-18">{this.isNotNull(this.props.company.suburb)}</div>
-        </div>
-        <div className="col-xs-24" style={inputStyle}>
-          <div className="col-sm-6">Postal:</div>
-          <div className="col-sm-18">{this.isNotNull(this.props.company.postal)}</div>
-        </div>
-        <div className="col-xs-24" style={inputStyle}>
-          <div className="col-sm-6">Country:</div>
-          <div className="col-sm-18">{this.isNotNull(this.props.company.country)}</div>
-        </div>
-        <div className="col-xs-24" style={inputStyle}>
-          <Link to={"/company/" + this.props.company.id + "/edit"} className="btn btn-primary btn-sm">Edit</Link>
+      <div className="row-view">
+        {this.getRow("Name", this.props.company.name)}
+        {this.getRow("Email", this.props.company.email)}
+
+        {phone !== null ?
+          <div className="form-group row">
+            <div className="col-sm-3 text-sm-right">Phone:</div>
+            <div className="col-sm-21" dangerouslySetInnerHTML={{__html: phone.join(', ')}} />
+          </div>
+        : ''}
+        {this.getRow("Address", this.props.company.address)}
+        {this.getRow("Suburb", this.props.company.suburb)}
+        {this.getRow("Postal", this.props.company.postal)}
+        {this.getRow("Country", this.props.company.country)}
+
+        <div className="form-group row">
+          <div className="offset-sm-3 col-sm-21">
+            <Link to={"/company/" + this.props.company.id + "/edit"} className="btn btn-primary btn-sm">Edit</Link>
+          </div>
         </div>
       </div>
     );

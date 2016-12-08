@@ -125,7 +125,10 @@ body {
   }
 }
 .view-people, .view-company {
-  >.row {
+  position: relative;
+  overflow: hidden;
+  display: none;
+  >.row-view {
     cursor: default;
     margin-top: 10px;
     padding: 15px 10px;

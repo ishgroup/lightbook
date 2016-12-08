@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Icon from 'react-fa';
 import squish_logo from '../../assets/img/squish.png';
 import PeopleView from './PeopleView';
+import Toggle from '../../components/Toggle';
 
 class People extends Component {
   constructor(props) {
@@ -26,6 +27,8 @@ class People extends Component {
     this.setState({
       'viewToggle': _toggleState === true ? false : true
     });
+
+    Toggle.Slide(this.state.viewToggle, 'view-people-'+ this.props.people.id);
   }
 
   handleCheckFetched(check, people=[]) {
@@ -60,18 +63,18 @@ class People extends Component {
             </div>
           </div>
         </div>
-        {this.state.viewToggle ?
-          <div className="view-people col-xs-24">
-            <PeopleView people={_people} checkFetched={this.handleCheckFetched.bind(this)} fetch={this.state.viewToggle}>
-              <h6>
-                People View -
-                <a href={"https://squish.ish.com.au/issues/?jql=reporter%20%3D%20"+ _name[0] +"%20and%20resolution%20%3D%20Unresolved"} style={{marginRight: '5px'}} target="_blank">
-                  <img src={squish_logo} width="38px" height="25px" alt="Squish Logo" />
-                </a>
-              </h6>
-            </PeopleView>
 
-          </div> : ''}
+        <div className={"view-people col-xs-24" + (this.state.viewToggle ? " slide-down" : '')} id={"view-people-" + this.props.people.id}>
+          <PeopleView people={_people} checkFetched={this.handleCheckFetched.bind(this)} fetch={this.state.viewToggle}>
+            <h6>
+              People View -
+              <a href={"https://squish.ish.com.au/issues/?jql=reporter%20%3D%20"+ _name[0] +"%20and%20resolution%20%3D%20Unresolved"} style={{marginRight: '5px'}} target="_blank">
+                <img src={squish_logo} width="38px" height="25px" alt="Squish Logo" />
+              </a>
+            </h6>
+          </PeopleView>
+
+        </div>
       </div>
     );
   }

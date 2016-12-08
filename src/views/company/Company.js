@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Icon from 'react-fa';
 import { Link } from 'react-router';
 import CompanyView from './CompanyView';
+import Toggle from '../../components/Toggle';
 
 class Company extends Component {
   constructor(props) {
@@ -31,6 +32,8 @@ class Company extends Component {
     this.setState({
       'viewToggle': _toggleState === true ? false : true
     });
+
+    Toggle.Slide(this.state.viewToggle, 'view-company-'+ this.props.company.id);
   }
 
   handleCheckFetched(check, company=[]) {
@@ -64,10 +67,9 @@ class Company extends Component {
             </div>
           </div>
         </div>
-        {this.state.viewToggle ?
-          <div className="view-company col-xs-24">
-            <CompanyView company={_company} checkFetched={this.handleCheckFetched.bind(this)} fetch={this.state.viewToggle} />
-          </div> : ''}
+        <div className={"view-company col-xs-24" + (this.state.viewToggle ? " slide-down" : '')} id={"view-company-" + this.props.company.id}>
+          <CompanyView company={_company} checkFetched={this.handleCheckFetched.bind(this)} fetch={this.state.viewToggle} />
+        </div>
       </div>
     );
   }
