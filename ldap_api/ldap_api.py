@@ -307,7 +307,7 @@ class LdapApi:
     def __increase_max_uniqueIdentifier(self):
         new_max = self.__get_max_uniqueIdentifier() + 1
         dn = '{},{}'.format('cn=maxUniqueIdentifier', self.LDAP_BASES['counts'])
-        self.__ldap_client.modify_s(dn, [[ldap.MOD_REPLACE, 'uid', self.__clear_param(new_max)]])
+        self.__ldap_client.modify_s(dn, [(ldap.MOD_REPLACE, 'uid', self.__clear_param(new_max))])
         return new_max
 
     def __get_max_uidNumber(self):
@@ -316,7 +316,7 @@ class LdapApi:
     def __increase_max_uidNumber(self):
         new_max = self.__get_max_uidNumber() + 1
         dn = '{},{}'.format('cn=maxUidNumber',self.LDAP_BASES['counts'])
-        self.__ldap_client.modify_s(dn, [[ldap.MOD_REPLACE, 'uid', self.__clear_param(new_max)]])
+        self.__ldap_client.modify_s(dn, [(ldap.MOD_REPLACE, 'uid', self.__clear_param(new_max))])
         return new_max
 
     def __get_entry_uid(self, base, ldap_filter):
