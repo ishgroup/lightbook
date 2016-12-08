@@ -48,7 +48,7 @@ def view_person(person_id):
 @app.route('/data/people/update/<int:person_id>', methods=['PATCH', 'OPTIONS'])
 @requires_auth
 def update_person(person_id):
-  result = get_ldap_api().modify_person(person_id, request.json)
+  result = get_ldap_api().modify_person(person_id, request.get_json())
   if result is None:
     return jsonify({
       "status": "error",
@@ -66,7 +66,7 @@ def update_person(person_id):
 @app.route('/data/companies/update/<int:company_id>', methods=['PATCH', 'OPTIONS'])
 @requires_auth
 def update_company(company_id):
-  result = get_ldap_api().modify_company(company_id, request.json)
+  result = get_ldap_api().modify_company(company_id, request.get_json())
   if result is None:
     return jsonify({
       "status": "error",
@@ -166,7 +166,7 @@ def add_person():
   return jsonify({
     "status": "success",
     "output": {
-      "people": get_ldap_api().add_person(request.json)
+      "people": get_ldap_api().add_person(request.get_json())
     }
   })
 
@@ -177,7 +177,7 @@ def add_company():
   return jsonify({
     "status": "success",
     "output": {
-      "company": get_ldap_api().add_company(request.json)
+      "company": get_ldap_api().add_company(request.get_json())
     }
   })
 
