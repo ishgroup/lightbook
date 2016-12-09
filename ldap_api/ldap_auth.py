@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template, g, Response
+from flask import request, g, Response
 from functools import wraps
 from settings import SiteSettings
 from ldap_api import LdapApi

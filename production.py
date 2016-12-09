@@ -3,7 +3,7 @@
 import sys
 import logging
 from gevent import monkey, wsgi
-from flask import Flask, jsonify, request, render_template, g
+from flask import Flask, jsonify, request, g
 from logstash_formatter import LogstashFormatterV1
 import ldap
 from ldap_api import requires_auth, SiteSettings
