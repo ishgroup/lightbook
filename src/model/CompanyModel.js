@@ -14,7 +14,7 @@ class CompanyModel {
   }
 
   static delete(that, id, callback) {
-    BaseModel.delete(that, '/data/company/delete/' + id, callback);
+    BaseModel.delete(that, '/data/companies/delete/' + id, callback);
   }
 }
 
