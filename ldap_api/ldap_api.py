@@ -361,6 +361,8 @@ class LdapApi:
     def __modify_ldap_entry(self, entry, attributes):
         dn = entry[0]
         ldap_attributes = self.__remap_dict(attributes, self.INVERSE_ENTRY_MAPPING)
+        ldap_attributes =  {k: v for k,v in ldap_attributes.items() if (v is not None) and (type(v) is not list or not (len(v) == 0 and entry[1].get(k) is None))}
+
         modify_list = self.__make_modify_list(ldap_attributes)
         self.__ldap_client.modify_s(dn, modify_list)
 
