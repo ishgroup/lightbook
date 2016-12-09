@@ -5,7 +5,6 @@ import Company from './views/company/Company';
 import EditPeople from './views/people/EditPeople';
 import SearchModel from './model/SearchModel';
 import PeopleModel from './model/PeopleModel';
-import Container from './components/Container';
 import ListView from './components/ListView';
 import SearchBox from './components/SearchBox';
 

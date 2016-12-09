@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
-import Icon from 'react-fa';
 import ViewCompany from './ViewCompany';
 import CompanyModel from '../../model/CompanyModel';
 import Toggle from '../../components/Toggle';
@@ -16,12 +15,6 @@ class Company extends Component {
       'viewToggle': false,
       company: []
     }
-  }
-
-  handleRemoveCompany(e) {
-    e.preventDefault();
-    this.props.onCompanyDelete(this.props.company);
-    return false;
   }
 
   handleViewToggle() {
@@ -57,12 +50,6 @@ class Company extends Component {
               <Link to={"company/" + this.props.company.id} className="link-people">
                 {this.props.company.name}
               </Link>
-            </div>
-
-            <div className="col-xs-6">
-              <a href="" onClick={this.handleRemoveCompany.bind(this)} style={{marginRight: '5px'}}>
-                <Icon name="remove" />
-              </a>
             </div>
           </div>
         </div>

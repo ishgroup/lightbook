@@ -55,13 +55,13 @@ class EditPeople extends Component {
       PeopleModel.delete(this, this.state.people.id, function(that, response) {
         if(response.data.output.message !== undefined) {
           alert(response.data.output.message);
-          that.hideAddForm();
+          that.goBack();
         }
       });
     }
   }
 
-  hideAddForm() {
+  goBack() {
     this.props.router.goBack();
   }
 
@@ -82,8 +82,8 @@ class EditPeople extends Component {
 
             <div className="form-group row">
               <div className="offset-sm-3 col-sm-21">
-                <input type="submit" className="btn btn-primary" value="Update"/>&nbsp;
-                <input type="button" className="btn btn-secondary" value="Discard changes" onClick={this.hideAddForm.bind(this)} />&nbsp;
+                <input type="submit" className="btn btn-primary" value="Update People"/>&nbsp;
+                <input type="button" className="btn btn-secondary" value="Discard changes" onClick={this.goBack.bind(this)} />&nbsp;
                 <input type="button" className="btn btn-danger" value="Remove" onClick={this.handleRemovePeople.bind(this)} />
               </div>
             </div>

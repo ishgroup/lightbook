@@ -51,7 +51,7 @@ class AddCompany extends Component {
     return false;
   }
 
-  hideAddForm() {
+  goBack() {
     this.props.router.goBack();
   }
 
@@ -71,7 +71,7 @@ class AddCompany extends Component {
           <div className="form-group row">
             <div className="offset-sm-3 col-sm-21">
               <input type="submit" className="btn btn-primary" value="Add Company"/>&nbsp;
-              <input type="button" className="btn btn-primary" value="Close" onClick={this.hideAddForm.bind(this)} />
+              <input type="button" className="btn btn-secondary" value="Discard changes" onClick={this.goBack.bind(this)} />
             </div>
           </div>
         </form>

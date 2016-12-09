@@ -57,8 +57,19 @@ class EditCompany extends Component {
     return false;
   }
 
-  hideAddForm() {
+  goBack() {
     this.props.router.goBack();
+  }
+
+  handleRemoveCompany() {
+    if(confirm('Are you sure you want to delete this company?')) {
+      CompanyModel.delete(this, this.state.company.id, function(that, response) {
+        if(response.data.output.message !== undefined) {
+          alert(response.data.output.message);
+          that.goBack();
+        }
+      });
+    }
   }
 
   render() {
@@ -79,7 +90,8 @@ class EditCompany extends Component {
             <div className="form-group row">
               <div className="offset-sm-3 col-sm-21">
                 <input type="submit" className="btn btn-primary" value="Update Company"/>&nbsp;
-                <input type="button" className="btn btn-primary" value="Close" onClick={this.hideAddForm.bind(this)} />
+                <input type="button" className="btn btn-secondary" value="Discard changes" onClick={this.goBack.bind(this)} />&nbsp;
+                <input type="button" className="btn btn-danger" value="Remove" onClick={this.handleRemoveCompany.bind(this)} />
               </div>
             </div>
 

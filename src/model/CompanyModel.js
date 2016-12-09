@@ -12,6 +12,10 @@ class CompanyModel {
   static getCompany(that, id, callback) {
     BaseModel.fetch(that, '/data/company/view/' + id, callback);
   }
+
+  static delete(that, id, callback) {
+    BaseModel.delete(that, '/data/company/delete/' + id, callback);
+  }
 }
 
 export default CompanyModel;
