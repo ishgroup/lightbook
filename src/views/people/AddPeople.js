@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Util from '../../components/Util';
 import PeopleModel from '../../model/PeopleModel';
 import Validate from '../../components/Validate';
 import FormField from '../../components/FormField';
@@ -13,15 +14,8 @@ class AddPeople extends Component {
     e.preventDefault();
     const validate = new Validate();
 
-    let phoneItem = this.refs.phone.item.value;
-    let phone = [];
-    if(phoneItem.length > 0) {
-      const phonePart = phoneItem.split(',');
-      phonePart.forEach(function(value) {
-        if(value.trim() !== '')
-          phone.push(value.trim());
-      });
-    }
+    const phone = Util.numberList(this.refs.phone.item.value);
+    const mobile = Util.numberList(this.refs.mobile.item.value);
 
     const newrow = {
       name: validate.field('Name', this.refs.name.item).required().value(),
@@ -31,7 +25,7 @@ class AddPeople extends Component {
       company_role: this.refs.company_role.item.value,
       phone: phone,
       notes: this.refs.notes.item.value,
-      mobile: this.refs.mobile.item.value
+      mobile: mobile
     };
 
     if(validate.isValidate) {

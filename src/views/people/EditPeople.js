@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import TextInputEdited from '../../components/TextInputEdited';
+import Util from '../../components/Util';
 import PeopleModel from '../../model/PeopleModel';
 
 class EditPeople extends Component {
@@ -22,15 +23,8 @@ class EditPeople extends Component {
   handleSubmit(e) {
     e.preventDefault();
 
-    let phoneItem = this.refs.phone.item.value;
-    let phone = [];
-    if(phoneItem.length > 0) {
-      const phonePart = phoneItem.split(',');
-      phonePart.forEach(function(value) {
-        if(value.trim() !== '')
-          phone.push(value.trim());
-      });
-    }
+    const phone = Util.numberList(this.refs.phone.item.value);
+    const mobile = Util.numberList(this.refs.mobile.item.value);
 
     const newrow = {
       id: this.state.people.id,
@@ -40,7 +34,7 @@ class EditPeople extends Component {
       company_role: this.refs.company_role.item.value,
       phone: phone,
       notes: this.refs.notes.item.value,
-      mobile: this.refs.mobile.item.value
+      mobile: mobile
     };
 
     PeopleModel.edit(this, newrow, function(that, response) {

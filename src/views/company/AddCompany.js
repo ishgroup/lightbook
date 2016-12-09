@@ -20,15 +20,7 @@ class AddCompany extends Component {
     const postal   = this.refs.postal.item.value;
     //const country  = this.refs.country.item.value;
 
-    let phoneItem = this.refs.phone.item.value;
-    let phone = [];
-    if(phoneItem.length > 0) {
-      const phonePart = phoneItem.split(',');
-      phonePart.forEach(function(value) {
-        if(value.trim() !== '')
-          phone.push(value.trim());
-      });
-    }
+    const phone = Util.numberList(this.refs.phone.item.value);
 
     const newrow = {
       name: name,

@@ -27,6 +27,18 @@ class Util extends Component {
     return phone;
   }
 
+  static numberList(item) {
+    let number = [];
+    if(item.length > 0) {
+      const list = item.split(',');
+      list.forEach(function(value) {
+        if(value.trim() !== '')
+          number.push(value.trim());
+      });
+    }
+    return number;
+  }
+
   static isEmpty(item) {
     return (item !== 'null' && item !== undefined && item !== '');
   }
