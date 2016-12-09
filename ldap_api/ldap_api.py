@@ -30,7 +30,8 @@ class LdapApi:
         'people': {
             'uidNumber': 'id',
             'cn': 'name',
-            'uid': 'username'
+            'uid': 'username',
+            'o': 'company'
         },
         'companies': {
             'uniqueIdentifier': 'id',

@@ -31,7 +31,6 @@ if not debug_mode:
 @app.errorhandler(ldap.LDAPError)
 def ldap_error_handler(e):
     app.logger.error('Ldap error: %s', (e))
-    # import pdb; pdb.set_trace()
 
     return jsonify({
       'status': 'error',

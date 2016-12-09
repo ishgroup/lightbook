@@ -62,43 +62,53 @@ def search_entry(search):
       "peoples": [
         {
           "id": "289",
-          "name": "Eilish"
+          "name": "Eilish",
+          "company": 'ish'
         },
         {
           "id": "512",
-          "name": "Andrew Bishop"
+          "name": "Andrew Bishop",
+          "company": 'ish'
         },
         {
           "id": "518",
-          "name": "Chris Fisher"
+          "name": "Chris Fisher",
+          "company": 'ish'
         },
         {
           "id": "574",
-          "name": "Sudhir Mishra"
+          "name": "Sudhir Mishra",
+          "company": 'ish'
         },
         {
           "id": "1681",
-          "name": "Bob Bishop"
+          "name": "Bob Bishop",
+          "company": 'other'
         },
         {
           "id": "1682",
-          "name": "Barry Bishop"
+          "name": "Barry Bishop",
+          "company": 'other'
         },
         {
           "id": "1696",
-          "name": "Daryn Chisholm"
+          "name": "Daryn Chisholm",
+          "company": 'other'
         },
         {
           "id": "1802",
-          "name": "Robert Fisher"
+          "name": "Robert Fisher",
+          "company": 'other'
         },
         {
           "id": "1816",
-          "name": "Rishi Lalseta"
+          "name": "Rishi Lalseta",
+          "company": 'other'
         },
         {
           "id": "1821",
-          "name": "Vishal Charan"
+          "name": "Vishal Charan",
+          "company": 'other'
         }
       ]
     }
