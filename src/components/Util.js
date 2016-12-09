@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 class Util extends Component {
   static Row(label, item, lclass = "col-sm-3 text-sm-right", rclass = "col-sm-21") {
-    console.log(item);
     if(Util.isEmpty(item)) {
       return (
         <div className="form-group row">

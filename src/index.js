@@ -13,14 +13,14 @@ import { Router, Route, hashHistory, IndexRoute  } from 'react-router';
 
 ReactDOM.render((
    <Router history={hashHistory}>
-      <Route path="/" component={App}>
+      <Route name="Lightbook" path="/" component={App}>
          <IndexRoute component={PeopleApp} />
-         <Route name="add-people" path="add-people" component={AddPeople} />
-         <Route name="add-company" path="add-company" component={AddCompany} />
-         <Route name="search" path="search" component={PeopleApp} />
-         <Route name="company" path="company/:id" component={PeopleList} />
-         <Route name="edit-company" path="company/:id/edit" component={EditCompany} />
-         <Route name="edit-people" path="people/:id/edit" component={PeopleEdit} />
+         <Route name="Add People" path="add-people" component={AddPeople} />
+         <Route name="Add Company" path="add-company" component={AddCompany} />
+         <Route name="Search" path="search" component={PeopleApp} />
+         <Route name="List of People" path="company/:id" component={PeopleList} />
+         <Route name="Edit Company" path="company/:id/edit" component={EditCompany} />
+         <Route name="Edit People" path="people/:id/edit" component={PeopleEdit} />
       </Route>
    </Router>
 

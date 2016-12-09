@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Icon from 'react-fa';
 import squish_logo from '../../assets/img/squish.png';
 import Toggle from '../../components/Toggle';
 import PeopleView from './PeopleView';
@@ -16,12 +15,6 @@ class People extends Component {
       'viewToggle': false,
       people: []
     }
-  }
-
-  handleRemovePeople(e) {
-    e.preventDefault();
-    this.props.onPeopleDelete(this.props.people);
-    return false;
   }
 
   handleViewToggle() {
@@ -60,12 +53,6 @@ class People extends Component {
                 {this.props.people.name}
               </span>
               {this.props.people.username !== undefined ? <span> - <a href={"mailto:"+ this.props.people.username}>{this.props.people.username}</a></span> : ''}
-            </div>
-
-            <div className="col-xs-6">
-              <a href="#" onClick={this.handleRemovePeople.bind(this)} style={{marginRight: '5px'}}>
-                <Icon name="remove" />
-              </a>
             </div>
           </div>
         </div>

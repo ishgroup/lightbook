@@ -31,20 +31,18 @@ class PeopleApp extends Component {
     const _has_search = this.props.location.query;
 
     if(_has_search.q !== undefined) {
-      if(_has_search.q.length > 0) {
-        const _search_query = _has_search.q;
-        const getSearchResponse = localStorage.getItem(this.peopleStorageKey());
+      this.state.filterString = _has_search.q;
 
-        if(getSearchResponse !== undefined && getSearchResponse !== null) {
-          const _parseResponse = JSON.parse(getSearchResponse);
-          if(_parseResponse.companies !== undefined && _parseResponse.peoples !== undefined) {
-            this.state = {
-              companylist: _parseResponse.companies,
-              peoplelist: _parseResponse.peoples,
-              filterString: _search_query
-            };
+      if(_has_search.q.length > 0) {
+        SearchModel.search(this, _has_search.q,
+          function(that, response) {
+            that.setState({
+              companylist: response.data.output.companies,
+              peoplelist: response.data.output.peoples
+            });
           }
-        }
+        );
+
       }
     }
 
@@ -114,7 +112,6 @@ class PeopleApp extends Component {
 
     SearchModel.search(this.block, _queryText,
       function(that, response) {
-        localStorage.setItem(that.peopleStorageKey(), JSON.stringify(response.data.output));
         that.setState({
           companylist: response.data.output.companies,
           peoplelist: response.data.output.peoples
@@ -130,7 +127,6 @@ class PeopleApp extends Component {
 
     if(_queryText.length === 0) {
       this.block.props.router.replace('search');
-      localStorage.setItem(this.block.peopleStorageKey(), JSON.stringify([]));
       this.block.setState({
         companylist: [],
         peoplelist: []

@@ -22,13 +22,23 @@ class PeopleEdit extends Component {
   handleSubmit(e) {
     e.preventDefault();
 
+    let phoneItem = this.refs.phone.item.value;
+    let phone = [];
+    if(phoneItem.length > 0) {
+      const phonePart = phoneItem.split(',');
+      phonePart.forEach(function(value) {
+        if(value.trim() !== '')
+          phone.push(value.trim());
+      });
+    }
+
     const newrow = {
       id: this.state.people.id,
       name: this.refs.name.item.value,
       username: this.refs.username.item.value,
       company: this.refs.company.item.value,
       company_role: this.refs.company_role.item.value,
-      phone: this.refs.phone.item.value,
+      phone: phone,
       notes: this.refs.notes.item.value,
       mobile: this.refs.mobile.item.value
     };
@@ -38,6 +48,17 @@ class PeopleEdit extends Component {
     });
 
     return false;
+  }
+
+  handleRemovePeople() {
+    if(confirm('Are you sure you want to delete this people?')) {
+      PeopleModel.delete(this, this.state.people.id, function(that, response) {
+        if(response.data.output.message !== undefined) {
+          alert(response.data.output.message);
+          that.hideAddForm();
+        }
+      });
+    }
   }
 
   hideAddForm() {
@@ -62,7 +83,8 @@ class PeopleEdit extends Component {
             <div className="form-group row">
               <div className="offset-sm-3 col-sm-21">
                 <input type="submit" className="btn btn-primary" value="Update"/>&nbsp;
-                <input type="button" className="btn btn-secondary" value="Discard changes" onClick={this.hideAddForm.bind(this)} />
+                <input type="button" className="btn btn-secondary" value="Discard changes" onClick={this.hideAddForm.bind(this)} />&nbsp;
+                <input type="button" className="btn btn-danger" value="Remove" onClick={this.handleRemovePeople.bind(this)} />
               </div>
             </div>
           </form>

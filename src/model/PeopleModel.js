@@ -16,6 +16,10 @@ class PeopleModel {
   static getPeople(that, id, callback) {
     BaseModel.fetch(that, '/data/people/view/' + id, callback);
   }
+
+  static delete(that, id, callback) {
+    BaseModel.delete(that, '/data/people/delete/' + id, callback);
+  }
 }
 
 export default PeopleModel;

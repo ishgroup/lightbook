@@ -11,7 +11,17 @@ class AddPeople extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    const validate      = new Validate();
+    const validate = new Validate();
+
+    let phoneItem = this.refs.phone.item.value;
+    let phone = [];
+    if(phoneItem.length > 0) {
+      const phonePart = phoneItem.split(',');
+      phonePart.forEach(function(value) {
+        if(value.trim() !== '')
+          phone.push(value.trim());
+      });
+    }
 
     const newrow = {
       name: validate.field('Name', this.refs.name.item).required().value(),
@@ -19,7 +29,7 @@ class AddPeople extends Component {
       username: validate.field('Username', this.refs.username.item).required().value(),
       company: validate.field('Company', this.refs.company.item).required().value(),
       company_role: this.refs.company_role.item.value,
-      phone: this.refs.phone.item.value,
+      phone: phone,
       notes: this.refs.notes.item.value,
       mobile: this.refs.mobile.item.value
     };

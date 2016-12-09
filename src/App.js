@@ -8,9 +8,22 @@ import Container from './components/Container';
 import ishLogo from './assets/img/ish-logo.png';
 
 class App extends Component {
+
   render() {
     let _active_add_form = 'add-link';
     let _active_search_form = 'search-link';
+
+    let pageTitle = 'Lightbook';
+    let routes = this.props.routes;
+
+    if(routes.length >= 2) {
+      let pagePart = routes[routes.length - 1];
+      if(pagePart.name !== undefined) {
+        document.title = pagePart.name +' - ' + pageTitle;
+      } else {
+        document.title = pageTitle;
+      }
+    }
 
     return (
       <div className="App clearfix">
