@@ -138,23 +138,17 @@ class LdapApi:
 
     def delete_company(self, company_id):
         dn = 'uniqueIdentifier={},{}'.format(company_id, self.LDAP_BASES['companies'])
-        try:
-            notify = self.__find_notify(dn)
-            if notify:
-                self.__ldap_client.delete_s(notify[0])
+        notify = self.__find_notify(dn)
+        if notify:
+            self.__ldap_client.delete_s(notify[0])
 
-            self.__ldap_client.delete_s(dn)
-            return True if self.get_company(company_id) is None else False
-        except:
-            return False
+        self.__ldap_client.delete_s(dn)
+        return True if self.get_company(company_id) is None else False
 
     def delete_person(self, person_id):
         dn = 'uidNumber={},{}'.format(person_id, self.LDAP_BASES['people'])
-        try:
-            self.__ldap_client.delete_s(dn)
-            return True if self.get_person(person_id) is None else False
-        except:
-            return False
+        self.__ldap_client.delete_s(dn)
+        return True if self.get_person(person_id) is None else False
 
     def add_person(self, attributes):
         ldap_attributes = self.__remap_dict(attributes, self.INVERSE_ENTRY_MAPPING)
@@ -174,6 +168,9 @@ class LdapApi:
             attributes.pop('auto_add_to_task')
             if 'company' in attributes:
                 need_auto_add_to_task = True
+
+        if 'active' not in ldap_attributes:
+            ldap_attributes['active'] = 'TRUE'
 
         create_attempts = 0
         while create_attempts < self.MAX_CREATE_ATTEMPTS - 1:
@@ -200,6 +197,10 @@ class LdapApi:
         ldap_attributes['objectClass'] = self.OBJECT_CLASSES['companies']
         ldap_attributes['o'] = ldap_attributes['cn']
         create_attempts = 0
+
+        if 'active' not in ldap_attributes:
+            ldap_attributes['active'] = 'TRUE'
+
         while create_attempts < self.MAX_CREATE_ATTEMPTS - 1:
             try:
                 company_id = self.__get_next_unique_identifier()
