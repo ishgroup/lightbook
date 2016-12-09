@@ -48,9 +48,11 @@ class EditCompany extends Component {
       country: country
     };
 
-    CompanyModel.edit(this, newrow, function(that, response) {
-      alert("Company updated successfully");
-    });
+    if(validate.isValidate) {
+      CompanyModel.edit(this, newrow, function(that, response) {
+        alert("Company updated successfully");
+      });
+    }
 
     return false;
   }

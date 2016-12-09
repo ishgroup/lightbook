@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import TextInputEdited from '../../components/TextInputEdited';
 import Util from '../../components/Util';
+import Validate from '../../components/Validate';
 import PeopleModel from '../../model/PeopleModel';
 
 class EditPeople extends Component {
@@ -23,13 +24,16 @@ class EditPeople extends Component {
   handleSubmit(e) {
     e.preventDefault();
 
+    const validate = new Validate();
+
     const phone = Util.numberList(this.refs.phone.item.value);
     const mobile = Util.numberList(this.refs.mobile.item.value);
 
     const newrow = {
       id: this.state.people.id,
-      name: this.refs.name.item.value,
-      username: this.refs.username.item.value,
+      name: validate.field('Name', this.refs.name.item).required().value(),
+      email: validate.field('Email', this.refs.email.item).required().value(),
+      username: validate.field('Username', this.refs.username.item).required().value(),
       company: this.refs.company.item.value,
       company_role: this.refs.company_role.item.value,
       phone: phone,
@@ -37,9 +41,11 @@ class EditPeople extends Component {
       mobile: mobile
     };
 
-    PeopleModel.edit(this, newrow, function(that, response) {
-      alert("People updated successfully");
-    });
+    if(validate.isValidate) {
+      PeopleModel.edit(this, newrow, function(that, response) {
+        alert("People updated successfully");
+      });
+    }
 
     return false;
   }
