@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import squish_logo from '../../assets/img/squish.png';
+import SquishLogo from '../../assets/img/squish.png';
 import Toggle from '../../components/Toggle';
-import PeopleView from './PeopleView';
+import ViewPeople from './ViewPeople';
 import PeopleModel from '../../model/PeopleModel';
 
 class People extends Component {
@@ -52,20 +52,20 @@ class People extends Component {
               <span className="link-people">
                 {this.props.people.name}
               </span>
-              {this.props.people.username !== undefined ? <span> - <a href={"mailto:"+ this.props.people.username}>{this.props.people.username}</a></span> : ''}
+              {this.props.people.company !== undefined ? <span className="company">{this.props.people.company}</span> : ''}
             </div>
           </div>
         </div>
 
         <div className={"view-people col-xs-24" + (this.state.viewToggle ? " slide-down" : '')} id={"view-people-" + this.props.people.id}>
-          <PeopleView people={_people}>
+          <ViewPeople people={_people}>
             <h6>
               People View -
               <a href={"https://squish.ish.com.au/issues/?jql=reporter%20%3D%20"+ _name[0] +"%20and%20resolution%20%3D%20Unresolved"} style={{marginRight: '5px'}} target="_blank">
-                <img src={squish_logo} width="38px" height="25px" alt="Squish Logo" />
+                <img src={SquishLogo} width="38px" height="25px" alt="Squish Logo" />
               </a>
             </h6>
-          </PeopleView>
+          </ViewPeople>
 
         </div>
       </div>

@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-
 import People from './People';
-import PeopleEdit from './PeopleEdit';
-
+import EditPeople from './EditPeople';
 import PeopleModel from '../../model/PeopleModel';
-
 import ListView from '../../components/ListView';
 
-class PeopleList extends Component {
+class ListPeople extends Component {
   constructor(props) {
     super(props);
 
@@ -77,7 +74,7 @@ class PeopleList extends Component {
   handlePeopleEditOpen(item) {
     PeopleModel.getPeople(this, item.id, function(that, response) {
       ReactDOM.render(
-        <PeopleEdit people={response.data.output.people} block={that} onPeopleEditSubmit={that.handlePeopleEdit} />,
+        <EditPeople people={response.data.output.people} block={that} onPeopleEditSubmit={that.handlePeopleEdit} />,
         document.getElementById('react-modal')
       );
     });
@@ -105,4 +102,4 @@ class PeopleList extends Component {
   }
 };
 
-export default PeopleList;
+export default ListPeople;

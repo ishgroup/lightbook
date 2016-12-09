@@ -43,7 +43,7 @@ class TextInputEdited extends Component {
     let textValue = this.getText(this.props.validate, this.state.value);
     let inputTextEmpty = '';
 
-    if(textValue === null || textValue === undefined || (textValue !== null && textValue.length === 0)) {
+    if(textValue === 'null' || textValue === undefined || (textValue !== 'null' && textValue.length === 0)) {
       inputTextEmpty = ' text-empty';
       textValue = this.props.placeholder;
     }

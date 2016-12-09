@@ -1,18 +1,15 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import People from './views/people/People';
+import Company from './views/company/Company';
+import EditPeople from './views/people/EditPeople';
+import SearchModel from './model/SearchModel';
+import PeopleModel from './model/PeopleModel';
+import Container from './components/Container';
+import ListView from './components/ListView';
+import SearchBox from './components/SearchBox';
 
-import People from './People';
-import Company from '../company/Company';
-import PeopleEdit from './PeopleEdit';
-
-import SearchModel from '../../model/SearchModel';
-import PeopleModel from '../../model/PeopleModel';
-
-import Container from '../../components/Container';
-import ListView from '../../components/ListView';
-import SearchBox from '../../components/SearchBox';
-
-class PeopleApp extends Component {
+class LightbookApp extends Component {
 
   constructor(props) {
     super(props);
@@ -25,8 +22,6 @@ class PeopleApp extends Component {
       showAddForm: false,
       showSearchForm: true,
     };
-
-    Container.setPageName('search');
 
     const _has_search = this.props.location.query;
 
@@ -145,8 +140,6 @@ class PeopleApp extends Component {
       filterString: '',
     });
 
-    Container.setPageName('add-form');
-
     this.closeSearchForm();
   }
 
@@ -161,8 +154,6 @@ class PeopleApp extends Component {
     this.setState({
       showSearchForm: true,
     });
-
-    Container.setPageName('search');
 
     this.closeAddForm();
   }
@@ -180,7 +171,7 @@ class PeopleApp extends Component {
   handlePeopleEditOpen(item) {
     PeopleModel.getPeople(this, item.id, function(that, response) {
       ReactDOM.render(
-        <PeopleEdit people={response.data.output.people} block={that} onPeopleEditSubmit={that.handlePeopleEdit} />,
+        <EditPeople people={response.data.output.people} block={that} onPeopleEditSubmit={that.handlePeopleEdit} />,
         document.getElementById('react-modal')
       );
     });
@@ -232,4 +223,4 @@ class PeopleApp extends Component {
   }
 };
 
-export default PeopleApp;
+export default LightbookApp;

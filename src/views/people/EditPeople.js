@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import TextInputEdited from '../../components/TextInputEdited';
 import PeopleModel from '../../model/PeopleModel';
 
-class PeopleEdit extends Component {
+class EditPeople extends Component {
 
   constructor(props) {
     super(props);
@@ -94,4 +94,4 @@ class PeopleEdit extends Component {
   }
 }
 
-export default PeopleEdit;
+export default EditPeople;

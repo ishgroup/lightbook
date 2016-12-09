@@ -5,13 +5,11 @@ import './assets/css/styles.css';
 
 import Icon from 'react-fa';
 import Container from './components/Container';
-import ishLogo from './assets/img/ish-logo.png';
+import IshLogo from './assets/img/ish-logo.png';
 
 class App extends Component {
 
   render() {
-    let _active_add_form = 'add-link';
-    let _active_search_form = 'search-link';
 
     let pageTitle = 'Lightbook';
     let routes = this.props.routes;
@@ -31,7 +29,7 @@ class App extends Component {
           <header id="header" className="row">
             <nav className="navbar navbar-dark bg-inverse">
               <div className="nav navbar-nav">
-                <Link to="/" className="navbar-brand"><img src={ishLogo} alt="ish" />ish customer directory</Link>
+                <Link to="/" className="navbar-brand"><img src={IshLogo} alt="ish" />ish customer directory</Link>
                 <div className="float-xs-right">
                   <li className="nav-item">
                     <Link to="add-people" className="nav-link" activeClassName="active">

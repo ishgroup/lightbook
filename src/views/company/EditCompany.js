@@ -28,11 +28,20 @@ class EditCompany extends Component {
     const validate = new Validate();
     const name     = validate.field('Name', this.refs.name.refs.inputEditedName).required().value();
     const email    = validate.field('Email', this.refs.email.refs.inputEditedName).required().value();
-    const phone    = this.refs.phone.refs.inputEditedName.value;
     const address  = this.refs.address.refs.inputEditedName.value;
     const suburb   = this.refs.suburb.refs.inputEditedName.value;
     const postal   = this.refs.postal.refs.inputEditedName.value;
     const country  = this.refs.country.refs.inputEditedName.value;
+
+    let phoneItem = this.refs.phone.refs.inputEditedName.value;
+    let phone = [];
+    if(phoneItem.length > 0) {
+      const phonePart = phoneItem.split(',');
+      phonePart.forEach(function(value) {
+        if(value.trim() !== '')
+          phone.push(value.trim());
+      });
+    }
 
     const newrow = {
       id: id,

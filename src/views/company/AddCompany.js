@@ -15,11 +15,20 @@ class AddCompany extends Component {
     const validate = new Validate();
     const name     = validate.field('Name', this.refs.name.item).required().value();
     //const email    = validate.field('Email', this.refs.email.item).required().value();
-    const phone    = this.refs.phone.item.value;
     const address  = this.refs.address.item.value;
     const suburb   = this.refs.suburb.item.value;
     const postal   = this.refs.postal.item.value;
     //const country  = this.refs.country.item.value;
+
+    let phoneItem = this.refs.phone.item.value;
+    let phone = [];
+    if(phoneItem.length > 0) {
+      const phonePart = phoneItem.split(',');
+      phonePart.forEach(function(value) {
+        if(value.trim() !== '')
+          phone.push(value.trim());
+      });
+    }
 
     const newrow = {
       name: name,

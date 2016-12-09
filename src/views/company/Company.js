@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import Icon from 'react-fa';
-import CompanyView from './CompanyView';
+import ViewCompany from './ViewCompany';
 import CompanyModel from '../../model/CompanyModel';
 import Toggle from '../../components/Toggle';
 
@@ -57,7 +57,6 @@ class Company extends Component {
               <Link to={"company/" + this.props.company.id} className="link-people">
                 {this.props.company.name}
               </Link>
-              {this.props.company.email !== undefined ? <span> - <a href={"mailto:"+ this.props.company.email}>{this.props.company.email}</a></span> : ''}
             </div>
 
             <div className="col-xs-6">
@@ -68,9 +67,9 @@ class Company extends Component {
           </div>
         </div>
         <div className={"view-company col-xs-24" + (this.state.viewToggle ? " slide-down" : '')} id={"view-company-" + this.props.company.id}>
-          <CompanyView company={_company}>
+          <ViewCompany company={_company}>
             <h6>Company View</h6>
-          </CompanyView>
+          </ViewCompany>
         </div>
       </div>
     );

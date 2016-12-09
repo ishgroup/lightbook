@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import { Link } from 'react-router';
 import Util from '../../components/Util';
 
-class CompanyView extends Component {
-
+class ViewPeople extends Component {
   render() {
-    let phone = Util.Phone(this.props.company.phone);
+    let phone = Util.Phone(this.props.people.phone);
 
     return (
       <div className="row-view">
@@ -14,24 +13,21 @@ class CompanyView extends Component {
             {this.props.children}
           </div>
         </div>
-
-        {Util.Row("Name", this.props.company.name)}
-        {Util.Row("Email", this.props.company.email)}
-
+        {Util.Row("Name", this.props.people.name)}
+        {Util.Row("Email", this.props.people.email)}
+        {Util.Row("Company", this.props.people.company)}
+        {Util.Row("Company Role", this.props.people.company_role)}
         {phone !== null ?
           <div className="form-group row">
             <div className="col-sm-3 text-sm-right">Phone:</div>
             <div className="col-sm-21" dangerouslySetInnerHTML={{__html: phone.join(', ')}} />
           </div>
         : ''}
-        {Util.Row("Address", this.props.company.address)}
-        {Util.Row("Suburb", this.props.company.suburb)}
-        {Util.Row("Postal", this.props.company.postal)}
-        {Util.Row("Country", this.props.company.country)}
-
+        {Util.Row("Notes", this.props.people.notes)}
+        {Util.Row("Mobile", this.props.people.mobile)}
         <div className="form-group row">
           <div className="offset-sm-3 col-sm-21">
-            <Link to={"/company/" + this.props.company.id + "/edit"} className="btn btn-primary btn-sm">Edit</Link>
+            <Link to={"/people/" + this.props.people.id + "/edit"} className="btn btn-primary btn-sm">Edit</Link>
           </div>
         </div>
       </div>
@@ -39,4 +35,4 @@ class CompanyView extends Component {
   }
 }
 
-export default CompanyView;
+export default ViewPeople;
