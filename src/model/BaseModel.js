@@ -9,7 +9,7 @@ class BaseModel {
           callback(that, response);
         else {
           if(response.data.status !== undefined) {
-            alert('Error: Unable to get record from "' + url + '"');
+            alert('Error: Unable to get record from "' + url + '"\nError: ' + response.data.message);
             return false;
           }
         }
@@ -23,7 +23,7 @@ class BaseModel {
           callback(that, response);
         else {
           if(response.data.status !== undefined) {
-            alert('Error: Unable to post record for "' + url + '"');
+            alert('Error: Unable to post record for "' + url + '"\nError: ' + response.data.message);
             return false;
           }
         }
@@ -37,7 +37,7 @@ class BaseModel {
           callback(that, response);
         else {
           if(response.data.status !== undefined) {
-            alert('Error: Unable to put record for "' + url + '"');
+            alert('Error: Unable to put record for "' + url + '"\nError: ' + response.data.message);
             return false;
           }
         }
@@ -51,7 +51,7 @@ class BaseModel {
           callback(that, response);
         else {
           if(response.data.status !== undefined) {
-            alert('Error: Unable to patch record for "' + url + '"');
+            alert('Error: Unable to patch record for "' + url + '"\nError: ' + response.data.message);
             return false;
           }
         }
@@ -65,7 +65,7 @@ class BaseModel {
           callback(that, response);
         else {
           if(response.data.status !== undefined) {
-            alert('Error: Unable to delete record for "' + url + '"');
+            alert('Error: Unable to delete record for "' + url + '"\nError: ' + response.data.message);
             return false;
           }
         }
