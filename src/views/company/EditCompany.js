@@ -27,12 +27,13 @@ class EditCompany extends Component {
     const id = this.state.company.id;
 
     const validate = new Validate();
-    const name     = validate.field('Name', this.refs.name.refs.item).required().value();
-    const email    = validate.field('Email', this.refs.email.refs.item).required().value();
-    const address  = this.refs.address.refs.item.value;
-    const suburb   = this.refs.suburb.refs.item.value;
-    const postal   = this.refs.postal.refs.item.value;
-    const country  = this.refs.country.refs.item.value;
+
+    const name     = validate.field('Name', this.refs.name.item).required().value();
+    const email    = validate.field('Email', this.refs.email.item).required().value();
+    const address  = this.refs.address.item.value;
+    const suburb   = this.refs.suburb.item.value;
+    const postal   = this.refs.postal.item.value;
+    const country  = this.refs.country.item.value;
 
     const phone = Util.numberList(this.refs.phone.item.value);
 
