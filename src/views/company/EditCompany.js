@@ -29,23 +29,23 @@ class EditCompany extends Component {
     const validate = new Validate();
 
     const name     = validate.field('Name', this.refs.name.item).required().value();
-    const email    = validate.field('Email', this.refs.email.item).required().value();
+    //const email    = validate.field('Email', this.refs.email.item).required().value();
     const address  = this.refs.address.item.value;
     const suburb   = this.refs.suburb.item.value;
     const postal   = this.refs.postal.item.value;
-    const country  = this.refs.country.item.value;
+    //const country  = this.refs.country.item.value;
 
     const phone = Util.numberList(this.refs.phone.item.value);
 
     const newrow = {
       id: id,
       name: name,
-      email: email,
+      //email: email,
       phone: phone,
       address: address,
       suburb: suburb,
       postal: postal,
-      country: country
+      //country: country
     };
 
     if(validate.isValidate) {
