@@ -178,7 +178,7 @@ class LdapApi:
         create_attempts = 0
         while create_attempts < self.MAX_CREATE_ATTEMPTS - 1:
             try:
-                person_id = self.__increase_max_uidNumber()
+                person_id = self.__get_next_uid()
                 dn = 'uidNumber={},{}'.format(person_id, self.LDAP_BASES['people'])
 
                 self.__add_entry(dn, ldap_attributes)
@@ -194,6 +194,7 @@ class LdapApi:
 
         return self.get_person(person_id)
 
+
     def add_company(self, attributes):
         ldap_attributes = self.__remap_dict(attributes, self.INVERSE_ENTRY_MAPPING)
         ldap_attributes['objectClass'] = self.OBJECT_CLASSES['companies']
@@ -201,7 +202,7 @@ class LdapApi:
         create_attempts = 0
         while create_attempts < self.MAX_CREATE_ATTEMPTS - 1:
             try:
-                company_id = self.__increase_max_uniqueIdentifier()
+                company_id = self.__get_next_unique_identifier()
                 dn = 'uniqueIdentifier={},{}'.format(company_id, self.LDAP_BASES['companies'])
                 self.__add_entry(dn, ldap_attributes)
                 break
@@ -212,6 +213,7 @@ class LdapApi:
             self.__add_entry(dn, ldap_attributes)
 
         return self.get_company(company_id)
+
 
     # private
 
@@ -301,23 +303,34 @@ class LdapApi:
 
         return response[0]
 
-    def __get_max_uniqueIdentifier(self):
-        return self.__get_entry_uid(self.LDAP_BASES['counts'], '(cn=maxUniqueIdentifier)')
 
-    def __increase_max_uniqueIdentifier(self):
-        new_max = self.__get_max_uniqueIdentifier() + 1
+    def __get_next_unique_identifier(self):
+        """
+        Get the next uniqueIdentifier available in LDAP
+        :return: int next value
+        """
+        # Get the maximum value cached in an LDAP attribute
+        next_value = self.__get_entry_uid(self.LDAP_BASES['counts'], '(cn=maxUniqueIdentifier)') + 1
+
+        # Store this next value back to LDAP for the next request
         dn = '{},{}'.format('cn=maxUniqueIdentifier', self.LDAP_BASES['counts'])
-        self.__ldap_client.modify_s(dn, [(ldap.MOD_REPLACE, 'uid', self.__clear_param(new_max))])
-        return new_max
+        self.__ldap_client.modify_s(dn, [(ldap.MOD_REPLACE, 'uid', self.__clear_param(next_value))])
+        return next_value
 
-    def __get_max_uidNumber(self):
-        return self.__get_entry_uid(self.LDAP_BASES['counts'], '(cn=maxUidNumber)')
 
-    def __increase_max_uidNumber(self):
-        new_max = self.__get_max_uidNumber() + 1
+    def __get_next_uid(self):
+        """
+        Get the next uid available in LDAP
+        :return: int next value
+        """
+        # Get the maximum value cached in an LDAP attribute
+        next_value = self.__get_entry_uid(self.LDAP_BASES['counts'], '(cn=maxUidNumber)') + 1
+
+        # Store this next value back to LDAP for the next request
         dn = '{},{}'.format('cn=maxUidNumber',self.LDAP_BASES['counts'])
-        self.__ldap_client.modify_s(dn, [(ldap.MOD_REPLACE, 'uid', self.__clear_param(new_max))])
-        return new_max
+        self.__ldap_client.modify_s(dn, [(ldap.MOD_REPLACE, 'uid', self.__clear_param(next_value))])
+        return next_value
+
 
     def __get_entry_uid(self, base, ldap_filter):
         result = self.__ldap_client.search_s(base, ldap.SCOPE_SUBTREE, ldap_filter, attrlist=['uid'])[0][1]['uid'][0]
