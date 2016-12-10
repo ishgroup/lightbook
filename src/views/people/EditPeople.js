@@ -107,9 +107,9 @@ class EditPeople extends Component {
 
             <div className="form-group row">
               <div className="offset-sm-3 col-sm-21">
-                <input type="submit" className="btn btn-primary" value="Update People" disabled={this.state.disabledUpdateBtn} />&nbsp;
+                <input type="submit" className="btn btn-primary" value="Update" disabled={this.state.disabledUpdateBtn} />&nbsp;
                 <input type="button" className="btn btn-secondary" value="Discard changes" onClick={this.goBack.bind(this)} />&nbsp;
-                <input type="button" className="btn btn-danger" value="Remove" onClick={this.handleRemovePeople.bind(this)} disabled={this.state.disabledRemoveBtn} />
+                <input type="button" className="btn btn-danger" value="Delete" onClick={this.handleRemovePeople.bind(this)} disabled={this.state.disabledRemoveBtn} />
               </div>
             </div>
           </form>
