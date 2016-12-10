@@ -22,7 +22,11 @@ class FormField extends Component {
       <div className="form-group row">
         <label htmlFor={"input-" + this.props.name}  className="col-sm-3 col-form-label text-sm-right">{this.props.label}</label>
         <div className="col-sm-21">
-          <input type="text" name={this.props.name} value={this.state.value} id={"input-" + this.props.name} placeholder={this.props.label} ref={(item) => { this.item = item} } onChange={this.handleChange.bind(this)} className="form-control" />
+          {
+            this.props.children !== undefined
+            ? this.props.children
+            : <input type="text" name={this.props.name} value={this.state.value} id={"input-" + this.props.name} placeholder={this.props.label} ref={(item) => { this.item = item} } onChange={this.handleChange.bind(this)} className="form-control" />
+          }
         </div>
       </div>
     );

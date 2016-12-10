@@ -3,6 +3,7 @@ import Util from '../../components/Util';
 import PeopleModel from '../../model/PeopleModel';
 import Validate from '../../components/Validate';
 import FormField from '../../components/FormField';
+import AutoComplete from '../../components/AutoComplete';
 
 class AddPeople extends Component {
   constructor(props) {
@@ -63,7 +64,10 @@ class AddPeople extends Component {
           <FormField label="Name" name="name" ref="name" />
           <FormField label="Email" name="email" ref="email" />
           <FormField label="Username" name="username" ref="username" />
-          <FormField label="Company" name="company" ref="company" />
+          <FormField label="Company" name="company" ref="company">
+            <AutoComplete placeholder="Company" url="/data/companies/search" ref="search_company" output="companies" />
+          </FormField>
+
           <FormField label="Company Role" name="company_role" ref="company_role" />
           <FormField label="Phone" name="phone" ref="phone" />
           <FormField label="Notes" name="notes" ref="notes" />
