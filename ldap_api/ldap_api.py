@@ -68,10 +68,20 @@ class LdapApi:
         return result
 
     def get_company(self, company_id):
+        """
+        Get a company record
+        :param company_id:  the company unique identifier
+        :return: the company if it exists, or none if it doesn't
+        """
         ldap_response = self.__find_company(company_id)
         return self.__extract_value_from_array(self.__company_from_ldap(ldap_response[1])) if ldap_response else None
 
-    def get_company_people(self, company_id):
+    def get_people(self, company_id):
+        """
+        Get all the people attached to this company
+        :param company_id: the company unique identifier
+        :return: list of people sorted by name
+        """
         company = self.__find_company(company_id)
         if company is None:
             return None
@@ -169,7 +179,7 @@ class LdapApi:
             ldap_attributes['sn'] = ldap_attributes['cn']
             ldap_attributes['givenName'] = ldap_attributes['cn']
 
-        ldap_attributes['userPassword'] = self.__make_password(attributes.get('password', ''))
+        ldap_attributes['userPassword'] = self.__hash_password(attributes.get('password', ''))
 
         need_auto_add_to_task = False
         if 'auto_add_to_task' in attributes and attributes['auto_add_to_task']:
@@ -181,7 +191,7 @@ class LdapApi:
             ldap_attributes['active'] = 'TRUE'
 
         create_attempts = 0
-        while create_attempts < self.MAX_CREATE_ATTEMPTS - 1:
+        while create_attempts < self.MAX_CREATE_ATTEMPTS:
             try:
                 person_id = self.__get_next_uid()
                 dn = 'uidNumber={},{}'.format(person_id, self.LDAP_BASES['people'])
@@ -191,7 +201,7 @@ class LdapApi:
             except ldap.ALREADY_EXISTS:
                 create_attempts += 1
 
-        if create_attempts == self.MAX_CREATE_ATTEMPTS - 1:
+        if create_attempts == self.MAX_CREATE_ATTEMPTS:
             self.__add_entry(dn, ldap_attributes)
 
         if need_auto_add_to_task:
@@ -418,7 +428,7 @@ class LdapApi:
                 attributes_dict[key] = self.__clear_str(value[0])
         return attributes_dict
 
-    def __make_password(self, password):
+    def __hash_password(self, password):
         """
         Take plaintext password and return a hash ready for LDAP
         :param password:
