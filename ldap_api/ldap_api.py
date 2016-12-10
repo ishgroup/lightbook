@@ -6,7 +6,7 @@ from ldap.controls import SimplePagedResultsControl
 
 
 class LdapApi:
-    SIZELIMIT = 10
+    SEARCH_LIMIT = 20
     MAX_CREATE_ATTEMPTS = 10
     SPACES_REGEX = re.compile(r"\s+", re.IGNORECASE)
     ENTRY_MAPPING = {
@@ -83,11 +83,17 @@ class LdapApi:
 
         if ldap_response is None:
             return []
-        people = map(lambda x: self.__extract_value_from_array(self.__remap_dict(x[1], self.SHORT_INFO['people'])), ldap_response)
+        people = map(lambda x: self.__extract_value_from_array(self.__remap_dict(x[1], self.SHORT_INFO['people'])),
+                     ldap_response)
 
         return sorted(people, key=lambda k: k['name'].lower())
 
     def get_employee_dn_by_uid(self, uid):
+        """
+        Search for an employee by their uid
+        :param uid:
+        :return: the dn of the employee or None if not found
+        """
         ldap_filter = '(uid={})'.format(uid)
         ldap_response = self.__ldap_client.search_ext_s(self.LDAP_BASES['employees'],
                                                         ldap.SCOPE_SUBTREE, ldap_filter)
@@ -105,7 +111,8 @@ class LdapApi:
 
         if ldap_response is None:
             return []
-        return map(lambda x: self.__extract_value_from_array(self.__remap_dict(x[1], self.SHORT_INFO[base])), ldap_response)
+        return map(lambda x: self.__extract_value_from_array(self.__remap_dict(x[1], self.SHORT_INFO[base])),
+                   ldap_response)
 
     def modify_person(self, person_id, attributes):
         person = self.__find_person(person_id)
@@ -192,7 +199,6 @@ class LdapApi:
 
         return self.get_person(person_id)
 
-
     def add_company(self, attributes):
         ldap_attributes = self.__remap_dict(attributes, self.INVERSE_ENTRY_MAPPING)
         ldap_attributes['objectClass'] = self.OBJECT_CLASSES['companies']
@@ -215,7 +221,6 @@ class LdapApi:
             self.__add_entry(dn, ldap_attributes)
 
         return self.get_company(company_id)
-
 
     # private
 
@@ -305,7 +310,6 @@ class LdapApi:
 
         return response[0]
 
-
     def __get_next_unique_identifier(self):
         """
         Get the next uniqueIdentifier available in LDAP
@@ -319,7 +323,6 @@ class LdapApi:
         self.__ldap_client.modify_s(dn, [(ldap.MOD_REPLACE, 'uid', self.__clear_param(next_value))])
         return next_value
 
-
     def __get_next_uid(self):
         """
         Get the next uid available in LDAP
@@ -329,10 +332,9 @@ class LdapApi:
         next_value = self.__get_entry_uid(self.LDAP_BASES['counts'], '(cn=maxUidNumber)') + 1
 
         # Store this next value back to LDAP for the next request
-        dn = '{},{}'.format('cn=maxUidNumber',self.LDAP_BASES['counts'])
+        dn = '{},{}'.format('cn=maxUidNumber', self.LDAP_BASES['counts'])
         self.__ldap_client.modify_s(dn, [(ldap.MOD_REPLACE, 'uid', self.__clear_param(next_value))])
         return next_value
-
 
     def __get_entry_uid(self, base, ldap_filter):
         result = self.__ldap_client.search_s(base, ldap.SCOPE_SUBTREE, ldap_filter, attrlist=['uid'])[0][1]['uid'][0]
@@ -361,7 +363,8 @@ class LdapApi:
     def __modify_ldap_entry(self, entry, attributes):
         dn = entry[0]
         ldap_attributes = self.__remap_dict(attributes, self.INVERSE_ENTRY_MAPPING)
-        ldap_attributes =  {k: v for k,v in ldap_attributes.items() if (v is not None) and (type(v) is not list or not (len(v) == 0 and entry[1].get(k) is None))}
+        ldap_attributes = {k: v for k, v in ldap_attributes.items() if
+                           (v is not None) and (type(v) is not list or not (len(v) == 0 and entry[1].get(k) is None))}
 
         modify_list = self.__make_modify_list(ldap_attributes)
         self.__ldap_client.modify_s(dn, modify_list)
@@ -397,7 +400,7 @@ class LdapApi:
             return None
 
     def __ldap_page_ctrl(self):
-        return SimplePagedResultsControl(True, size=self.SIZELIMIT, cookie='')
+        return SimplePagedResultsControl(True, size=self.SEARCH_LIMIT, cookie='')
 
     def __remap_dict(self, source_dict, mapping):
         return {mapping[key]: value for key, value in source_dict.items() if key in mapping}
@@ -416,6 +419,11 @@ class LdapApi:
         return attributes_dict
 
     def __make_password(self, password):
+        """
+        Take plaintext password and return a hash ready for LDAP
+        :param password:
+        :return:
+        """
         salt = os.urandom(4)
         sha = hashlib.sha1(password)
         sha.update(salt)
