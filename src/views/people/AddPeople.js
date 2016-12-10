@@ -3,11 +3,16 @@ import Util from '../../components/Util';
 import PeopleModel from '../../model/PeopleModel';
 import Validate from '../../components/Validate';
 import FormField from '../../components/FormField';
+import AutoComplete from '../../components/AutoComplete';
 
 class AddPeople extends Component {
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
+
+    this.state = {
+      disabledAddBtn: false
+    };
   }
 
   handleSubmit(e) {
@@ -30,9 +35,17 @@ class AddPeople extends Component {
 
     if(validate.isValidate) {
 
+      this.setState({
+        disabledAddBtn: true
+      });
+
       PeopleModel.add(this, newrow, function(that, response) {
         document.getElementsByClassName('ContactForm')[0].reset();
         alert('People added successfully.');
+
+        this.setState({
+          disabledAddBtn: false
+        });
       });
     }
 
@@ -51,7 +64,10 @@ class AddPeople extends Component {
           <FormField label="Name" name="name" ref="name" />
           <FormField label="Email" name="email" ref="email" />
           <FormField label="Username" name="username" ref="username" />
-          <FormField label="Company" name="company" ref="company" />
+          <FormField label="Company" name="company" ref="company">
+            <AutoComplete placeholder="Company" url="/data/companies/search" ref="search_company" output="companies" />
+          </FormField>
+
           <FormField label="Company Role" name="company_role" ref="company_role" />
           <FormField label="Phone" name="phone" ref="phone" />
           <FormField label="Notes" name="notes" ref="notes" />
@@ -59,7 +75,7 @@ class AddPeople extends Component {
 
           <div className="form-group row">
             <div className="offset-sm-3 col-sm-21">
-              <input type="submit" className="btn btn-primary" value="Add People"/>&nbsp;
+              <input type="submit" className="btn btn-primary" value="Add People" disabled={this.state.disabledAddBtn} />&nbsp;
               <input type="button" className="btn btn-secondary" value="Discard changes" onClick={this.goBack.bind(this)} />
             </div>
           </div>

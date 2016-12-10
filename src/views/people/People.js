@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import SquishLogo from '../../assets/img/squish.png';
 import Toggle from '../../components/Toggle';
+import Util from '../../components/Util';
 import ViewPeople from './ViewPeople';
 import PeopleModel from '../../model/PeopleModel';
 
@@ -13,8 +14,15 @@ class People extends Component {
 
     this.state = {
       'viewToggle': false,
-      people: []
+      people: [],
+      showLoader: false
     }
+  }
+
+  setLoader(value) {
+    this.setState({
+      showLoader: value
+    });
   }
 
   handleViewToggle() {
@@ -22,10 +30,13 @@ class People extends Component {
     const _toggleState = this.state.viewToggle;
 
     if(this.isFetch !== false && _toggleState === false) {
+      this.setLoader(true);
       PeopleModel.getPeople(this, this.props.people.id, function(that, response) {
         that.setState({
           people: response.data.output.people
         });
+
+        that.setLoader(false);
 
         Toggle.Slide(!that.state.viewToggle, 'view-people-'+ that.props.people.id);
       });
@@ -55,6 +66,7 @@ class People extends Component {
               {this.props.people.company !== undefined ? <span className="company">{this.props.people.company}</span> : ''}
             </div>
           </div>
+          {this.state.showLoader ? Util.loaderImage() : ''}
         </div>
 
         <div className={"view-people col-xs-24" + (this.state.viewToggle ? " slide-down" : '')} id={"view-people-" + this.props.people.id}>

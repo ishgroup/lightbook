@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router';
 import ViewCompany from './ViewCompany';
 import CompanyModel from '../../model/CompanyModel';
+import Util from '../../components/Util';
 import Toggle from '../../components/Toggle';
 
 class Company extends Component {
@@ -13,18 +14,28 @@ class Company extends Component {
 
     this.state = {
       'viewToggle': false,
-      company: []
+      company: [],
+      showLoader: false
     }
+  }
+
+  setLoader(value) {
+    this.setState({
+      showLoader: value
+    });
   }
 
   handleViewToggle() {
     var _toggleState = this.state.viewToggle;
 
     if(this.isFetch !== false && _toggleState === false) {
+      this.setLoader(true);
       CompanyModel.getCompany(this, this.props.company.id, function(that, response) {
         that.setState({
           company: response.data.output.company
         });
+
+        that.setLoader(false);
 
         Toggle.Slide(!that.state.viewToggle, 'view-company-'+ that.props.company.id);
       });
@@ -52,7 +63,9 @@ class Company extends Component {
               </Link>
             </div>
           </div>
+          {this.state.showLoader ? Util.loaderImage() : ''}
         </div>
+
         <div className={"view-company col-xs-24" + (this.state.viewToggle ? " slide-down" : '')} id={"view-company-" + this.props.company.id}>
           <ViewCompany company={_company}>
             <h6>Company View</h6>

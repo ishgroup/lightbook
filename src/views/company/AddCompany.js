@@ -8,6 +8,10 @@ class AddCompany extends Component {
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
+
+    this.state = {
+      disabledAddBtn: false
+    };
   }
 
   handleSubmit(e) {
@@ -35,6 +39,10 @@ class AddCompany extends Component {
 
     if(validate.isValidate) {
 
+      this.setState({
+        disabledAddBtn: true
+      });
+
       CompanyModel.add(this, newrow, function(that, response) {
         that.refs.name.item.value = '';
         that.refs.email.item.value = '';
@@ -45,6 +53,10 @@ class AddCompany extends Component {
         that.refs.country.item.value = '';
 
         alert('Company added successfully.');
+
+        this.setState({
+          disabledAddBtn: false
+        });
       });
     }
 
@@ -70,7 +82,7 @@ class AddCompany extends Component {
 
           <div className="form-group row">
             <div className="offset-sm-3 col-sm-21">
-              <input type="submit" className="btn btn-primary" value="Add Company"/>&nbsp;
+              <input type="submit" className="btn btn-primary" value="Add Company" disabled={this.state.disabledAddBtn} />&nbsp;
               <input type="button" className="btn btn-secondary" value="Discard changes" onClick={this.goBack.bind(this)} />
             </div>
           </div>

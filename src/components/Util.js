@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import LoaderImage from '../assets/img/small-loader.svg';
 
 class Util extends Component {
   static Row(label, item, lclass = "col-sm-3 text-sm-right", rclass = "col-sm-21") {
@@ -41,6 +42,12 @@ class Util extends Component {
 
   static isEmpty(item) {
     return (item !== 'null' && item !== undefined && item !== '');
+  }
+
+  static loaderImage(width = 20, className="loader-image") {
+    return (
+      <img src={LoaderImage} width={width} className={className} alt="loader" />
+    );
   }
 }
 

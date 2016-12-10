@@ -9,13 +9,17 @@ class EditCompany extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      company: {}
+      company: {},
+      disabledUpdateBtn: false,
+      disabledRemoveBtn: false,
+      showLoader: true
     };
 
     if(this.props.params.id !== undefined) {
       CompanyModel.getCompany(this, this.props.params.id, function(that, response) {
         that.setState({
-          company: response.data.output.company
+          company: response.data.output.company,
+          showLoader: false
         });
       });
     }
@@ -49,8 +53,16 @@ class EditCompany extends Component {
     };
 
     if(validate.isValidate) {
+      this.setState({
+        disabledUpdateBtn: true
+      });
+
       CompanyModel.edit(this, newrow, function(that, response) {
         alert("Company updated successfully");
+
+        this.setState({
+          disabledUpdateBtn: false
+        });
       });
     }
 
@@ -63,7 +75,15 @@ class EditCompany extends Component {
 
   handleRemoveCompany() {
     if(confirm('Are you sure you want to delete this company?')) {
+      this.setState({
+        disabledRemoveBtn: true
+      });
+
       CompanyModel.delete(this, this.state.company.id, function(that, response) {
+        this.setState({
+          disabledRemoveBtn: false
+        });
+
         if(response.data.output.message !== undefined) {
           alert(response.data.output.message);
           that.goBack();
@@ -76,6 +96,11 @@ class EditCompany extends Component {
 
     return (
       <div className="well">
+        {this.state.showLoader ?
+          <div className="alert alert-info" role="alert">
+            {Util.loaderImage()}&nbsp;Please wait while fetching company details.
+          </div>
+          : '' }
         {this.state.company.name !== undefined ?
           <form onSubmit={this.handleSubmit.bind(this)} className="ContactForm edit-company" noValidate="true">
 
@@ -89,9 +114,9 @@ class EditCompany extends Component {
 
             <div className="form-group row">
               <div className="offset-sm-3 col-sm-21">
-                <input type="submit" className="btn btn-primary" value="Update Company"/>&nbsp;
+                <input type="submit" className="btn btn-primary" value="Update Company" disabled={this.state.disabledUpdateBtn} />&nbsp;
                 <input type="button" className="btn btn-secondary" value="Discard changes" onClick={this.goBack.bind(this)} />&nbsp;
-                <input type="button" className="btn btn-danger" value="Remove" onClick={this.handleRemoveCompany.bind(this)} />
+                <input type="button" className="btn btn-danger" value="Remove" onClick={this.handleRemoveCompany.bind(this)} disabled={this.state.disabledRemoveBtn} />
               </div>
             </div>
 
