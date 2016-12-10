@@ -24,6 +24,7 @@ body {
   padding-top: 15px;
 }
 .list-rows {
+
   >.row{
     border-top: 1px solid #eceeef;
     padding: 0.25rem;
@@ -31,6 +32,13 @@ body {
     cursor: pointer;
     &:nth-of-type(odd) {
       background: rgba(0,0,0,.05);;
+    }
+    >div {
+      .loader-image {
+        position: absolute;
+        top: 0.5px;
+        right: 2px;
+      }
     }
   }
 }
@@ -111,6 +119,13 @@ body {
   }
 }
 .search-wrapper {
+  position: relative;
+  >.loader-image {
+    position: absolute;
+    top: 9px;
+    z-index: 3;
+    right: 9px;
+  }
   >.row {
     background: $white;
     box-shadow: 1px 1px 10px #ddd;
@@ -118,7 +133,7 @@ body {
       padding: 3px !important;
       .form-control {
         border: 0 none;
-        padding: 6px 16px;
+        padding: 6px 32px 6px 16px;
       }
     }
   }

@@ -7,32 +7,33 @@ import SearchModel from './model/SearchModel';
 import PeopleModel from './model/PeopleModel';
 import ListView from './components/ListView';
 import SearchBox from './components/SearchBox';
+import Util from './components/Util';
 
 class LightbookApp extends Component {
 
   constructor(props) {
     super(props);
 
+    const _has_search = this.props.location.query;
+
     this.state = {
       peoplelist: [],
       companylist: [],
-      filterString: '',
+      filterString: _has_search.q !== undefined ? _has_search.q : '',
       filteredData: [],
       showAddForm: false,
       showSearchForm: true,
+      showLoader: ((_has_search.q !== undefined && _has_search.q.length > 2) ? true : false)
     };
 
-    const _has_search = this.props.location.query;
-
     if(_has_search.q !== undefined) {
-      this.state.filterString = _has_search.q;
-
-      if(_has_search.q.length > 0) {
+      if(_has_search.q.length > 2) {
         SearchModel.search(this, _has_search.q,
           function(that, response) {
             that.setState({
               companylist: response.data.output.companies,
-              peoplelist: response.data.output.peoples
+              peoplelist: response.data.output.peoples,
+              showLoader: false
             });
           }
         );
@@ -43,6 +44,12 @@ class LightbookApp extends Component {
     this.onRowSubmit = this.handleNewRowSubmit.bind(this);
     this.onPeopleRemove = this.handlePeopleRemove.bind(this);
     this.onPeopleEdits = this.handlePeopleEdit.bind(this);
+  }
+
+  setLoader(value) {
+    this.setState({
+      showLoader: value
+    });
   }
 
   peopleStorageKey() {
@@ -104,12 +111,16 @@ class LightbookApp extends Component {
 
     this.block.props.router.replace('search?q='+ filterString);
 
+    this.block.setLoader(true);
+
     SearchModel.search(this.block, _queryText,
       function(that, response) {
         that.setState({
           companylist: response.data.output.companies,
           peoplelist: response.data.output.peoples
         });
+
+        that.setLoader(false);
       }
     );
 
@@ -197,6 +208,7 @@ class LightbookApp extends Component {
       <div>
         <div className="col-xs-24 search-wrapper">
            <SearchBox filterString={this.state.filterString} doSearch={this.doSearch} block={this} />
+           {(this.state.showLoader && this.state.filterString.length > 2) ? Util.loaderImage() : ''}
         </div>
 
         <div className="row">

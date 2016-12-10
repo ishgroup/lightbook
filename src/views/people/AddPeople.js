@@ -8,6 +8,10 @@ class AddPeople extends Component {
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
+
+    this.state = {
+      disabledAddBtn: false
+    };
   }
 
   handleSubmit(e) {
@@ -30,9 +34,17 @@ class AddPeople extends Component {
 
     if(validate.isValidate) {
 
+      this.setState({
+        disabledAddBtn: true
+      });
+
       PeopleModel.add(this, newrow, function(that, response) {
         document.getElementsByClassName('ContactForm')[0].reset();
         alert('People added successfully.');
+
+        this.setState({
+          disabledAddBtn: false
+        });
       });
     }
 
@@ -59,7 +71,7 @@ class AddPeople extends Component {
 
           <div className="form-group row">
             <div className="offset-sm-3 col-sm-21">
-              <input type="submit" className="btn btn-primary" value="Add People"/>&nbsp;
+              <input type="submit" className="btn btn-primary" value="Add People" disabled={this.state.disabledAddBtn} />&nbsp;
               <input type="button" className="btn btn-secondary" value="Discard changes" onClick={this.goBack.bind(this)} />
             </div>
           </div>
