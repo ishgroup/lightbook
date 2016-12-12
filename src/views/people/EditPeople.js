@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import Config from '../../config';
 import TextInputEdited from '../../components/TextInputEdited';
 import Util from '../../components/Util';
 import Validate from '../../components/Validate';
+import AutoComplete from '../../components/AutoComplete';
 import PeopleModel from '../../model/PeopleModel';
 
 class EditPeople extends Component {
@@ -99,7 +101,14 @@ class EditPeople extends Component {
             <TextInputEdited type="text" className="form-control col-md-8" placeholder="Name" name="name" ref="name" value={this.state.people.name} />
             <TextInputEdited type="text" className="form-control col-md-8" placeholder="Email" name="email" ref="email" value={this.state.people.email || ''} />
             <TextInputEdited type="text" className="form-control col-md-8" placeholder="Username" name="username" ref="username" value={this.state.people.username || ''} validate="email" />
-            <TextInputEdited type="text" className="form-control col-md-8" placeholder="Company" name="company" ref="company" value={this.state.people.company || ''}  />
+
+            <div className="form-group row">
+              <label htmlFor="input-search" className="col-sm-3 col-form-label text-sm-right">Company</label>
+              <div className="col-sm-21">
+                <AutoComplete id="input-search" value={this.state.people.company || ''} placeholder="Company" url={Config.getUrl('searchCompanies')} ref="company" output="companies" />
+              </div>
+            </div>
+
             <TextInputEdited type="text" className="form-control col-md-8" placeholder="Company Role" name="company_role" ref="company_role" value={this.state.people.company_role || ''} />
             <TextInputEdited type="text" className="form-control col-md-8" placeholder="Phone" name="phone" ref="phone" value={this.state.people.phone || ''} validate="phone" />
             <TextInputEdited type="text" className="form-control col-md-8" placeholder="Notes" name="notes" ref="notes" value={this.state.people.notes || ''} />

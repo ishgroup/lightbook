@@ -2,6 +2,8 @@
 
 class Config {
 
+  static urls = {};
+
   static baseUrl() {
     if(Config.isDevelopment())
       return 'http://localhost:5000';
@@ -19,6 +21,11 @@ class Config {
 
   static isDevelopment() {
     return Config.getMode() === 'development';
+  }
+
+  static getUrl(url) {
+    Config.urls['searchCompanies'] = '/data/companies/search';
+    return Config.urls[url];
   }
 }
 export default Config;

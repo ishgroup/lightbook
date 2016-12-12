@@ -203,6 +203,7 @@ class LdapApi:
             ldap_attributes['active'] = 'TRUE'
 
         create_attempts = 0
+        person_id = None
         while create_attempts < self.MAX_CREATE_ATTEMPTS:
             try:
                 person_id = self.__get_next_uid()
@@ -212,9 +213,8 @@ class LdapApi:
                 break
             except ldap.ALREADY_EXISTS:
                 create_attempts += 1
-
-        if create_attempts == self.MAX_CREATE_ATTEMPTS:
-            self.__add_entry(dn, ldap_attributes)
+                if create_attempts == self.MAX_CREATE_ATTEMPTS:
+                    raise
 
         if need_auto_add_to_task:
             self.__set_notify_for(dn, attributes['company'])
@@ -230,7 +230,8 @@ class LdapApi:
         if 'active' not in ldap_attributes:
             ldap_attributes['active'] = 'TRUE'
 
-        while create_attempts < self.MAX_CREATE_ATTEMPTS - 1:
+        company_id = None
+        while create_attempts < self.MAX_CREATE_ATTEMPTS:
             try:
                 company_id = self.__get_next_unique_identifier()
                 dn = 'uniqueIdentifier={},{}'.format(company_id, self.LDAP_BASES['companies'])
@@ -238,9 +239,8 @@ class LdapApi:
                 break
             except ldap.ALREADY_EXISTS:
                 create_attempts += 1
-
-        if create_attempts == self.MAX_CREATE_ATTEMPTS - 1:
-            self.__add_entry(dn, ldap_attributes)
+                if create_attempts >= self.MAX_CREATE_ATTEMPTS:
+                    raise
 
         return self.get_company(company_id)
 
@@ -385,17 +385,27 @@ class LdapApi:
     def __modify_ldap_entry(self, entry, attributes):
         dn = entry[0]
         ldap_attributes = self.__remap_dict(attributes, self.INVERSE_ENTRY_MAPPING)
-        ldap_attributes = {k: v for k, v in ldap_attributes.items() if
-                           (v is not None) and (type(v) is not list or not (len(v) == 0 and entry[1].get(k) is None))}
-
+        ldap_attributes = self.__filter_blank_attributes(ldap_attributes, entry[1])
         modify_list = self.__make_modify_list(ldap_attributes)
         self.__ldap_client.modify_s(dn, modify_list)
+
+    def __filter_blank_attributes(self, new_attributes, old_attributes={}):
+        return {k: v for k, v in new_attributes.items() if not self.__skip_attribute(k, v, old_attributes) }
+
+    def __skip_attribute(self, key, value, current_attributes):
+        if value is None:
+            return True
+
+        if type(value) in (str, unicode, list) and len(value) == 0 and current_attributes.get(key) is None:
+            return True
+
+        return False
 
     def __make_operation(self, attribute):
         key = self.__clear_param(attribute[0])
         value = self.__clear_param(attribute[1])
 
-        if type(value) is list and len(value) == 0:
+        if type(value) in (list, str, unicode) and len(value) == 0:
             return ldap.MOD_DELETE, key, None
         else:
             return ldap.MOD_REPLACE, key, value
@@ -404,6 +414,7 @@ class LdapApi:
         return map(lambda x: self.__make_operation(x), attributes.items())
 
     def __add_entry(self, dn, ldap_attributes):
+        ldap_attributes = self.__filter_blank_attributes(ldap_attributes)
         modify_list = map(lambda x: (self.__clear_param(x[0]), self.__clear_param(x[1])), ldap_attributes.items())
         return self.__ldap_client.add_s(dn, modify_list)
 

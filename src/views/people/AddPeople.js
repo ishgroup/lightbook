@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Config from '../../config';
 import Util from '../../components/Util';
 import PeopleModel from '../../model/PeopleModel';
 import Validate from '../../components/Validate';
@@ -57,16 +58,19 @@ class AddPeople extends Component {
   }
 
   render() {
-
     return (
       <div className="well">
         <form onSubmit={this.handleSubmit} className="ContactForm" noValidate="true">
           <FormField label="Name" name="name" ref="name" />
           <FormField label="Email" name="email" ref="email" />
           <FormField label="Username" name="username" ref="username" />
-          <FormField label="Company" name="company" ref="company">
-            <AutoComplete placeholder="Company" url="/data/companies/search" ref="search_company" output="companies" />
-          </FormField>
+
+          <div className="form-group row">
+            <label htmlFor="input-search" className="col-sm-3 col-form-label text-sm-right">Company</label>
+            <div className="col-sm-21">
+              <AutoComplete id="input-search" placeholder="Company" url={Config.getUrl('searchCompanies')} ref="company" output="companies" />
+            </div>
+          </div>
 
           <FormField label="Company Role" name="company_role" ref="company_role" />
           <FormField label="Phone" name="phone" ref="phone" />
