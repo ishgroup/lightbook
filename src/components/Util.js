@@ -1,9 +1,12 @@
-import React, { Component } from 'react';
-import LoaderImage from '../assets/img/small-loader.svg';
+import React, { Component } from "react";
+import LoaderImage from "../assets/img/small-loader.svg";
 
 class Util extends Component {
-  static Row(label, item, lclass = "col-sm-3 text-sm-right", rclass = "col-sm-21") {
+  static Row(label, item, lclass = "col-sm-3 text-sm-right", rclass = "col-sm-21", link="") {
     if(Util.isEmpty(item)) {
+      if (link) {
+        item = `<a href='${link}:${item}'>${item}</a>`;
+      };
       return (
         <div className="form-group row">
           <div className={lclass}>{label}:</div>
@@ -11,21 +14,6 @@ class Util extends Component {
         </div>
       );
     }
-  }
-
-  static Phone(number) {
-    let phone = null;
-    if(Util.isEmpty(number)) {
-      phone = [];
-      number.forEach(function(value) {
-        const _phonePart = value.split(' ');
-        if(_phonePart[0] !== null)
-          phone.push(['<a href="tel:'+ _phonePart[0] +'">'+ _phonePart[0] +'</a> ' + (_phonePart[1] || '')]);
-        else
-          phone.push([value]);
-      });
-    }
-    return phone;
   }
 
   static numberList(item) {

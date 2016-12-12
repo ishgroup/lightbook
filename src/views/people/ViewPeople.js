@@ -4,8 +4,6 @@ import Util from '../../components/Util';
 
 class ViewPeople extends Component {
   render() {
-    let phone = Util.Phone(this.props.people.phone);
-
     return (
       <div className="row-view">
         <div className="form-group row">
@@ -14,15 +12,10 @@ class ViewPeople extends Component {
           </div>
         </div>
         {Util.Row("Name", this.props.people.name)}
-        {Util.Row("Email", this.props.people.email)}
+        {Util.Row("Email", this.props.people.email, "mailto")}
         {Util.Row("Company", this.props.people.company)}
         {Util.Row("Company Role", this.props.people.company_role)}
-        {phone !== null ?
-          <div className="form-group row">
-            <div className="col-sm-3 text-sm-right">Phone:</div>
-            <div className="col-sm-21" dangerouslySetInnerHTML={{__html: phone.join(', ')}} />
-          </div>
-        : ''}
+        {Util.Row("Phone", this.props.people.phone, "tel")}
         {Util.Row("Notes", this.props.people.notes)}
         {Util.Row("Mobile", this.props.people.mobile)}
         <div className="form-group row">
