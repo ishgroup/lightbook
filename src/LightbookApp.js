@@ -232,6 +232,6 @@ class LightbookApp extends Component {
       </div>
     );
   }
-};
+}
 
 export default LightbookApp;

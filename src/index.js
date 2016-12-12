@@ -8,7 +8,7 @@ import EditPeople from './views/people/EditPeople';
 import AddCompany from './views/company/AddCompany';
 import EditCompany from './views/company/EditCompany';
 
-import { Router, Route, hashHistory, IndexRoute  } from 'react-router';
+import { Router, Route, IndexRoute  } from 'react-router';
 
 ReactDOM.render((
    <Router history={hashHistory}>

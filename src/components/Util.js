@@ -6,7 +6,7 @@ class Util extends Component {
     if(item) {
       if (link) {
         item = `<a href='${link}:${item}'>${item}</a>`;
-      };
+      }
       return (
         <div className="form-group row">
           <div className={lclass}>{label}:</div>

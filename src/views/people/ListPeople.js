@@ -100,6 +100,6 @@ class ListPeople extends Component {
       </div>
     );
   }
-};
+}
 
 export default ListPeople;
