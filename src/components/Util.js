@@ -3,7 +3,7 @@ import LoaderImage from "../assets/img/small-loader.svg";
 
 class Util extends Component {
   static Row(label, item, lclass = "col-sm-3 text-sm-right", rclass = "col-sm-21", link="") {
-    if(Util.isEmpty(item)) {
+    if(item) {
       if (link) {
         item = `<a href='${link}:${item}'>${item}</a>`;
       };
@@ -26,10 +26,6 @@ class Util extends Component {
       });
     }
     return number;
-  }
-
-  static isEmpty(item) {
-    return (item !== 'null' && item !== undefined && item !== '');
   }
 
   static loaderImage(width = 20, className="loader-image") {
