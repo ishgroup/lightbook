@@ -365,12 +365,12 @@ class LdapApi:
     def __find_person(self, uid_number):
         response = self.__ldap_client.search_s(self.LDAP_BASES['people'], ldap.SCOPE_SUBTREE,
                                                '(uidNumber=%d)' % uid_number)
-        return self.__get_first_result(response)
+        return self.__get_first(response)
 
     def __find_company(self, unique_identifier):
         response = self.__ldap_client.search_s(self.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE,
                                                '(uniqueIdentifier=%d)' % unique_identifier)
-        return self.__get_first_result(response)
+        return self.__get_first(response)
 
     def __person_from_ldap(self, ldap_dict):
         person = self.__remap_dict(ldap_dict, self.ENTRY_MAPPING)
@@ -390,7 +390,7 @@ class LdapApi:
         self.__ldap_client.modify_s(dn, modify_list)
 
     def __filter_blank_attributes(self, new_attributes, old_attributes={}):
-        return {k: v for k, v in new_attributes.items() if not self.__skip_attribute(k, v, old_attributes) }
+        return {k: v for k, v in new_attributes.items() if not self.__skip_attribute(k, v, old_attributes)}
 
     def __skip_attribute(self, key, value, current_attributes):
         if value is None:
@@ -443,8 +443,11 @@ class LdapApi:
         return self.SPACES_REGEX.sub(' ', line).strip(' ')
 
     @staticmethod
-    def __get_first_result(response):
-        return response[0] if response else None
+    def __get_first(iterable, default=None):
+        if iterable:
+            for item in iterable:
+                return item
+        return default
 
     def __extract_value_from_array(self, attributes_dict):
         for key in self.ONLY_ONE_VALUE_FIELDS:
