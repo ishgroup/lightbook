@@ -17,11 +17,24 @@ def requires_auth(f):
 
 
 def authenticate(username, password):
+    """
+    Authenticate as this employee and set the ldap connection to a flask global
+    :param username:
+    :param password:
+    :return: true if the login succeeded, false if not
+    """
     try:
-        common_api = LdapApi(config.get_ldap_url())
-        dn = common_api.get_employee_dn_by_uid(username)
-        g._ldap_api = LdapApi(config.get_ldap_url(), dn, password)
-        return True
+        # First use an anonymous connection to get the user's dn
+        unauthenticated_conn = LdapApi(config.get_ldap_url())
+        dn = unauthenticated_conn.get_employee_dn_by_uid(username)
+
+        # Now create the real LDAP connection bound as the user
+        auth_conn = LdapApi(config.get_ldap_url(), dn, password)
+        if auth_conn:
+            g._ldap_api = auth_conn
+            return True
+
+        return False
     except ldap.LDAPError:
         return False
 

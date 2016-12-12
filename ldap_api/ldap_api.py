@@ -58,6 +58,11 @@ class LdapApi:
         self.__ldap_client.simple_bind_s(login, password)
 
     def get_person(self, person_id):
+        """
+        Get a person record
+        :param person_id: the person uid
+        :return: the person if it exists, or none if it doesn't
+        """
         ldap_response = self.__find_person(person_id)
         if ldap_response is None:
             return None
@@ -111,6 +116,13 @@ class LdapApi:
         return None if ldap_response is None or len(ldap_response) == 0 else ldap_response[0][0]
 
     def search(self, name, base, get_disabled=False):
+        """
+        Return a list of results, searching by name
+        :param name: the string to search for
+        :param base: the string "people" or "companies" to choose the base of what we are searching for
+        :param get_disabled: true if we are going to find non-active users as well
+        :return:
+        """
         ldap_filter = '(cn~=%s)' % name
         if not get_disabled:
             ldap_filter = '(&%s(active=TRUE))' % ldap_filter
