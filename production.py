@@ -3,9 +3,9 @@
 import sys
 import logging
 from gevent import monkey, wsgi
-from flask import Flask, jsonify, request, g
+from flask import Flask, jsonify, request
 from logstash_formatter import LogstashFormatterV1
-import ldap
+from ldap import LDAPError
 from ldap_api import requires_auth, SiteSettings
 
 debug_mode = '--debug' in sys.argv
@@ -13,8 +13,8 @@ debug_mode = '--debug' in sys.argv
 app = Flask(__name__, static_folder='build', static_url_path='')
 config = SiteSettings()
 
-def get_ldap_api():
-  return getattr(g, '_ldap_api', None)
+def ldap():
+  return Flask.g.get('_ldap_api', None)
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -28,7 +28,7 @@ if not debug_mode:
     None
     # Just keep going
 
-@app.errorhandler(ldap.LDAPError)
+@app.errorhandler(LDAPError)
 def ldap_error_handler(e):
     app.logger.error('Ldap error: %s', (e))
 
@@ -50,7 +50,7 @@ def view_person(person_id):
   return jsonify({
     "status": "success",
     "output": {
-      "people": get_ldap_api().get_person(person_id)
+      "people": ldap().get_person(person_id)
     }
   })
 
@@ -58,7 +58,7 @@ def view_person(person_id):
 @app.route('/data/people/update/<int:person_id>', methods=['PATCH', 'OPTIONS'])
 @requires_auth
 def update_person(person_id):
-  result = get_ldap_api().modify_person(person_id, request.get_json())
+  result = ldap().modify_person(person_id, request.get_json())
   if result is None:
     return jsonify({
       "status": "error",
@@ -76,7 +76,7 @@ def update_person(person_id):
 @app.route('/data/companies/update/<int:company_id>', methods=['PATCH', 'OPTIONS'])
 @requires_auth
 def update_company(company_id):
-  result = get_ldap_api().modify_company(company_id, request.get_json())
+  result = ldap().modify_company(company_id, request.get_json())
   if result is None:
     return jsonify({
       "status": "error",
@@ -94,7 +94,7 @@ def update_company(company_id):
 @app.route('/data/people/delete/<int:person_id>', methods=['DELETE', 'OPTIONS'])
 @requires_auth
 def delete_person(person_id):
-  if get_ldap_api().delete_person(person_id):
+  if ldap().delete_person(person_id):
       return jsonify({
         'status': "success",
         'output': {
@@ -113,7 +113,7 @@ def delete_person(person_id):
 @app.route('/data/companies/delete/<int:company_id>', methods=['DELETE', 'OPTIONS'])
 @requires_auth
 def delete_company(company_id):
-  if get_ldap_api().delete_company(company_id):
+  if ldap().delete_company(company_id):
     return jsonify({
       'status': "success",
       'output': {
@@ -136,8 +136,8 @@ def search_entry(search):
   return jsonify({
     "status": "success",
     "output": {
-      'peoples': get_ldap_api().search(search, 'people', get_disabled),
-      'companies': get_ldap_api().search(search, 'companies', get_disabled)
+      'peoples': ldap().search(search, 'people', get_disabled),
+      'companies': ldap().search(search, 'companies', get_disabled)
     }
   })
 
@@ -145,7 +145,7 @@ def search_entry(search):
 @app.route('/data/company/<int:company_id>/people')
 @requires_auth
 def company_people(company_id):
-  result = get_ldap_api().get_company_people(company_id)
+  result = ldap().get_people(company_id)
 
   if result is None:
     return jsonify({
@@ -165,7 +165,7 @@ def view_company(company_id):
   return jsonify({
     "status": "success",
     "output": {
-      "company": get_ldap_api().get_company(company_id)
+      "company": ldap().get_company(company_id)
     }
   })
 
@@ -176,7 +176,7 @@ def add_person():
   return jsonify({
     "status": "success",
     "output": {
-      "people": get_ldap_api().add_person(request.get_json())
+      "people": ldap().add_person(request.get_json())
     }
   })
 
@@ -187,7 +187,7 @@ def add_company():
   return jsonify({
     "status": "success",
     "output": {
-      "company": get_ldap_api().add_company(request.get_json())
+      "company": ldap().add_company(request.get_json())
     }
   })
 
