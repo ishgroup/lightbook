@@ -319,18 +319,12 @@ class LdapApi:
     def __find_notify(self, company_dn):
         ldap_filter = '(cn=notify)'
         response = self.__ldap_client.search_s(company_dn, ldap.SCOPE_SUBTREE, ldap_filter)
-        if response is None or len(response) == 0:
-            return None
-
-        return response[0]
+        return __get_first(response)
 
     def __find_company_entry_by_name(self, name):
         ldap_filter = '(cn={})'.format(name)
         response = self.__ldap_client.search_s(self.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE, ldap_filter)
-        if response is None or len(response) == 0:
-            return None
-
-        return response[0]
+        return __get_first(response)
 
     def __get_next_unique_identifier(self):
         """
