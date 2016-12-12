@@ -18,7 +18,7 @@ class ListView extends Component {
     this.props.onEdits(item);
   }
 
-  renderContent(block, item) {
+  static renderContent(block, item) {
     return block.props.item(block, item);
   }
 
@@ -26,7 +26,7 @@ class ListView extends Component {
     const lists = [];
     const that = this;
     this.props.list.forEach(function(list) {
-      lists.push([that.renderContent(that, list)]);
+      lists.push([ListView.renderContent(that, list)]);
     });
 
     return (

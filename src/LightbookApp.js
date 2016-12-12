@@ -52,7 +52,7 @@ class LightbookApp extends Component {
     });
   }
 
-  peopleStorageKey() {
+  static peopleStorageKey() {
     return 'searchResponse';
   }
 
@@ -187,11 +187,11 @@ class LightbookApp extends Component {
     });
   }
 
-  renderPeople(block, item) {
+  static renderPeople(block, item) {
     return <People people={item} onPeopleDelete={block.handleRemove.bind(block)} onPeopleEdit={block.handleEditOpen.bind(block)} />;
   }
 
-  renderCompany(block, item) {
+  static renderCompany(block, item) {
     return <Company company={item} onCompanyDelete={block.handleRemove.bind(block)} onCompanyEdit={block.handleEditOpen.bind(block)} />;
   }
 
@@ -215,7 +215,7 @@ class LightbookApp extends Component {
           <div className="col-lg-24">
             <div className="row">
               <div className="people-list col-lg-24" style={_hide_peoples}>
-                <ListView list={_plist} onRemove={this.handlePeopleRemove} onEdits={this.handlePeopleEditOpen.bind(this)} block={this} item={this.renderPeople} />
+                <ListView list={_plist} onRemove={this.handlePeopleRemove} onEdits={this.handlePeopleEditOpen.bind(this)} block={this} item={LightbookApp.renderPeople} />
               </div>
 
               <div className="col-xs-24" style={ ((_plist.length > 0 && _clist.length > 0) ? {display: 'block'} : {display: 'none'}) }>

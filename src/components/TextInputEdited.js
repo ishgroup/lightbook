@@ -29,7 +29,7 @@ class TextInputEdited extends Component {
     })
   }
 
-  getText(validate, text) {
+  static getText(validate, text) {
     if(validate !== undefined && text !== '' && text !== null && text !== undefined) {
       if(validate === 'email')
         return '<a href="mailto:'+ text +'">'+ text +'</a>';
@@ -40,7 +40,7 @@ class TextInputEdited extends Component {
   }
 
   render() {
-    let textValue = this.getText(this.props.validate, this.state.value);
+    let textValue = TextInputEdited.getText(this.props.validate, this.state.value);
     let inputTextEmpty = '';
 
     if(textValue === 'null' || textValue === undefined || (textValue !== 'null' && textValue.length === 0)) {

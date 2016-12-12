@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router';
-import Util from '../../components/Util';
+import React, { Component } from "react";
+import { Link } from "react-router";
+import Util from "../../components/Util";
 
 class ViewPeople extends Component {
   render() {

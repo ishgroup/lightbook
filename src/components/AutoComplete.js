@@ -28,7 +28,7 @@ class AutoComplete extends Component {
 
     document.body.addEventListener('click', function(e) {
       if(that.checkMounted) {
-        const id = that.getId(that.props.id);
+        const id = AutoComplete.getId(that.props.id);
         if(e.target !== (document.getElementById(id) || document.getElementById('searched-items-' + id))) {
           if(e.target.parentElement.parentElement !== document.getElementById('searched-items-' + id)
             && e.target.parentElement.parentElement !== document.getElementById('search-lists-' + id)
@@ -40,7 +40,7 @@ class AutoComplete extends Component {
     });
   }
 
-  getId(id) {
+  static getId(id) {
     return ((id !== undefined && id !== '') ? id : 'autocomplete-input');
   }
 
@@ -122,8 +122,8 @@ class AutoComplete extends Component {
 
       if(this.state.showList) {
         return (
-          <div id={"search-lists-" + this.getId(this.props.id)} className="search-lists">
-            <ul id={"searched-items-" + this.getId(this.props.id)} className="searched-items">
+          <div id={"search-lists-" + AutoComplete.getId(this.props.id)} className="search-lists">
+            <ul id={"searched-items-" + AutoComplete.getId(this.props.id)} className="searched-items">
               {item}
             </ul>
           </div>
@@ -137,7 +137,7 @@ class AutoComplete extends Component {
 
     return (
       <div className="auto-complete">
-        <input type="text" name="search" ref={(item) => { this.item = item } } placeholder={this.props.placeholder !== undefined ? this.props.placeholder : "Search..."} value={this.state.filterString} onChange={this.doSearch.bind(this)} onKeyUp={this.onKeyUp.bind(this)} onClick={this.showList.bind(this)} onBlur={this.onBlur.bind(this)} onFocus={this.onFocus.bind(this)} className="form-control" id={this.getId(this.props.id)} autoComplete="off" />
+        <input type="text" name="search" ref={(item) => { this.item = item } } placeholder={this.props.placeholder !== undefined ? this.props.placeholder : "Search..."} value={this.state.filterString} onChange={this.doSearch.bind(this)} onKeyUp={this.onKeyUp.bind(this)} onClick={this.showList.bind(this)} onBlur={this.onBlur.bind(this)} onFocus={this.onFocus.bind(this)} className="form-control" id={AutoComplete.getId(this.props.id)} autoComplete="off" />
         {this.state.showLoader ? Util.loaderImage() : ''}
         {this.getList(list)}
       </div>

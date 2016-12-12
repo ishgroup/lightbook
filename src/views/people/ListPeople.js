@@ -80,7 +80,7 @@ class ListPeople extends Component {
     });
   }
 
-  renderPeople(block, item) {
+  static renderPeople(block, item) {
     return <People people={item} onPeopleDelete={block.handleRemove.bind(block)} onPeopleEdit={block.handleEditOpen.bind(block)} />;
   }
 
@@ -90,7 +90,7 @@ class ListPeople extends Component {
     return (
       <div className="people-list">
         {_plist.length !== 0 ?
-          <ListView list={_plist} onRemove={this.handlePeopleRemove} onEdits={this.handlePeopleEditOpen.bind(this)} block={this} item={this.renderPeople} />
+          <ListView list={_plist} onRemove={this.handlePeopleRemove} onEdits={this.handlePeopleEditOpen.bind(this)} block={this} item={ListPeople.renderPeople} />
         : (this.state.fetched === true ?
             <div className="alert alert-info" role="alert">
               People not found under this company.
