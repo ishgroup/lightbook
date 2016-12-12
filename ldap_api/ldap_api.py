@@ -435,13 +435,15 @@ class LdapApi:
     def __ldap_page_ctrl(self):
         return SimplePagedResultsControl(True, size=self.SEARCH_LIMIT, cookie='')
 
-    def __remap_dict(self, source_dict, mapping):
+    @staticmethod
+    def __remap_dict(source_dict, mapping):
         return {mapping[key]: value for key, value in source_dict.items() if key in mapping}
 
     def __clear_str(self, line):
         return self.SPACES_REGEX.sub(' ', line).strip(' ')
 
-    def __get_first_result(self, response):
+    @staticmethod
+    def __get_first_result(response):
         return response[0] if response else None
 
     def __extract_value_from_array(self, attributes_dict):
@@ -451,7 +453,8 @@ class LdapApi:
                 attributes_dict[key] = self.__clear_str(value[0])
         return attributes_dict
 
-    def __hash_password(self, password):
+    @staticmethod
+    def __hash_password(password):
         """
         Take plaintext password and return a hash ready for LDAP
         :param password:
