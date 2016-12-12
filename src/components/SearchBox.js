@@ -1,8 +1,28 @@
 import React, { Component } from 'react';
 
 class SearchBox extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      filterString: '',
+      isTextChanged: false
+    }
+  }
   doSearch() {
-    this.props.doSearch(this.refs.searchInput.value);
+    this.setState({
+      filterString: this.refs.searchInput.value,
+      isTextChanged: true
+    });
+  }
+
+  onKeyUp() {
+    if(this.state.isTextChanged === true) {
+      this.props.doSearch(this.refs.searchInput.value);
+    }
+
+    this.setState({
+      isTextChanged: false
+    });
   }
 
   render() {
@@ -11,7 +31,7 @@ class SearchBox extends Component {
     return (
       <div className="row">
         <div className="input-group input-group-lg" style={inputStyle}>
-          <input type="text" ref="searchInput" className="form-control col-md-24" placeholder="Search..." value={this.props.filterString} name="search_input" onChange={this.doSearch.bind(this)} />
+          <input type="text" ref="searchInput" className="form-control col-md-24" placeholder="Search..." value={this.state.filterString} name="search_input" onChange={this.doSearch.bind(this)} onKeyUp={this.onKeyUp.bind(this)} />
         </div>
       </div>
     );
