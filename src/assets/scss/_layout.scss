@@ -43,6 +43,14 @@ body {
 }
 .auto-complete {
   position: relative;
+  >.form-control {
+    padding-right: 35px;
+  }
+  >.loader-image {
+    position: absolute;
+    top: 8.5px;
+    right: 8.5px;
+  }
   >div {
     background: #fff;
     position: absolute;

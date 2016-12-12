@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import BaseModel from '../model/BaseModel';
+import Util from './Util';
 
 class AutoComplete extends Component {
   checkMounted = false;
@@ -11,7 +12,9 @@ class AutoComplete extends Component {
       filterString: (this.props.value !== undefined ? this.props.value : ''),
       selectedItem: [],
       itemList: [],
-      showList: true
+      showList: true,
+      showLoader: false,
+      isTextChanged: false
     }
   }
 
@@ -44,22 +47,9 @@ class AutoComplete extends Component {
   doSearch() {
     let searchString = this.item.value;
     this.setState({
-      filterString: searchString
+      filterString: searchString,
+      isTextChanged: true
     });
-
-    if(this.props.url !== undefined && this.props.url !== '' && searchString !== '' && this.props.output) {
-      BaseModel.fetch(this, this.props.url + '/' + searchString, function(that, response) {
-        if(response.data.output !== undefined) {
-          that.setState({
-            itemList: response.data.output
-          });
-        }
-      });
-    } else {
-      this.setState({
-        itemList: []
-      });
-    }
   }
 
   showList() {
@@ -81,6 +71,35 @@ class AutoComplete extends Component {
 
   onFocus() {
     this.item.select();
+  }
+
+  onKeyUp() {
+    if(this.state.isTextChanged === true) {
+      const searchString = this.state.filterString;
+
+      if(this.props.url !== undefined && this.props.url !== '' && searchString !== '' && this.props.output) {
+        this.setState({
+          showLoader: true
+        });
+
+        BaseModel.fetch(this, this.props.url + '/' + searchString, function(that, response) {
+          if(response.data.output !== undefined) {
+            that.setState({
+              itemList: response.data.output,
+              showLoader: false
+            });
+          }
+        });
+      } else {
+        this.setState({
+          itemList: []
+        });
+      }
+    }
+
+    this.setState({
+      isTextChanged: false
+    });
   }
 
   setItem(that) {
@@ -118,7 +137,8 @@ class AutoComplete extends Component {
 
     return (
       <div className="auto-complete">
-        <input type="text" name="search" ref={(item) => { this.item = item } } placeholder={this.props.placeholder !== undefined ? this.props.placeholder : "Search..."} value={this.state.filterString} onChange={this.doSearch.bind(this)} onClick={this.showList.bind(this)} onBlur={this.onBlur.bind(this)} onFocus={this.onFocus.bind(this)} className="form-control" id={this.getId(this.props.id)} autoComplete="off" />
+        <input type="text" name="search" ref={(item) => { this.item = item } } placeholder={this.props.placeholder !== undefined ? this.props.placeholder : "Search..."} value={this.state.filterString} onChange={this.doSearch.bind(this)} onKeyUp={this.onKeyUp.bind(this)} onClick={this.showList.bind(this)} onBlur={this.onBlur.bind(this)} onFocus={this.onFocus.bind(this)} className="form-control" id={this.getId(this.props.id)} autoComplete="off" />
+        {this.state.showLoader ? Util.loaderImage() : ''}
         {this.getList(list)}
       </div>
     );
