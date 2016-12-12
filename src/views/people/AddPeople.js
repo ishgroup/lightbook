@@ -79,7 +79,7 @@ class AddPeople extends Component {
 
           <div className="form-group row">
             <div className="offset-sm-3 col-sm-21">
-              <input type="submit" className="btn btn-primary" value="Add People" disabled={this.state.disabledAddBtn} />&nbsp;
+              <input type="submit" className="btn btn-primary" value="Create" disabled={this.state.disabledAddBtn} />&nbsp;
               <input type="button" className="btn btn-secondary" value="Discard changes" onClick={this.goBack.bind(this)} />
             </div>
           </div>
