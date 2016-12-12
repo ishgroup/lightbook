@@ -191,6 +191,17 @@ def add_company():
     }
   })
 
+@app.route('/data/companies/search/<search>')
+@requires_auth
+def search_company(search):
+  get_disabled = request.args.get('disabled') is not None
+  return jsonify({
+    "status": "success",
+    "output": {
+      'companies': get_ldap_api().search(search, 'companies', get_disabled)
+    }
+  })
+
 if __name__ == '__main__':
   if debug_mode:
     app.run(debug=True)

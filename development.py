@@ -512,5 +512,49 @@ def add_company():
     }
   })
 
+
+@app.route('/data/companies/search/<search>')
+def search_company(search):
+    return jsonify({
+        'status': 'success',
+        'output': {
+            'companies': [
+                {
+                  "id": "1",
+                  "name": "Ish Pty. Ltd",
+                  "phone": [
+                    "12345679"
+                  ],
+                  "address": "",
+                  "suburb": "",
+                  "postal": "",
+                  "country": ""
+                },
+                {
+                  "id": "2",
+                  "name": "Other corp",
+                  "phone": [
+                    "12345679"
+                  ],
+                  "address": "",
+                  "suburb": "",
+                  "postal": "",
+                  "country": ""
+                },
+                {
+                  "id": "3",
+                  "name": "Glooge",
+                  "phone": [
+                    "12345679"
+                  ],
+                  "address": "",
+                  "suburb": "",
+                  "postal": "",
+                  "country": ""
+                }
+            ]
+        }
+    })
+
 if __name__ == '__main__':
   app.run(debug=True)
