@@ -13,6 +13,7 @@ debug_mode = '--debug' in sys.argv
 app = Flask(__name__, static_folder='build', static_url_path='')
 config = SiteSettings()
 
+
 def ldap():
   return Flask.g.get('_ldap_api', None)
 
@@ -28,14 +29,16 @@ if not debug_mode:
     None
     # Just keep going
 
+
 @app.errorhandler(LDAPError)
 def ldap_error_handler(e):
-    app.logger.error('Ldap error: %s', (e))
+    app.logger.error('Ldap error: %s', e)
 
     return jsonify({
       'status': 'error',
       'message': e.args[0]['desc'].encode()
     }), 200
+
 
 @app.route('/')
 @requires_auth
@@ -191,6 +194,7 @@ def add_company():
     }
   })
 
+
 @app.route('/data/companies/search/<search>')
 @requires_auth
 def search_company(search):
@@ -198,7 +202,7 @@ def search_company(search):
   return jsonify({
     "status": "success",
     "output": {
-      'companies': get_ldap_api().search(search, 'companies', get_disabled)
+      'companies': ldap().search(search, 'companies', get_disabled)
     }
   })
 
