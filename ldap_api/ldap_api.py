@@ -54,10 +54,21 @@ class LdapApi:
     }
 
     def __init__(self, url, login='', password=''):
+        """
+        Connect to ldap server
+        :param url: ldap url like this: "ldap://host:port"
+        :param login: dn for binding to ldap server, by default is blank
+        :param password: password for binding to ldap server, by default is blank
+        """
         self.__ldap_client = ldap.initialize(url)
         self.__ldap_client.simple_bind_s(login, password)
 
     def get_person(self, person_id):
+        """
+        Get a person record
+        :param person_id: the person uid number
+        :return: the person if it exists, or none if it doesn't
+        """
         ldap_response = self.__find_person(person_id)
         if ldap_response is None:
             return None
@@ -111,6 +122,13 @@ class LdapApi:
         return None if ldap_response is None or len(ldap_response) == 0 else ldap_response[0][0]
 
     def search(self, name, base, get_disabled=False):
+        """
+        Search entries by cn in specified directory
+        :param name: ldap entry cn
+        :param base: directory, can be "people" or "companies"
+        :param get_disabled: False - exclude inactive entries, True - search all entries, by default False
+        :return: array of entries with short info
+        """
         ldap_filter = '(cn~=%s)' % name
         if not get_disabled:
             ldap_filter = '(&%s(active=TRUE))' % ldap_filter
@@ -125,6 +143,12 @@ class LdapApi:
                    ldap_response)
 
     def modify_person(self, person_id, attributes):
+        """
+        Edit person attributes
+        :param person_id: the person uid number
+        :param attributes: changed attributes
+        :return: updated person or None if person doesn't exist
+        """
         person = self.__find_person(person_id)
         if person is None:
             return None
@@ -147,6 +171,12 @@ class LdapApi:
         return self.get_person(person_id)
 
     def modify_company(self, company_id, attributes):
+        """
+        Edit company attributes
+        :param company_id: the company unique identifier
+        :param attributes: changed attributes
+        :return: updated company or None if company doesn't exist
+        """
         company = self.__find_company(company_id)
         if company is None:
             return None
@@ -155,6 +185,11 @@ class LdapApi:
         return self.get_company(company_id)
 
     def delete_company(self, company_id):
+        """
+        Delete company
+        :param company_id: the company unique identifier
+        :return: True if the company was deleted, else return False
+        """
         dn = 'uniqueIdentifier={},{}'.format(company_id, self.LDAP_BASES['companies'])
         notify = self.__find_notify(dn)
         if notify:
@@ -164,11 +199,21 @@ class LdapApi:
         return True if self.get_company(company_id) is None else False
 
     def delete_person(self, person_id):
+        """
+        Delete person
+        :param person_id: the person uid number
+        :return: True if the person was deleted, else return False
+        """
         dn = 'uidNumber={},{}'.format(person_id, self.LDAP_BASES['people'])
         self.__ldap_client.delete_s(dn)
         return True if self.get_person(person_id) is None else False
 
     def add_person(self, attributes):
+        """
+        Create person entry in ldap
+        :param attributes: person attributes
+        :return: created person
+        """
         ldap_attributes = self.__remap_dict(attributes, self.INVERSE_ENTRY_MAPPING)
         ldap_attributes['objectClass'] = self.OBJECT_CLASSES['people']
         names = ldap_attributes['cn'].split(' ')
@@ -192,6 +237,7 @@ class LdapApi:
 
         create_attempts = 0
         person_id = None
+        dn = None
         while create_attempts < self.MAX_CREATE_ATTEMPTS:
             try:
                 person_id = self.__get_next_uid()
@@ -210,6 +256,11 @@ class LdapApi:
         return self.get_person(person_id)
 
     def add_company(self, attributes):
+        """
+        Create company in ldap
+        :param attributes: company attributes
+        :return: created company
+        """
         ldap_attributes = self.__remap_dict(attributes, self.INVERSE_ENTRY_MAPPING)
         ldap_attributes['objectClass'] = self.OBJECT_CLASSES['companies']
         ldap_attributes['o'] = ldap_attributes['cn']
@@ -235,6 +286,11 @@ class LdapApi:
     # private
 
     def __get_auto_add_to_task(self, person):
+        """
+        Check is user default participant on company tasks
+        :param person: ldap entry of person - (dn, attributes)
+        :return: True or False
+        """
         user_dn = person[0]
         if 'o' not in person[1]:
             return False
@@ -254,6 +310,12 @@ class LdapApi:
         return user_dn in role_occupants
 
     def __set_notify_for(self, user_dn, company_name):
+        """
+        Set user as default participant on company tasks
+        :param user_dn:
+        :param company_name:
+        :return: True if user already is default participant or None if company doesn't exist
+        """
         company = self.__find_company_entry_by_name(company_name)
         if company is None:
             return None
@@ -274,6 +336,12 @@ class LdapApi:
         return self.__ldap_client.modify_s(dn, modify_list)
 
     def __unset_notify_for(self, user_dn, company_name):
+        """
+        Unset user as default participant on company tasks
+        :param user_dn:
+        :param company_name:
+        :return: True if user already isn't default participant o
+        """
         company = self.__find_company_entry_by_name(company_name)
         if company is None:
             return True
@@ -297,6 +365,12 @@ class LdapApi:
         return self.__ldap_client.modify_s(dn, modify_list)
 
     def __create_notify(self, user_dn, company_dn):
+        """
+        Create company sub entry with cn=notify
+        :param user_dn:
+        :param company_dn:
+        :return:
+        """
         dn = 'cn=notify,{}'.format(company_dn)
         ldap_attributes = {
             'objectClass': self.OBJECT_CLASSES['role'],
@@ -305,6 +379,11 @@ class LdapApi:
         return self.__add_entry(dn, ldap_attributes)
 
     def __find_notify(self, company_dn):
+        """
+        Find entry which store default participants of company tasks
+        :param company_dn:
+        :return: dict of attributes
+        """
         ldap_filter = '(cn=notify)'
         response = self.__ldap_client.search_s(company_dn, ldap.SCOPE_SUBTREE, ldap_filter)
         if response is None or len(response) == 0:
@@ -313,6 +392,11 @@ class LdapApi:
         return response[0]
 
     def __find_company_entry_by_name(self, name):
+        """
+        Get company dn by name
+        :param name:
+        :return: dn or None if company doesn't exist
+        """
         ldap_filter = '(cn={})'.format(name)
         response = self.__ldap_client.search_s(self.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE, ldap_filter)
         if response is None or len(response) == 0:
@@ -347,49 +431,85 @@ class LdapApi:
         return next_value
 
     def __get_entry_uid(self, base, ldap_filter):
+        """
+        Find entry by ldap filter in specified directory and extract uid attribute
+        :param base: ldap directory
+        :param ldap_filter:
+        :return: int uid
+        """
         result = self.__ldap_client.search_s(base, ldap.SCOPE_SUBTREE, ldap_filter, attrlist=['uid'])[0][1]['uid'][0]
         return int(result)
 
     def __find_person(self, uid_number):
+        """
+        Find person by uid number
+        :param uid_number: person uid number
+        :return: tuple(dn, attributes) person
+        """
         response = self.__ldap_client.search_s(self.LDAP_BASES['people'], ldap.SCOPE_SUBTREE,
                                                '(uidNumber=%d)' % uid_number)
         return self.__get_first_result(response)
 
     def __find_company(self, unique_identifier):
+        """
+        Find person by unique identifier
+        :param unique_identifier: company unique identifier
+        :return: tuple(dn, attributes) company
+        """
         response = self.__ldap_client.search_s(self.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE,
                                                '(uniqueIdentifier=%d)' % unique_identifier)
         return self.__get_first_result(response)
 
     def __person_from_ldap(self, ldap_dict):
+        """
+        Transform ldap person attributes to lightbook attributes
+        :param ldap_dict: ldap person attributes
+        :return: dict person
+        """
         person = self.__remap_dict(ldap_dict, self.ENTRY_MAPPING)
         person['id'] = ldap_dict.get('uidNumber')
         return person
 
     def __company_from_ldap(self, ldap_dict):
+        """
+        Transform ldap company attributes to lightbook attributes
+        :param ldap_dict:
+        :return: dict company
+        """
         company = self.__remap_dict(ldap_dict, self.ENTRY_MAPPING)
         company['id'] = ldap_dict.get('uniqueIdentifier')
         return company
 
     def __modify_ldap_entry(self, entry, attributes):
+        """
+        Apply changes of attributes in ldap server
+        :param entry: tuple(dn, attributes) ldap entry
+        :param attributes: dict new attributes
+        """
         dn = entry[0]
         ldap_attributes = self.__remap_dict(attributes, self.INVERSE_ENTRY_MAPPING)
         ldap_attributes = self.__filter_blank_attributes(ldap_attributes, entry[1])
         modify_list = self.__make_modify_list(ldap_attributes)
         self.__ldap_client.modify_s(dn, modify_list)
 
-    def __filter_blank_attributes(self, new_attributes, old_attributes={}):
-        return {k: v for k, v in new_attributes.items() if not self.__skip_attribute(k, v, old_attributes) }
-
-    def __skip_attribute(self, key, value, current_attributes):
-        if value is None:
-            return True
-
-        if type(value) in (str, unicode, list) and len(value) == 0 and current_attributes.get(key) is None:
-            return True
-
-        return False
+    def __filter_blank_attributes(self, new_attributes, old_attributes=None):
+        """
+        Remove blank attributes if it is None or already isn't present in ldap entry
+        :param new_attributes: new ldap attributes
+        :param old_attributes: old ldap attributes
+        :return: dict filtered attributes
+        """
+        if old_attributes is None:
+            old_attributes = {}
+        return {k: v for k, v in new_attributes.items() if not self.__skip_attribute(k, v, old_attributes)}
 
     def __make_operation(self, attribute):
+        """
+        Transform attribute to ldap operation.
+        If value is blank('', []) then modification will be "DELETE"
+        :param attribute: (key, value)
+        :return: tuple (modification, key, value)
+        """
         key = self.__clear_param(attribute[0])
         value = self.__clear_param(attribute[1])
 
@@ -423,15 +543,6 @@ class LdapApi:
     def __ldap_page_ctrl(self):
         return SimplePagedResultsControl(True, size=self.SEARCH_LIMIT, cookie='')
 
-    def __remap_dict(self, source_dict, mapping):
-        return {mapping[key]: value for key, value in source_dict.items() if key in mapping}
-
-    def __clear_str(self, line):
-        return self.SPACES_REGEX.sub(' ', line).strip(' ')
-
-    def __get_first_result(self, response):
-        return response[0] if response else None
-
     def __extract_value_from_array(self, attributes_dict):
         for key in self.ONLY_ONE_VALUE_FIELDS:
             value = attributes_dict.get(key)
@@ -439,7 +550,19 @@ class LdapApi:
                 attributes_dict[key] = self.__clear_str(value[0])
         return attributes_dict
 
-    def __hash_password(self, password):
+    def __clear_str(self, line):
+        return self.SPACES_REGEX.sub(' ', line).strip(' ')
+
+    @staticmethod
+    def __remap_dict(source_dict, mapping):
+        return {mapping[key]: value for key, value in source_dict.items() if key in mapping}
+
+    @staticmethod
+    def __get_first_result(response):
+        return response[0] if response else None
+
+    @staticmethod
+    def __hash_password(password):
         """
         Take plaintext password and return a hash ready for LDAP
         :param password:
@@ -450,3 +573,13 @@ class LdapApi:
         sha.update(salt)
         digest_salt_b64 = '{}{}'.format(sha.digest(), salt).encode('base64').strip()
         return '{{SSHA}}{}'.format(digest_salt_b64)
+
+    @staticmethod
+    def __skip_attribute(key, value, current_attributes):
+        if value is None:
+            return True
+
+        if type(value) in (str, unicode, list) and len(value) == 0 and current_attributes.get(key) is None:
+            return True
+
+        return False
