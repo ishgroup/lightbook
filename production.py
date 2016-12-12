@@ -3,7 +3,7 @@
 import sys
 import logging
 from gevent import monkey, wsgi
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, g
 from logstash_formatter import LogstashFormatterV1
 from ldap import LDAPError
 from ldap_api import requires_auth, SiteSettings
@@ -15,7 +15,7 @@ config = SiteSettings()
 
 
 def ldap():
-  return Flask.g.get('_ldap_api', None)
+  return g.get('_ldap_api', None)
 
 logging.basicConfig(level=logging.DEBUG)
 
