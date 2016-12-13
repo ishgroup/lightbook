@@ -183,10 +183,10 @@ class LdapApi:
     def add_person(self, attributes):
         ldap_attributes = self.__remap_dict(attributes, self.INVERSE_ENTRY_MAPPING)
         ldap_attributes['objectClass'] = self.OBJECT_CLASSES['people']
-        names = ldap_attributes['cn'].split(' ')
+        names = ldap_attributes['cn'].split(' ', 1)
         if len(names) > 1:
-            ldap_attributes['sn'] = names[0]
-            ldap_attributes['givenName'] = names[1]
+            ldap_attributes['givenName'] = names[0]
+            ldap_attributes['sn'] = names[1]
         else:
             ldap_attributes['sn'] = ldap_attributes['cn']
             ldap_attributes['givenName'] = ldap_attributes['cn']
