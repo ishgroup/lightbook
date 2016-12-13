@@ -70,6 +70,11 @@ class LdapApi:
         result = self.__extract_value_from_array(self.__person_from_ldap(ldap_response[1]))
         result['auto_add_to_task'] = self.__get_auto_add_to_task(ldap_response)
 
+        if result.get('company'):
+            company = self.__find_company_entry_by_name(result.get('company'))
+            if company:
+                result['company_id'] = company[1]['uniqueIdentifier'][0]
+
         return result
 
     def get_company(self, company_id):
@@ -319,12 +324,12 @@ class LdapApi:
     def __find_notify(self, company_dn):
         ldap_filter = '(cn=notify)'
         response = self.__ldap_client.search_s(company_dn, ldap.SCOPE_SUBTREE, ldap_filter)
-        return __get_first(response)
+        return self.__get_first(response)
 
     def __find_company_entry_by_name(self, name):
         ldap_filter = '(cn={})'.format(name)
         response = self.__ldap_client.search_s(self.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE, ldap_filter)
-        return __get_first(response)
+        return self.__get_first(response)
 
     def __get_next_unique_identifier(self):
         """
