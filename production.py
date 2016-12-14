@@ -70,7 +70,7 @@ def update_person(person_id):
   return jsonify({
     "status": "success",
     "output": {
-      "message": "People updated successfully",
+      "message": "Person updated successfully",
       "people": result
     }
   })

@@ -53,8 +53,6 @@ class EditPeople extends Component {
       });
 
       PeopleModel.edit(this, newrow, function(that, response) {
-        alert("People updated successfully");
-
         this.setState({
           disabledUpdateBtn: false
         });
@@ -65,7 +63,7 @@ class EditPeople extends Component {
   }
 
   handleRemovePeople() {
-    if(confirm('Are you sure you want to delete this people?')) {
+    if(confirm('Are you sure you want to delete this person?')) {
       this.setState({
         disabledRemoveBtn: true
       });
