@@ -1,6 +1,7 @@
 import os
 import hashlib
 import ldap
+import ldap.filter
 from ldap.controls import SimplePagedResultsControl
 
 
@@ -63,7 +64,7 @@ class LdapService:
         if ldap_response is None:
             return None
 
-        result = __extract_value_from_array(__person_from_ldap(ldap_response[1]))
+        result = extract_value_from_array(person_from_ldap(ldap_response[1]))
         result['auto_add_to_task'] = self.__get_auto_add_to_task(ldap_response)
 
         if result.get('company'):
@@ -80,7 +81,7 @@ class LdapService:
         :return: the company if it exists, or none if it doesn't
         """
         ldap_response = self.__find_company(company_id)
-        return __extract_value_from_array(__company_from_ldap(ldap_response[1])) if ldap_response else None
+        return extract_value_from_array(company_from_ldap(ldap_response[1])) if ldap_response else None
 
     def get_people(self, company_id):
         """
@@ -117,7 +118,7 @@ class LdapService:
 
         paged_control = SimplePagedResultsControl(True, size=LdapService.SEARCH_LIMIT, cookie='')
         ldap_response = self.ldap_connection.search_ext_s(
-            LdapService.LDAP_BASES[base],ldap.SCOPE_SUBTREE, ldap_filter, serverctrls=[paged_control])
+            LdapService.LDAP_BASES[base], ldap.SCOPE_SUBTREE, ldap_filter, serverctrls=[paged_control])
 
         if ldap_response is None:
             return []
@@ -169,7 +170,7 @@ class LdapService:
         return True if self.get_person(person_id) is None else False
 
     def add_person(self, attributes):
-        ldap_attributes = __remap_dict(attributes, LdapService.INVERSE_ENTRY_MAPPING)
+        ldap_attributes = remap_dict(attributes, LdapService.INVERSE_ENTRY_MAPPING)
         ldap_attributes['objectClass'] = LdapService.OBJECT_CLASSES['people']
         names = ldap_attributes['cn'].split(' ', 1)
         if len(names) > 1:
@@ -179,7 +180,7 @@ class LdapService:
             ldap_attributes['sn'] = ldap_attributes['cn']
             ldap_attributes['givenName'] = ldap_attributes['cn']
 
-        ldap_attributes['userPassword'] = __hash_password(attributes.get('password', ''))
+        ldap_attributes['userPassword'] = hash_password(attributes.get('password', ''))
 
         need_auto_add_to_task = False
         if 'auto_add_to_task' in attributes and attributes['auto_add_to_task']:
@@ -211,7 +212,7 @@ class LdapService:
         return self.get_person(person_id)
 
     def add_company(self, attributes):
-        ldap_attributes = __remap_dict(attributes, LdapService.INVERSE_ENTRY_MAPPING)
+        ldap_attributes = remap_dict(attributes, LdapService.INVERSE_ENTRY_MAPPING)
         ldap_attributes['objectClass'] = LdapService.OBJECT_CLASSES['companies']
         ldap_attributes['o'] = ldap_attributes['cn']
         create_attempts = 0
@@ -270,7 +271,7 @@ class LdapService:
 
         role_occupants.append(user_dn)
 
-        modify_list = [(ldap.MOD_REPLACE, __clear_param('roleOccupant'), __clear_param(role_occupants))]
+        modify_list = [(ldap.MOD_REPLACE, clear_param('roleOccupant'), clear_param(role_occupants))]
         dn = notify[0]
         return self.ldap_connection.modify_s(dn, modify_list)
 
@@ -293,7 +294,7 @@ class LdapService:
         if len(role_occupants) == 0:
             return self.ldap_connection.delete_s(notify[0])
 
-        modify_list = [(ldap.MOD_REPLACE, __clear_param('roleOccupant'), __clear_param(role_occupants))]
+        modify_list = [(ldap.MOD_REPLACE, clear_param('roleOccupant'), clear_param(role_occupants))]
         dn = notify[0]
         return self.ldap_connection.modify_s(dn, modify_list)
 
@@ -332,31 +333,30 @@ class LdapService:
         next_value = int(get_first(result)[1]['uid'][0]) + 1
 
         # Store this next value back to LDAP for the next requestz
-        self.ldap_connection.modify_s(dn, [(ldap.MOD_REPLACE, 'uid', __clear_param(next_value))])
+        self.ldap_connection.modify_s(dn, [(ldap.MOD_REPLACE, 'uid', clear_param(next_value))])
         return next_value
 
     def __find_person(self, uid_number):
         response = self.ldap_connection.search_s(LdapService.LDAP_BASES['people'], ldap.SCOPE_SUBTREE,
-                                               '(uidNumber=%d)' % uid_number)
+                                                 '(uidNumber=%d)' % uid_number)
         return get_first(response)
 
     def __find_company(self, unique_identifier):
         response = self.ldap_connection.search_s(LdapService.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE,
-                                               '(uniqueIdentifier=%d)' % unique_identifier)
+                                                 '(uniqueIdentifier=%d)' % unique_identifier)
         return get_first(response)
 
     def __modify_ldap_entry(self, entry, attributes):
         dn = entry[0]
-        ldap_attributes = __remap_dict(attributes, LdapService.INVERSE_ENTRY_MAPPING)
-        ldap_attributes = __filter_blank_attributes(ldap_attributes, entry[1])
-        modify_list = __make_modify_list(ldap_attributes)
+        ldap_attributes = remap_dict(attributes, LdapService.INVERSE_ENTRY_MAPPING)
+        ldap_attributes = filter_blank_attributes(ldap_attributes, entry[1])
+        modify_list = map(lambda x: make_operation(x), ldap_attributes.items())
         self.ldap_connection.modify_s(dn, modify_list)
 
     def __add_entry(self, dn, ldap_attributes):
-        ldap_attributes = __filter_blank_attributes(ldap_attributes)
+        ldap_attributes = filter_blank_attributes(ldap_attributes)
         modify_list = map(lambda x: (clear_param(x[0]), clear_param(x[1])), ldap_attributes.items())
         return self.ldap_connection.add_s(dn, modify_list)
-
 
 
 def make_operation(attribute):
@@ -379,8 +379,10 @@ def skip_attribute(key, value, current_attributes):
     return False
 
 
-def filter_blank_attributes(new_attributes, old_attributes={}):
-    return {k: v for k, v in new_attributes.items() if not LdapService.__skip_attribute(k, v, old_attributes)}
+def filter_blank_attributes(new_attributes, old_attributes=None):
+    if old_attributes is None:
+        old_attributes = {}
+    return {k: v for k, v in new_attributes.items() if not skip_attribute(k, v, old_attributes)}
 
 
 def company_from_ldap(ldap_dict):
@@ -395,21 +397,17 @@ def person_from_ldap(ldap_dict):
     return person
 
 
-def make_modify_list(attributes):
-    return map(lambda x: LdapService.__make_operation(x), attributes.items())
-
-
 def clear_param(param, first_level=True):
     if not first_level:
         return None
     if type(param) is list:
-        return map(lambda x: LdapService.__clear_param(x), param)
+        return map(lambda x: clear_param(x), param)
     elif type(param) is unicode:
         return param.encode('ascii', 'ignore')
     elif type(param) is str:
         return param
     elif type(param) is int:
-        return LdapService.__clear_param(str(param))
+        return clear_param(str(param))
     else:
         return None
 
