@@ -2,9 +2,11 @@ from flask import request, g, Response
 from functools import wraps
 from settings import SiteSettings
 import ldap
+import ldap.filter
+from ldap_api import LdapService
 
 config = SiteSettings()
-
+LOGIN_BASE = 'ou=Employees,ou=People,dc=ish,dc=com,dc=au'
 
 def requires_auth(f):
     @wraps(f)
@@ -27,6 +29,8 @@ def authenticate(username, password):
     if g.get('ldap_service', None):
         return True
 
+    url = config.get_ldap_url()
+
     try:
         # first let's create an anonymous LDAP connection
         unauthenticated_conn = ldap.initialize(url)
@@ -45,7 +49,7 @@ def authenticate(username, password):
         if not auth_conn:
             raise OSError("Your login was not correct.")
 
-        g.ldap_service = LdapApi(auth_conn)
+        g.ldap_service = LdapService(auth_conn)
         return True
 
     except (ldap.LDAPError, OSError):
