@@ -4,6 +4,7 @@ import People from './People';
 import EditPeople from './EditPeople';
 import PeopleModel from '../../model/PeopleModel';
 import ListView from '../../components/ListView';
+import Util from '../../components/Util';
 
 class ListPeople extends Component {
   constructor(props) {
@@ -11,7 +12,7 @@ class ListPeople extends Component {
 
     this.state = {
       peoplelist: [],
-      fetched: false
+      showLoader: true
     };
 
     if(this.props.params.id !== undefined) {
@@ -19,7 +20,7 @@ class ListPeople extends Component {
         if(response.data.peoples !== undefined) {
           that.setState({
             peoplelist: response.data.peoples,
-            fetched: true
+            showLoader: false
           });
         }
       });
@@ -89,9 +90,14 @@ class ListPeople extends Component {
 
     return (
       <div className="people-list">
+        {this.state.showLoader ?
+          <div className="alert alert-info" role="alert">
+            {Util.loaderImage()}&nbsp;Please wait while fetching person(s).
+          </div>
+          : '' }
         {_plist.length !== 0 ?
           <ListView list={_plist} onRemove={this.handlePeopleRemove} onEdits={this.handlePeopleEditOpen.bind(this)} block={this} item={ListPeople.renderPeople} />
-        : (this.state.fetched === true ?
+        : (!this.state.showLoader ?
             <div className="alert alert-info" role="alert">
               People not found under this company.
             </div>
