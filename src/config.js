@@ -1,4 +1,4 @@
-import {env} from "babel-core";
+
 
 class Config {
 
@@ -12,7 +12,7 @@ class Config {
   }
 
   static getEnv(name) {
-    return env[name];
+    return process.env[name];
   }
 
   static getMode() {
