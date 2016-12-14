@@ -117,7 +117,7 @@ class LdapService:
 
         paged_control = SimplePagedResultsControl(True, size=LdapService.SEARCH_LIMIT, cookie='')
         ldap_response = self.ldap_connection.search_ext_s(
-            LdapService.LDAP_BASES[base],ldap.SCOPE_SUBTREE, ldap_filter, serverctrls=[paged_control])
+            LdapService.LDAP_BASES[base], ldap.SCOPE_SUBTREE, ldap_filter, serverctrls=[paged_control])
 
         if ldap_response is None:
             return []
@@ -337,12 +337,12 @@ class LdapService:
 
     def __find_person(self, uid_number):
         response = self.ldap_connection.search_s(LdapService.LDAP_BASES['people'], ldap.SCOPE_SUBTREE,
-                                               '(uidNumber=%d)' % uid_number)
+                                                 '(uidNumber=%d)' % uid_number)
         return get_first(response)
 
     def __find_company(self, unique_identifier):
         response = self.ldap_connection.search_s(LdapService.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE,
-                                               '(uniqueIdentifier=%d)' % unique_identifier)
+                                                 '(uniqueIdentifier=%d)' % unique_identifier)
         return get_first(response)
 
     def __modify_ldap_entry(self, entry, attributes):
@@ -356,7 +356,6 @@ class LdapService:
         ldap_attributes = __filter_blank_attributes(ldap_attributes)
         modify_list = map(lambda x: (clear_param(x[0]), clear_param(x[1])), ldap_attributes.items())
         return self.ldap_connection.add_s(dn, modify_list)
-
 
 
 def make_operation(attribute):

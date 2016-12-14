@@ -33,22 +33,22 @@ def authenticate(username, password):
         unauthenticated_conn.simple_bind_s()
 
         # now find the employee
-        filter = ldap.filter.filter_format('(uid=%s)', [username])
-        ldap_response = unauthenticated_conn.search_ext_s(LOGIN_BASE, ldap.SCOPE_SUBTREE, filter)
+        ldap_filter = ldap.filter.filter_format('(uid=%s)', [username])
+        ldap_response = unauthenticated_conn.search_ext_s(LOGIN_BASE, ldap.SCOPE_SUBTREE, ldap_filter)
         if not ldap_response:
-            raise PermissionError("Your login was not correct.")
+            raise OSError("Your login was not correct.")
 
         # now let's bind with this employee
         dn = ldap_response[0][0]
         auth_conn = ldap.initialize(url)
         auth_conn.simple_bind_s(dn, password)
         if not auth_conn:
-            raise PermissionError("Your login was not correct.")
+            raise OSError("Your login was not correct.")
 
         g.ldap_service = LdapApi(auth_conn)
         return True
 
-    except (ldap.LDAPError, PermissionError):
+    except (ldap.LDAPError, OSError):
         return False
 
 
