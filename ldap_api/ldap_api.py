@@ -96,8 +96,7 @@ class LdapApi:
         if company is None:
             return None
         company_name = company[1].get('cn')[0]
-        ldap_filter = '(&(o=%s)(active=TRUE))' % company_name
-
+        ldap_filter = ldap.filter.filter_format('(&(o=%s)(active=TRUE))', [company_name])
         ldap_response = self.__ldap_client.search_ext_s(self.LDAP_BASES['people'],
                                                         ldap.SCOPE_SUBTREE, ldap_filter)
 
@@ -128,7 +127,7 @@ class LdapApi:
         :param get_disabled: true if we are going to find non-active users as well
         :return:
         """
-        ldap_filter = '(cn~=%s)' % name
+        ldap_filter = ldap.filter.filter_format('(cn~=%s)', [name])
         if not get_disabled:
             ldap_filter = '(&%s(active=TRUE))' % ldap_filter
 
@@ -209,6 +208,7 @@ class LdapApi:
 
         create_attempts = 0
         person_id = None
+        dn = None
         while create_attempts < self.MAX_CREATE_ATTEMPTS:
             try:
                 person_id = self.__get_next_uid()
@@ -327,7 +327,7 @@ class LdapApi:
         return self.__get_first(response)
 
     def __find_company_entry_by_name(self, name):
-        ldap_filter = '(cn={})'.format(name)
+        ldap_filter = ldap.filter.filter_format('(cn=%s)', [name])
         response = self.__ldap_client.search_s(self.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE, ldap_filter)
         return self.__get_first(response)
 
