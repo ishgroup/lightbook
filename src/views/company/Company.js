@@ -44,7 +44,7 @@ class Company extends Component {
     }
 
     this.setState({
-      'viewToggle': _toggleState === true ? false : true
+      'viewToggle': ! _toggleState
     });
 
     this.isFetch = false;

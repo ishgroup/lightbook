@@ -149,6 +149,6 @@ AutoComplete.propTypes = {
   output: React.PropTypes.string.isRequired,
   id: React.PropTypes.string.isRequired,
   url: React.PropTypes.string.isRequired
-}
+};
 
 export default AutoComplete;

@@ -23,7 +23,7 @@ class LightbookApp extends Component {
       filteredData: [],
       showAddForm: false,
       showSearchForm: true,
-      showLoader: ((_has_search.q !== undefined && _has_search.q.length > 2) ? true : false)
+      showLoader: ((_has_search.q !== undefined && _has_search.q.length > 2))
     };
 
     if(_has_search.q !== undefined) {
