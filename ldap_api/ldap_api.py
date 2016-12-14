@@ -8,7 +8,6 @@ from ldap.controls import SimplePagedResultsControl
 class LdapApi:
     SEARCH_LIMIT = 20
     MAX_CREATE_ATTEMPTS = 10
-    SPACES_REGEX = re.compile(r"\s+", re.IGNORECASE)
     ENTRY_MAPPING = {
         'telephoneNumber': 'phone',
         'uid': 'username',
@@ -438,9 +437,6 @@ class LdapApi:
     def __remap_dict(source_dict, mapping):
         return {mapping[key]: value for key, value in source_dict.items() if key in mapping}
 
-    def __clear_str(self, line):
-        return self.SPACES_REGEX.sub(' ', line).strip(' ')
-
     @staticmethod
     def __get_first(iterable, default=None):
         if iterable:
@@ -452,7 +448,7 @@ class LdapApi:
         for key in self.ONLY_ONE_VALUE_FIELDS:
             value = attributes_dict.get(key)
             if value is not None and len(value) == 1:
-                attributes_dict[key] = self.__clear_str(value[0])
+                attributes_dict[key] = value[0].strip(' ')
         return attributes_dict
 
     @staticmethod
