@@ -198,6 +198,8 @@ def view_person(person_id):
             "people": {
                 "company": "Niche Publishing",
                 "company_role": "null",
+                "company_id": 124,
+                "email": "ish.com.au",
                 "id": "317",
                 "mobile": "null",
                 "name": "Joanne Davies",

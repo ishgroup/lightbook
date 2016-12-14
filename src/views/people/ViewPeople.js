@@ -14,7 +14,11 @@ class ViewPeople extends Component {
 
         <Row label="Name" item={this.props.people.name} />
         <Row label="Email" item={this.props.people.email} link="mailto" />
-        <Row label="Company" item={this.props.people.company} />
+        <Row label="Company" item={this.props.people.company}>
+          {this.props.people.company_id ?
+            <Link to={"/company/"+ this.props.people.company_id}>{this.props.people.company}</Link>
+          : ''}
+        </Row>
         <Row label="Company Role" item={this.props.people.company_role} />
         <Row label="Phone" item={this.props.people.phone} link="tel" />
         <Row label="Notes" item={this.props.people.notes} />
