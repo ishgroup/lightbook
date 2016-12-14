@@ -15,7 +15,7 @@ config = SiteSettings()
 
 
 def ldap():
-  return g.get('_ldap_api', None)
+  return g.get('ldap_service', None)
 
 logging.basicConfig(level=logging.DEBUG)
 

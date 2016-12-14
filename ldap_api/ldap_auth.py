@@ -1,10 +1,10 @@
 from flask import request, g, Response
 from functools import wraps
 from settings import SiteSettings
-from ldap_api import LdapApi
 import ldap
 
 config = SiteSettings()
+
 
 def requires_auth(f):
     @wraps(f)
@@ -13,6 +13,7 @@ def requires_auth(f):
         if not auth or not authenticate(auth.username, auth.password):
             return need_auth_response()
         return f(*args, **kwargs)
+
     return decorated
 
 
@@ -23,23 +24,36 @@ def authenticate(username, password):
     :param password:
     :return: true if the login succeeded, false if not
     """
+    if g.get('ldap_service', None):
+        return True
+
     try:
-        # First use an anonymous connection to get the user's dn
-        unauthenticated_conn = LdapApi(config.get_ldap_url())
-        dn = unauthenticated_conn.get_employee_dn_by_uid(username)
+        # first let's create an anonymous LDAP connection
+        unauthenticated_conn = ldap.initialize(url)
+        unauthenticated_conn.simple_bind_s()
 
-        # Now create the real LDAP connection bound as the user
-        auth_conn = LdapApi(config.get_ldap_url(), dn, password)
-        if auth_conn:
-            g._ldap_api = auth_conn
-            return True
+        # now find the employee
+        filter = ldap.filter.filter_format('(uid=%s)', [username])
+        ldap_response = unauthenticated_conn.search_ext_s(LOGIN_BASE, ldap.SCOPE_SUBTREE, filter)
+        if not ldap_response:
+            raise PermissionError("Your login was not correct.")
 
+        # now let's bind with this employee
+        dn = ldap_response[0][0]
+        auth_conn = ldap.initialize(url)
+        auth_conn.simple_bind_s(dn, password)
+        if not auth_conn:
+            raise PermissionError("Your login was not correct.")
+
+        g.ldap_service = LdapApi(auth_conn)
+        return True
+
+    except (ldap.LDAPError, PermissionError):
         return False
-    except ldap.LDAPError:
-        return False
+
 
 def need_auth_response():
     return Response(
-    'Could not verify your access level for that URL.\n'
-    'You have to login with proper credentials', 401,
-    {'WWW-Authenticate': 'Basic realm="Login Required"'})
+        'Could not verify your access level for that URL.\n'
+        'You have to login with proper credentials', 401,
+        {'WWW-Authenticate': 'Basic realm="Login Required"'})

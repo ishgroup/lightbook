@@ -1,4 +1,3 @@
-import re
 import os
 import hashlib
 import ldap
@@ -42,7 +41,6 @@ class LdapApi:
     LDAP_BASES = {
         'people': 'ou=Customers,ou=People,dc=ish,dc=com,dc=au',
         'companies': 'ou=Companies,dc=ish,dc=com,dc=au',
-        'employees': 'ou=Employees,ou=People,dc=ish,dc=com,dc=au',
         'counts': 'cn=counts,dc=ish,dc=com,dc=au'
     }
 
@@ -52,9 +50,8 @@ class LdapApi:
         'role': 'organizationalRole'
     }
 
-    def __init__(self, url, login='', password=''):
-        self.__ldap_client = ldap.initialize(url)
-        self.__ldap_client.simple_bind_s(login, password)
+    def __init__(self, ldap_connection):
+        self.ldap_connection = ldap_connection
 
     def get_person(self, person_id):
         """
@@ -66,7 +63,7 @@ class LdapApi:
         if ldap_response is None:
             return None
 
-        result = self.__extract_value_from_array(self.__person_from_ldap(ldap_response[1]))
+        result = __extract_value_from_array(__person_from_ldap(ldap_response[1]))
         result['auto_add_to_task'] = self.__get_auto_add_to_task(ldap_response)
 
         if result.get('company'):
@@ -83,7 +80,7 @@ class LdapApi:
         :return: the company if it exists, or none if it doesn't
         """
         ldap_response = self.__find_company(company_id)
-        return self.__extract_value_from_array(self.__company_from_ldap(ldap_response[1])) if ldap_response else None
+        return __extract_value_from_array(__company_from_ldap(ldap_response[1])) if ldap_response else None
 
     def get_people(self, company_id):
         """
@@ -96,27 +93,15 @@ class LdapApi:
             return None
         company_name = company[1].get('cn')[0]
         ldap_filter = ldap.filter.filter_format('(&(o=%s)(active=TRUE))', [company_name])
-        ldap_response = self.__ldap_client.search_ext_s(LdapApi.LDAP_BASES['people'],
+        ldap_response = self.ldap_connection.search_ext_s(LdapApi.LDAP_BASES['people'],
                                                         ldap.SCOPE_SUBTREE, ldap_filter)
 
         if ldap_response is None:
             return []
-        people = map(lambda x: self.__extract_value_from_array(self.__remap_dict(x[1], self.SHORT_INFO['people'])),
+        people = map(lambda x: extract_value_from_array(remap_dict(x[1], LdapApi.SHORT_INFO['people'])),
                      ldap_response)
 
         return sorted(people, key=lambda k: k['name'].lower())
-
-    def get_employee_dn_by_uid(self, uid):
-        """
-        Search for an employee by their uid
-        :param uid:
-        :return: the dn of the employee or None if not found
-        """
-        ldap_filter = '(uid={})'.format(uid)
-        ldap_response = self.__ldap_client.search_ext_s(
-            LdapApi.LDAP_BASES['employees'], ldap.SCOPE_SUBTREE, ldap_filter)
-
-        return None if ldap_response is None or len(ldap_response) == 0 else ldap_response[0][0]
 
     def search(self, name, base, get_disabled=False):
         """
@@ -131,12 +116,12 @@ class LdapApi:
             ldap_filter = '(&%s(active=TRUE))' % ldap_filter
 
         paged_control = SimplePagedResultsControl(True, size=LdapApi.SEARCH_LIMIT, cookie='')
-        ldap_response = self.__ldap_client.search_ext_s(
+        ldap_response = self.ldap_connection.search_ext_s(
             LdapApi.LDAP_BASES[base],ldap.SCOPE_SUBTREE, ldap_filter, serverctrls=[paged_control])
 
         if ldap_response is None:
             return []
-        return map(lambda x: self.__extract_value_from_array(self.__remap_dict(x[1], self.SHORT_INFO[base])),
+        return map(lambda x: extract_value_from_array(remap_dict(x[1], LdapApi.SHORT_INFO[base])),
                    ldap_response)
 
     def modify_person(self, person_id, attributes):
@@ -173,18 +158,18 @@ class LdapApi:
         dn = 'uniqueIdentifier={},{}'.format(company_id, LdapApi.LDAP_BASES['companies'])
         notify = self.__find_notify(dn)
         if notify:
-            self.__ldap_client.delete_s(notify[0])
+            self.ldap_connection.delete_s(notify[0])
 
-        self.__ldap_client.delete_s(dn)
+        self.ldap_connection.delete_s(dn)
         return True if self.get_company(company_id) is None else False
 
     def delete_person(self, person_id):
         dn = 'uidNumber={},{}'.format(person_id, LdapApi.LDAP_BASES['people'])
-        self.__ldap_client.delete_s(dn)
+        self.ldap_connection.delete_s(dn)
         return True if self.get_person(person_id) is None else False
 
     def add_person(self, attributes):
-        ldap_attributes = self.__remap_dict(attributes, LdapApi.INVERSE_ENTRY_MAPPING)
+        ldap_attributes = __remap_dict(attributes, LdapApi.INVERSE_ENTRY_MAPPING)
         ldap_attributes['objectClass'] = LdapApi.OBJECT_CLASSES['people']
         names = ldap_attributes['cn'].split(' ', 1)
         if len(names) > 1:
@@ -194,7 +179,7 @@ class LdapApi:
             ldap_attributes['sn'] = ldap_attributes['cn']
             ldap_attributes['givenName'] = ldap_attributes['cn']
 
-        ldap_attributes['userPassword'] = self.__hash_password(attributes.get('password', ''))
+        ldap_attributes['userPassword'] = __hash_password(attributes.get('password', ''))
 
         need_auto_add_to_task = False
         if 'auto_add_to_task' in attributes and attributes['auto_add_to_task']:
@@ -226,7 +211,7 @@ class LdapApi:
         return self.get_person(person_id)
 
     def add_company(self, attributes):
-        ldap_attributes = self.__remap_dict(attributes, LdapApi.INVERSE_ENTRY_MAPPING)
+        ldap_attributes = __remap_dict(attributes, LdapApi.INVERSE_ENTRY_MAPPING)
         ldap_attributes['objectClass'] = LdapApi.OBJECT_CLASSES['companies']
         ldap_attributes['o'] = ldap_attributes['cn']
         create_attempts = 0
@@ -285,9 +270,9 @@ class LdapApi:
 
         role_occupants.append(user_dn)
 
-        modify_list = [(ldap.MOD_REPLACE, self.__clear_param('roleOccupant'), self.__clear_param(role_occupants))]
+        modify_list = [(ldap.MOD_REPLACE, __clear_param('roleOccupant'), __clear_param(role_occupants))]
         dn = notify[0]
-        return self.__ldap_client.modify_s(dn, modify_list)
+        return self.ldap_connection.modify_s(dn, modify_list)
 
     def __unset_notify_for(self, user_dn, company_name):
         company = self.__find_company_entry_by_name(company_name)
@@ -306,29 +291,29 @@ class LdapApi:
         role_occupants.remove(user_dn)
 
         if len(role_occupants) == 0:
-            return self.__ldap_client.delete_s(notify[0])
+            return self.ldap_connection.delete_s(notify[0])
 
-        modify_list = [(ldap.MOD_REPLACE, self.__clear_param('roleOccupant'), self.__clear_param(role_occupants))]
+        modify_list = [(ldap.MOD_REPLACE, __clear_param('roleOccupant'), __clear_param(role_occupants))]
         dn = notify[0]
-        return self.__ldap_client.modify_s(dn, modify_list)
+        return self.ldap_connection.modify_s(dn, modify_list)
 
     def __create_notify(self, user_dn, company_dn):
         dn = 'cn=notify,{}'.format(company_dn)
         ldap_attributes = {
-            'objectClass': self.OBJECT_CLASSES['role'],
+            'objectClass': LdapApi.OBJECT_CLASSES['role'],
             'roleOccupant': user_dn
         }
         return self.__add_entry(dn, ldap_attributes)
 
     def __find_notify(self, company_dn):
         ldap_filter = '(cn=notify)'
-        response = self.__ldap_client.search_s(company_dn, ldap.SCOPE_SUBTREE, ldap_filter)
-        return self.__get_first(response)
+        response = self.ldap_connection.search_s(company_dn, ldap.SCOPE_SUBTREE, ldap_filter)
+        return __get_first(response)
 
     def __find_company_entry_by_name(self, name):
         ldap_filter = ldap.filter.filter_format('(cn=%s)', [name])
-        response = self.__ldap_client.search_s(LdapApi.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE, ldap_filter)
-        return self.__get_first(response)
+        response = self.ldap_connection.search_s(LdapApi.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE, ldap_filter)
+        return __get_first(response)
 
     def __get_next_unique_identifier(self):
         """
@@ -340,7 +325,7 @@ class LdapApi:
 
         # Store this next value back to LDAP for the next request
         dn = '{},{}'.format('cn=maxUniqueIdentifier', LdapApi.LDAP_BASES['counts'])
-        self.__ldap_client.modify_s(dn, [(ldap.MOD_REPLACE, 'uid', self.__clear_param(next_value))])
+        self.ldap_connection.modify_s(dn, [(ldap.MOD_REPLACE, 'uid', __clear_param(next_value))])
         return next_value
 
     def __get_next_uid(self):
@@ -353,110 +338,119 @@ class LdapApi:
 
         # Store this next value back to LDAP for the next request
         dn = '{},{}'.format('cn=maxUidNumber', self.LDAP_BASES['counts'])
-        self.__ldap_client.modify_s(dn, [(ldap.MOD_REPLACE, 'uid', self.__clear_param(next_value))])
+        self.ldap_connection.modify_s(dn, [(ldap.MOD_REPLACE, 'uid', __clear_param(next_value))])
         return next_value
 
     def __get_entry_uid(self, base, ldap_filter):
-        result = self.__ldap_client.search_s(base, ldap.SCOPE_SUBTREE, ldap_filter, attrlist=['uid'])[0][1]['uid'][0]
+        result = self.ldap_connection.search_s(base, ldap.SCOPE_SUBTREE, ldap_filter, attrlist=['uid'])[0][1]['uid'][0]
         return int(result)
 
     def __find_person(self, uid_number):
-        response = self.__ldap_client.search_s(LdapApi.LDAP_BASES['people'], ldap.SCOPE_SUBTREE,
+        response = self.ldap_connection.search_s(LdapApi.LDAP_BASES['people'], ldap.SCOPE_SUBTREE,
                                                '(uidNumber=%d)' % uid_number)
-        return self.__get_first(response)
+        return __get_first(response)
 
     def __find_company(self, unique_identifier):
-        response = self.__ldap_client.search_s(LdapApi.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE,
+        response = self.ldap_connection.search_s(LdapApi.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE,
                                                '(uniqueIdentifier=%d)' % unique_identifier)
-        return self.__get_first(response)
-
-    def __person_from_ldap(self, ldap_dict):
-        person = self.__remap_dict(ldap_dict, LdapApi.ENTRY_MAPPING)
-        person['id'] = ldap_dict.get('uidNumber')
-        return person
-
-    def __company_from_ldap(self, ldap_dict):
-        company = self.__remap_dict(ldap_dict, LdapApi.ENTRY_MAPPING)
-        company['id'] = ldap_dict.get('uniqueIdentifier')
-        return company
+        return __get_first(response)
 
     def __modify_ldap_entry(self, entry, attributes):
         dn = entry[0]
-        ldap_attributes = self.__remap_dict(attributes, LdapApi.INVERSE_ENTRY_MAPPING)
-        ldap_attributes = self.__filter_blank_attributes(ldap_attributes, entry[1])
-        modify_list = self.__make_modify_list(ldap_attributes)
-        self.__ldap_client.modify_s(dn, modify_list)
-
-    def __filter_blank_attributes(self, new_attributes, old_attributes={}):
-        return {k: v for k, v in new_attributes.items() if not self.__skip_attribute(k, v, old_attributes)}
-
-    def __skip_attribute(self, key, value, current_attributes):
-        if value is None:
-            return True
-
-        if type(value) in (str, unicode, list) and len(value) == 0 and current_attributes.get(key) is None:
-            return True
-
-        return False
-
-    def __make_operation(self, attribute):
-        key = self.__clear_param(attribute[0])
-        value = self.__clear_param(attribute[1])
-
-        if type(value) in (list, str, unicode) and len(value) == 0:
-            return ldap.MOD_DELETE, key, None
-        else:
-            return ldap.MOD_REPLACE, key, value
-
-    def __make_modify_list(self, attributes):
-        return map(lambda x: self.__make_operation(x), attributes.items())
+        ldap_attributes = __remap_dict(attributes, LdapApi.INVERSE_ENTRY_MAPPING)
+        ldap_attributes = __filter_blank_attributes(ldap_attributes, entry[1])
+        modify_list = __make_modify_list(ldap_attributes)
+        self.ldap_connection.modify_s(dn, modify_list)
 
     def __add_entry(self, dn, ldap_attributes):
-        ldap_attributes = self.__filter_blank_attributes(ldap_attributes)
-        modify_list = map(lambda x: (self.__clear_param(x[0]), self.__clear_param(x[1])), ldap_attributes.items())
-        return self.__ldap_client.add_s(dn, modify_list)
+        ldap_attributes = __filter_blank_attributes(ldap_attributes)
+        modify_list = map(lambda x: (clear_param(x[0]), clear_param(x[1])), ldap_attributes.items())
+        return self.ldap_connection.add_s(dn, modify_list)
 
-    def __clear_param(self, param, first_level=True):
-        if not first_level:
-            return None
-        if type(param) is list:
-            return map(lambda x: self.__clear_param(x), param)
-        elif type(param) is unicode:
-            return param.encode('ascii', 'ignore')
-        elif type(param) is str:
-            return param
-        elif type(param) is int:
-            return self.__clear_param(str(param))
-        else:
-            return None
 
-    @staticmethod
-    def __remap_dict(source_dict, mapping):
-        return {mapping[key]: value for key, value in source_dict.items() if key in mapping}
 
-    @staticmethod
-    def __get_first(iterable, default=None):
-        if iterable:
-            for item in iterable:
-                return item
-        return default
+def make_operation(attribute):
+    key = clear_param(attribute[0])
+    value = clear_param(attribute[1])
 
-    def __extract_value_from_array(self, attributes_dict):
-        for key in self.ONLY_ONE_VALUE_FIELDS:
-            value = attributes_dict.get(key)
-            if value is not None and len(value) == 1:
-                attributes_dict[key] = value[0].strip(' ')
-        return attributes_dict
+    if type(value) in (list, str, unicode) and len(value) == 0:
+        return ldap.MOD_DELETE, key, None
+    else:
+        return ldap.MOD_REPLACE, key, value
 
-    @staticmethod
-    def __hash_password(password):
-        """
-        Take plaintext password and return a hash ready for LDAP
-        :param password:
-        :return:
-        """
-        salt = os.urandom(4)
-        sha = hashlib.sha1(password)
-        sha.update(salt)
-        digest_salt_b64 = '{}{}'.format(sha.digest(), salt).encode('base64').strip()
-        return '{{SSHA}}{}'.format(digest_salt_b64)
+
+def skip_attribute(key, value, current_attributes):
+    if value is None:
+        return True
+
+    if type(value) in (str, unicode, list) and len(value) == 0 and current_attributes.get(key) is None:
+        return True
+
+    return False
+
+
+def filter_blank_attributes(new_attributes, old_attributes={}):
+    return {k: v for k, v in new_attributes.items() if not LdapApi.__skip_attribute(k, v, old_attributes)}
+
+
+def company_from_ldap(ldap_dict):
+    company = remap_dict(ldap_dict, LdapApi.ENTRY_MAPPING)
+    company['id'] = ldap_dict.get('uniqueIdentifier')
+    return company
+
+
+def person_from_ldap(ldap_dict):
+    person = remap_dict(ldap_dict, LdapApi.ENTRY_MAPPING)
+    person['id'] = ldap_dict.get('uidNumber')
+    return person
+
+
+def make_modify_list(attributes):
+    return map(lambda x: LdapApi.__make_operation(x), attributes.items())
+
+
+def clear_param(param, first_level=True):
+    if not first_level:
+        return None
+    if type(param) is list:
+        return map(lambda x: LdapApi.__clear_param(x), param)
+    elif type(param) is unicode:
+        return param.encode('ascii', 'ignore')
+    elif type(param) is str:
+        return param
+    elif type(param) is int:
+        return LdapApi.__clear_param(str(param))
+    else:
+        return None
+
+
+def remap_dict(source_dict, mapping):
+    return {mapping[key]: value for key, value in source_dict.items() if key in mapping}
+
+
+def get_first(iterable, default=None):
+    if iterable:
+        for item in iterable:
+            return item
+    return default
+
+
+def extract_value_from_array(attributes_dict):
+    for key in LdapApi.ONLY_ONE_VALUE_FIELDS:
+        value = attributes_dict.get(key)
+        if value is not None and len(value) == 1:
+            attributes_dict[key] = value[0].strip(' ')
+    return attributes_dict
+
+
+def hash_password(password):
+    """
+    Take plaintext password and return a hash ready for LDAP
+    :param password:
+    :return:
+    """
+    salt = os.urandom(4)
+    sha = hashlib.sha1(password)
+    sha.update(salt)
+    digest_salt_b64 = '{}{}'.format(sha.digest(), salt).encode('base64').strip()
+    return '{{SSHA}}{}'.format(digest_salt_b64)
