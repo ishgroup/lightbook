@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router';
-import Util from '../../components/Util';
+import React, { Component } from "react";
+import { Link } from "react-router";
+import Row from "../../components/Row";
 
 class ViewCompany extends Component {
 
@@ -13,13 +13,13 @@ class ViewCompany extends Component {
           </div>
         </div>
 
-        {Util.Row("Name", this.props.company.name)}
-        {Util.Row("Email", this.props.company.email, "mailto")}
-        {Util.Row("Phone", this.props.company.phone, "tel")}
-        {Util.Row("Address", this.props.company.address)}
-        {Util.Row("Suburb", this.props.company.suburb)}
-        {Util.Row("Postal", this.props.company.postal)}
-        {Util.Row("Country", this.props.company.country)}
+        <Row label="Name" item={this.props.company.name} />
+        <Row label="Email" item={this.props.company.email} link="mailto" />
+        <Row label="Phone" item={this.props.company.phone} link="tel" />
+        <Row label="Address" item={this.props.company.address} />
+        <Row label="Suburb" item={this.props.company.suburb} />
+        <Row label="Postal" item={this.props.company.postal} />
+        <Row label="Country" item={this.props.company.country} />
 
         <div className="form-group row">
           <div className="offset-sm-3 col-sm-21">

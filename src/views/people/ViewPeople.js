@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router";
-import Util from "../../components/Util";
+import Row from "../../components/Row";
 
 class ViewPeople extends Component {
   render() {
@@ -11,13 +11,15 @@ class ViewPeople extends Component {
             {this.props.children}
           </div>
         </div>
-        {Util.Row("Name", this.props.people.name)}
-        {Util.Row("Email", this.props.people.email, "mailto")}
-        {Util.Row("Company", this.props.people.company)}
-        {Util.Row("Company Role", this.props.people.company_role)}
-        {Util.Row("Phone", this.props.people.phone, "tel")}
-        {Util.Row("Notes", this.props.people.notes)}
-        {Util.Row("Mobile", this.props.people.mobile)}
+
+        <Row label="Name" item={this.props.people.name} />
+        <Row label="Email" item={this.props.people.email} link="mailto" />
+        <Row label="Company" item={this.props.people.company} />
+        <Row label="Company Role" item={this.props.people.company_role} />
+        <Row label="Phone" item={this.props.people.phone} link="tel" />
+        <Row label="Notes" item={this.props.people.notes} />
+        <Row label="Mobile" item={this.props.people.mobile} />
+
         <div className="form-group row">
           <div className="offset-sm-3 col-sm-21">
             <Link to={"/people/" + this.props.people.id + "/edit"} className="btn btn-primary btn-sm">Edit</Link>

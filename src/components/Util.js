@@ -2,20 +2,6 @@ import React, { Component } from "react";
 import LoaderImage from "../assets/img/small-loader.svg";
 
 class Util extends Component {
-  static Row(label, item, link="", lclass = "col-sm-3 text-sm-right", rclass = "col-sm-21") {
-    if(item) {
-      if (link) {
-        item = <a href={link + ':' + item}>{item}</a>;
-      }
-      return (
-        <div className="form-group row">
-          <div className={lclass}>{label}:</div>
-          <div className={rclass}>{item}</div>
-        </div>
-      );
-    }
-  }
-
   static numberList(item) {
     let number = [];
     if(item.length > 0) {
