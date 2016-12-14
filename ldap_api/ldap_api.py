@@ -96,7 +96,7 @@ class LdapApi:
             return None
         company_name = company[1].get('cn')[0]
         ldap_filter = ldap.filter.filter_format('(&(o=%s)(active=TRUE))', [company_name])
-        ldap_response = self.__ldap_client.search_ext_s(self.LDAP_BASES['people'],
+        ldap_response = self.__ldap_client.search_ext_s(LdapApi.LDAP_BASES['people'],
                                                         ldap.SCOPE_SUBTREE, ldap_filter)
 
         if ldap_response is None:
@@ -113,8 +113,8 @@ class LdapApi:
         :return: the dn of the employee or None if not found
         """
         ldap_filter = '(uid={})'.format(uid)
-        ldap_response = self.__ldap_client.search_ext_s(self.LDAP_BASES['employees'],
-                                                        ldap.SCOPE_SUBTREE, ldap_filter)
+        ldap_response = self.__ldap_client.search_ext_s(
+            LdapApi.LDAP_BASES['employees'], ldap.SCOPE_SUBTREE, ldap_filter)
 
         return None if ldap_response is None or len(ldap_response) == 0 else ldap_response[0][0]
 
@@ -130,9 +130,9 @@ class LdapApi:
         if not get_disabled:
             ldap_filter = '(&%s(active=TRUE))' % ldap_filter
 
-        ldap_response = self.__ldap_client.search_ext_s(self.LDAP_BASES[base],
-                                                        ldap.SCOPE_SUBTREE, ldap_filter,
-                                                        serverctrls=[self.__ldap_page_ctrl()])
+        paged_control = SimplePagedResultsControl(True, size=LdapApi.SEARCH_LIMIT, cookie='')
+        ldap_response = self.__ldap_client.search_ext_s(
+            LdapApi.LDAP_BASES[base],ldap.SCOPE_SUBTREE, ldap_filter, serverctrls=[paged_control])
 
         if ldap_response is None:
             return []
@@ -170,7 +170,7 @@ class LdapApi:
         return self.get_company(company_id)
 
     def delete_company(self, company_id):
-        dn = 'uniqueIdentifier={},{}'.format(company_id, self.LDAP_BASES['companies'])
+        dn = 'uniqueIdentifier={},{}'.format(company_id, LdapApi.LDAP_BASES['companies'])
         notify = self.__find_notify(dn)
         if notify:
             self.__ldap_client.delete_s(notify[0])
@@ -179,13 +179,13 @@ class LdapApi:
         return True if self.get_company(company_id) is None else False
 
     def delete_person(self, person_id):
-        dn = 'uidNumber={},{}'.format(person_id, self.LDAP_BASES['people'])
+        dn = 'uidNumber={},{}'.format(person_id, LdapApi.LDAP_BASES['people'])
         self.__ldap_client.delete_s(dn)
         return True if self.get_person(person_id) is None else False
 
     def add_person(self, attributes):
-        ldap_attributes = self.__remap_dict(attributes, self.INVERSE_ENTRY_MAPPING)
-        ldap_attributes['objectClass'] = self.OBJECT_CLASSES['people']
+        ldap_attributes = self.__remap_dict(attributes, LdapApi.INVERSE_ENTRY_MAPPING)
+        ldap_attributes['objectClass'] = LdapApi.OBJECT_CLASSES['people']
         names = ldap_attributes['cn'].split(' ', 1)
         if len(names) > 1:
             ldap_attributes['givenName'] = names[0]
@@ -208,16 +208,16 @@ class LdapApi:
         create_attempts = 0
         person_id = None
         dn = None
-        while create_attempts < self.MAX_CREATE_ATTEMPTS:
+        while create_attempts < LdapApi.MAX_CREATE_ATTEMPTS:
             try:
                 person_id = self.__get_next_uid()
-                dn = 'uidNumber={},{}'.format(person_id, self.LDAP_BASES['people'])
+                dn = 'uidNumber={},{}'.format(person_id, LdapApi.LDAP_BASES['people'])
 
                 self.__add_entry(dn, ldap_attributes)
                 break
             except ldap.ALREADY_EXISTS:
                 create_attempts += 1
-                if create_attempts == self.MAX_CREATE_ATTEMPTS:
+                if create_attempts == LdapApi.MAX_CREATE_ATTEMPTS:
                     raise
 
         if need_auto_add_to_task:
@@ -226,8 +226,8 @@ class LdapApi:
         return self.get_person(person_id)
 
     def add_company(self, attributes):
-        ldap_attributes = self.__remap_dict(attributes, self.INVERSE_ENTRY_MAPPING)
-        ldap_attributes['objectClass'] = self.OBJECT_CLASSES['companies']
+        ldap_attributes = self.__remap_dict(attributes, LdapApi.INVERSE_ENTRY_MAPPING)
+        ldap_attributes['objectClass'] = LdapApi.OBJECT_CLASSES['companies']
         ldap_attributes['o'] = ldap_attributes['cn']
         create_attempts = 0
 
@@ -235,10 +235,10 @@ class LdapApi:
             ldap_attributes['active'] = 'TRUE'
 
         company_id = None
-        while create_attempts < self.MAX_CREATE_ATTEMPTS:
+        while create_attempts < LdapApi.MAX_CREATE_ATTEMPTS:
             try:
                 company_id = self.__get_next_unique_identifier()
-                dn = 'uniqueIdentifier={},{}'.format(company_id, self.LDAP_BASES['companies'])
+                dn = 'uniqueIdentifier={},{}'.format(company_id, LdapApi.LDAP_BASES['companies'])
                 self.__add_entry(dn, ldap_attributes)
                 break
             except ldap.ALREADY_EXISTS:
@@ -327,7 +327,7 @@ class LdapApi:
 
     def __find_company_entry_by_name(self, name):
         ldap_filter = ldap.filter.filter_format('(cn=%s)', [name])
-        response = self.__ldap_client.search_s(self.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE, ldap_filter)
+        response = self.__ldap_client.search_s(LdapApi.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE, ldap_filter)
         return self.__get_first(response)
 
     def __get_next_unique_identifier(self):
@@ -336,10 +336,10 @@ class LdapApi:
         :return: int next value
         """
         # Get the maximum value cached in an LDAP attribute
-        next_value = self.__get_entry_uid(self.LDAP_BASES['counts'], '(cn=maxUniqueIdentifier)') + 1
+        next_value = self.__get_entry_uid(LdapApi.LDAP_BASES['counts'], '(cn=maxUniqueIdentifier)') + 1
 
         # Store this next value back to LDAP for the next request
-        dn = '{},{}'.format('cn=maxUniqueIdentifier', self.LDAP_BASES['counts'])
+        dn = '{},{}'.format('cn=maxUniqueIdentifier', LdapApi.LDAP_BASES['counts'])
         self.__ldap_client.modify_s(dn, [(ldap.MOD_REPLACE, 'uid', self.__clear_param(next_value))])
         return next_value
 
@@ -361,28 +361,28 @@ class LdapApi:
         return int(result)
 
     def __find_person(self, uid_number):
-        response = self.__ldap_client.search_s(self.LDAP_BASES['people'], ldap.SCOPE_SUBTREE,
+        response = self.__ldap_client.search_s(LdapApi.LDAP_BASES['people'], ldap.SCOPE_SUBTREE,
                                                '(uidNumber=%d)' % uid_number)
         return self.__get_first(response)
 
     def __find_company(self, unique_identifier):
-        response = self.__ldap_client.search_s(self.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE,
+        response = self.__ldap_client.search_s(LdapApi.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE,
                                                '(uniqueIdentifier=%d)' % unique_identifier)
         return self.__get_first(response)
 
     def __person_from_ldap(self, ldap_dict):
-        person = self.__remap_dict(ldap_dict, self.ENTRY_MAPPING)
+        person = self.__remap_dict(ldap_dict, LdapApi.ENTRY_MAPPING)
         person['id'] = ldap_dict.get('uidNumber')
         return person
 
     def __company_from_ldap(self, ldap_dict):
-        company = self.__remap_dict(ldap_dict, self.ENTRY_MAPPING)
+        company = self.__remap_dict(ldap_dict, LdapApi.ENTRY_MAPPING)
         company['id'] = ldap_dict.get('uniqueIdentifier')
         return company
 
     def __modify_ldap_entry(self, entry, attributes):
         dn = entry[0]
-        ldap_attributes = self.__remap_dict(attributes, self.INVERSE_ENTRY_MAPPING)
+        ldap_attributes = self.__remap_dict(attributes, LdapApi.INVERSE_ENTRY_MAPPING)
         ldap_attributes = self.__filter_blank_attributes(ldap_attributes, entry[1])
         modify_list = self.__make_modify_list(ldap_attributes)
         self.__ldap_client.modify_s(dn, modify_list)
@@ -429,9 +429,6 @@ class LdapApi:
             return self.__clear_param(str(param))
         else:
             return None
-
-    def __ldap_page_ctrl(self):
-        return SimplePagedResultsControl(True, size=self.SEARCH_LIMIT, cookie='')
 
     @staticmethod
     def __remap_dict(source_dict, mapping):
