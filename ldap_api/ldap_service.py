@@ -379,7 +379,9 @@ def skip_attribute(key, value, current_attributes):
     return False
 
 
-def filter_blank_attributes(new_attributes, old_attributes={}):
+def filter_blank_attributes(new_attributes, old_attributes=None):
+    if old_attributes is None:
+        old_attributes = {}
     return {k: v for k, v in new_attributes.items() if not LdapService.__skip_attribute(k, v, old_attributes)}
 
 
