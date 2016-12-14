@@ -195,7 +195,7 @@ class LdapService:
         dn = None
         while create_attempts < LdapService.MAX_CREATE_ATTEMPTS:
             try:
-                person_id = self.__get_next_uid()
+                person_id = self.__next_id('uid')
                 dn = 'uidNumber={},{}'.format(person_id, LdapService.LDAP_BASES['people'])
 
                 self.__add_entry(dn, ldap_attributes)
@@ -222,7 +222,7 @@ class LdapService:
         company_id = None
         while create_attempts < LdapService.MAX_CREATE_ATTEMPTS:
             try:
-                company_id = self.__get_next_unique_identifier()
+                company_id = self.__next_id('uniqueIdentifier')
                 dn = 'uniqueIdentifier={},{}'.format(company_id, LdapService.LDAP_BASES['companies'])
                 self.__add_entry(dn, ldap_attributes)
                 break
@@ -308,52 +308,42 @@ class LdapService:
     def __find_notify(self, company_dn):
         ldap_filter = '(cn=notify)'
         response = self.ldap_connection.search_s(company_dn, ldap.SCOPE_SUBTREE, ldap_filter)
-        return __get_first(response)
+        return get_first(response)
 
     def __find_company_entry_by_name(self, name):
         ldap_filter = ldap.filter.filter_format('(cn=%s)', [name])
         response = self.ldap_connection.search_s(LdapService.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE, ldap_filter)
-        return __get_first(response)
+        return get_first(response)
 
-    def __get_next_unique_identifier(self):
+    def __next_id(self, identifier):
         """
         Get the next uniqueIdentifier available in LDAP
+        :param: identifier the type of identifier, either "uid" or "uniqueIdentifier"
         :return: int next value
         """
-        # Get the maximum value cached in an LDAP attribute
-        next_value = self.__get_entry_uid(LdapService.LDAP_BASES['counts'], '(cn=maxUniqueIdentifier)') + 1
+        dn = 'cn=max_{},{}'.format(identifier, LdapService.LDAP_BASES['counts'])
 
-        # Store this next value back to LDAP for the next request
-        dn = '{},{}'.format('cn=maxUniqueIdentifier', LdapService.LDAP_BASES['counts'])
+        # Get the maximum value cached in an LDAP attribute
+        result = self.ldap_connection.search_s(
+            dn,
+            ldap.SCOPE_BASE,
+            '(objectClass=uidObject)',
+            attrlist=['uid'])
+        next_value = int(get_first(result)[1]['uid'][0]) + 1
+
+        # Store this next value back to LDAP for the next requestz
         self.ldap_connection.modify_s(dn, [(ldap.MOD_REPLACE, 'uid', __clear_param(next_value))])
         return next_value
-
-    def __get_next_uid(self):
-        """
-        Get the next uid available in LDAP
-        :return: int next value
-        """
-        # Get the maximum value cached in an LDAP attribute
-        next_value = self.__get_entry_uid(self.LDAP_BASES['counts'], '(cn=maxUidNumber)') + 1
-
-        # Store this next value back to LDAP for the next request
-        dn = '{},{}'.format('cn=maxUidNumber', self.LDAP_BASES['counts'])
-        self.ldap_connection.modify_s(dn, [(ldap.MOD_REPLACE, 'uid', __clear_param(next_value))])
-        return next_value
-
-    def __get_entry_uid(self, base, ldap_filter):
-        result = self.ldap_connection.search_s(base, ldap.SCOPE_SUBTREE, ldap_filter, attrlist=['uid'])[0][1]['uid'][0]
-        return int(result)
 
     def __find_person(self, uid_number):
         response = self.ldap_connection.search_s(LdapService.LDAP_BASES['people'], ldap.SCOPE_SUBTREE,
                                                '(uidNumber=%d)' % uid_number)
-        return __get_first(response)
+        return get_first(response)
 
     def __find_company(self, unique_identifier):
         response = self.ldap_connection.search_s(LdapService.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE,
                                                '(uniqueIdentifier=%d)' % unique_identifier)
-        return __get_first(response)
+        return get_first(response)
 
     def __modify_ldap_entry(self, entry, attributes):
         dn = entry[0]
