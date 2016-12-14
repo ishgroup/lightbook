@@ -223,7 +223,7 @@ class LightbookApp extends Component {
               </div>
 
               <div className="company-list col-lg-24" style={_hide_companies}>
-                <ListView list={_clist} onRemove={this.handleCompanyRemove.bind(this)} onEdits={this.handleCompanyEditOpen.bind(this)} block={this} item={this.renderCompany} />
+                <ListView list={_clist} onRemove={this.handleCompanyRemove.bind(this)} onEdits={this.handleCompanyEditOpen.bind(this)} block={this} item={LightbookApp.renderCompany} />
               </div>
 
             </div>
