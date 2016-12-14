@@ -26,7 +26,7 @@ class Company extends Component {
   }
 
   handleViewToggle() {
-    var _toggleState = this.state.viewToggle;
+    let _toggleState = this.state.viewToggle;
 
     if(this.isFetch !== false && _toggleState === false) {
       this.setLoader(true);
