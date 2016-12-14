@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Config from '../../config';
+import Config from '../../Config';
 import TextInputEdited from '../../components/TextInputEdited';
 import Util from '../../components/Util';
 import Validate from '../../components/Validate';

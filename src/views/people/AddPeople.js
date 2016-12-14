@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Config from '../../config';
+import Config from '../../Config';
 import Util from '../../components/Util';
 import PeopleModel from '../../model/PeopleModel';
 import Validate from '../../components/Validate';

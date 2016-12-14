@@ -1,5 +1,5 @@
 import axios from 'axios';
-import Config from '../config';
+import Config from '../Config';
 
 class BaseModel {
   static fetch(that, url, callback) {
