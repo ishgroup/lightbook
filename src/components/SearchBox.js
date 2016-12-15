@@ -3,8 +3,10 @@ import React, { Component } from 'react';
 class SearchBox extends Component {
   constructor(props) {
     super(props);
+
+    let searchQuery = this.props.block.props.location.query.q;
     this.state = {
-      filterString: '',
+      filterString: searchQuery !== undefined ? searchQuery : '',
       isTextChanged: false
     }
   }

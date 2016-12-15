@@ -13,10 +13,22 @@ class People extends Component {
     this.props = props;
 
     this.state = {
-      'viewToggle': false,
+      viewToggle: false,
       people: [],
       showLoader: false
     }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(this.state.viewToggle)
+      Toggle.Slide(true, 'view-people-'+ this.props.people.id);
+
+    this.isFetch = true;
+
+    this.setState({
+      viewToggle: false,
+      showLoader: false
+    });
   }
 
   setLoader(value) {
@@ -45,7 +57,7 @@ class People extends Component {
     }
 
     this.setState({
-      'viewToggle': ! _toggleState
+      viewToggle: ! _toggleState
     });
 
     this.isFetch = false;

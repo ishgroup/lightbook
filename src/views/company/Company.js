@@ -13,10 +13,22 @@ class Company extends Component {
     this.props = props;
 
     this.state = {
-      'viewToggle': false,
+      viewToggle: false,
       company: [],
       showLoader: false
     }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(this.state.viewToggle)
+      Toggle.Slide(true, 'view-company-'+ this.props.company.id);
+
+    this.isFetch = true;
+
+    this.setState({
+      viewToggle: false,
+      showLoader: false
+    });
   }
 
   setLoader(value) {
@@ -44,7 +56,7 @@ class Company extends Component {
     }
 
     this.setState({
-      'viewToggle': ! _toggleState
+      viewToggle: ! _toggleState
     });
 
     this.isFetch = false;
