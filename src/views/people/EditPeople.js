@@ -4,6 +4,7 @@ import TextInputEdited from '../../components/TextInputEdited';
 import Util from '../../components/Util';
 import Validate from '../../components/Validate';
 import AutoComplete from '../../components/AutoComplete';
+import Select from '../../components/Select';
 import PeopleModel from '../../model/PeopleModel';
 
 class EditPeople extends Component {
@@ -44,7 +45,8 @@ class EditPeople extends Component {
       company_role: this.refs.company_role.item.value,
       phone: phone,
       notes: this.refs.notes.item.value,
-      mobile: mobile
+      mobile: mobile,
+      active: this.refs.status.value
     };
 
     if(validate.isValidate) {
@@ -111,6 +113,8 @@ class EditPeople extends Component {
             <TextInputEdited type="text" className="form-control col-md-8" placeholder="Phone" name="phone" ref="phone" value={this.state.people.phone || ''} validate="phone" />
             <TextInputEdited type="text" className="form-control col-md-8" placeholder="Notes" name="notes" ref="notes" value={this.state.people.notes || ''} />
             <TextInputEdited type="text" className="form-control col-md-8" placeholder="Mobile" name="mobile" ref="mobile" value={this.state.people.mobile || ''} validate="phone" />
+
+            <Select ref="status" name="status" label="Status" options={[ {'Active': "TRUE"}, {'Inactive': "FALSE"} ]} selected={this.state.people.active} />
 
             <div className="form-group row">
               <div className="offset-sm-3 col-sm-21">
