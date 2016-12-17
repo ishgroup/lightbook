@@ -30,11 +30,11 @@ class TextInputEdited extends Component {
   }
 
   static getText(validate, text) {
-    if(validate !== undefined && text !== '' && text !== null && text !== undefined) {
+    if(validate !== undefined && text !== '' && text !== 'null' && text !== undefined) {
       if(validate === 'email')
-        return '<a href="mailto:'+ text +'">'+ text +'</a>';
+        return <a href={"mailto:"+ text}>{text}</a>;
       if(validate === 'phone')
-        return '<a href="tel:'+ text +'">'+ text +'</a>';
+        return <a href={"tel:"+ text}>{text}</a>;
     } else
       return text;
   }
@@ -52,8 +52,8 @@ class TextInputEdited extends Component {
       <div className="form-group row">
         <label htmlFor={"input-" + this.props.name}  className="col-sm-3 col-form-label text-sm-right">{this.props.placeholder}</label>
         <div className={'col-sm-21 input-box'+ (this.state.activeInput ? ' input-active' : '')}>
-          <div className={'input-edited' + inputTextEmpty} onClick={this.hasTextEdited.bind(this)} dangerouslySetInnerHTML={{ __html: textValue }} />
-          <input type={this.props.type} name={this.props.name} id={'input-' + this.props.name} value={this.state.value} ref={(item) => { this.item = item } } className={'input-tag ' + this.props.className} placeholder={this.props.placeholder} onChange={this.handleChange.bind(this)} onBlur={this.onBlur.bind(this)} />
+          <div className={'input-edited' + inputTextEmpty} onClick={this.hasTextEdited.bind(this)}>{textValue}</div>
+          <input type={this.props.type} name={this.props.name} id={'input-' + this.props.name} value={this.state.value !== 'null' ? this.state.value : ""} ref={(item) => { this.item = item } } className={'input-tag ' + this.props.className} placeholder={this.props.placeholder} onChange={this.handleChange.bind(this)} onBlur={this.onBlur.bind(this)} />
         </div>
       </div>
     );

@@ -10,7 +10,7 @@ class Select extends Component {
   }
 
   option(value, item) {
-    return <option value={value[item]}>{item}</option>;
+    return <option value={value[item] || ""}>{item}</option>;
   }
 
   groupOptions(items=[], label = "") {
@@ -68,7 +68,8 @@ class Select extends Component {
       <div className="form-group row">
         <label htmlFor={"input-" + this.props.name}  className={"col-form-label " + lClass}>{this.props.label}</label>
         <div className={rClass}>
-          <select ref={(item) => { this.item = item; } } multiple={this.props.multiple} className="form-control" id={"input-" + this.props.name} name={this.props.name} onChange={this.handleChange.bind(this)} defaultValue={this.value}>
+          <select ref={(item) => { this.item = item; } } multiple={this.props.multiple} className="form-control" id={"input-" + this.props.name} name={this.props.name} onChange={this.handleChange.bind(this)} defaultValue={this.value} disabled={this.props.disabled}>
+            {this.props.default ? this.option([], this.props.default) : ''}
             {child}
           </select>
         </div>

@@ -5,6 +5,7 @@ import PeopleModel from '../../model/PeopleModel';
 import Validate from '../../components/Validate';
 import FormField from '../../components/FormField';
 import AutoComplete from '../../components/AutoComplete';
+import Select from '../../components/Select';
 
 class AddPeople extends Component {
   constructor(props) {
@@ -31,7 +32,8 @@ class AddPeople extends Component {
       company_role: this.refs.company_role.item.value,
       phone: phone,
       notes: this.refs.notes.item.value,
-      mobile: mobile
+      mobile: mobile,
+      active: this.refs.status.value
     };
 
     if(validate.isValidate) {
@@ -76,6 +78,8 @@ class AddPeople extends Component {
           <FormField label="Phone" name="phone" ref="phone" />
           <FormField label="Notes" name="notes" ref="notes" />
           <FormField label="Mobile" name="mobile" ref="mobile" />
+
+          <Select ref="status" name="status" label="Status" options={[ {'Active': "TRUE"}, {'Inactive': "FALSE"} ]} selected={"TRUE"} />
 
           <div className="form-group row">
             <div className="offset-sm-3 col-sm-21">
