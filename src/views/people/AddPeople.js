@@ -6,6 +6,7 @@ import Validate from '../../components/Validate';
 import FormField from '../../components/FormField';
 import AutoComplete from '../../components/AutoComplete';
 import Select from '../../components/Select';
+import CheckBox from '../../components/CheckBox';
 
 class AddPeople extends Component {
   constructor(props) {
@@ -33,7 +34,8 @@ class AddPeople extends Component {
       phone: phone,
       notes: this.refs.notes.item.value,
       mobile: mobile,
-      active: this.refs.status.value
+      active: this.refs.status.value,
+      auto_add_to_task: this.refs.auto_add_to_task.value
     };
 
     if(validate.isValidate) {
@@ -80,6 +82,7 @@ class AddPeople extends Component {
           <FormField label="Mobile" name="mobile" ref="mobile" />
 
           <Select ref="status" name="status" label="Status" options={[ {'Active': "TRUE"}, {'Inactive': "FALSE"} ]} selected={"TRUE"} />
+          <CheckBox ref="auto_add_to_task" name="auto_add_to_task" text="Auto add to task" checked={false} />
 
           <div className="form-group row">
             <div className="offset-sm-3 col-sm-21">

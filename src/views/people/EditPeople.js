@@ -5,6 +5,7 @@ import Util from '../../components/Util';
 import Validate from '../../components/Validate';
 import AutoComplete from '../../components/AutoComplete';
 import Select from '../../components/Select';
+import CheckBox from '../../components/CheckBox';
 import PeopleModel from '../../model/PeopleModel';
 
 class EditPeople extends Component {
@@ -46,7 +47,8 @@ class EditPeople extends Component {
       phone: phone,
       notes: this.refs.notes.item.value,
       mobile: mobile,
-      active: this.refs.status.value
+      active: this.refs.status.value,
+      auto_add_to_task: this.refs.auto_add_to_task.value
     };
 
     if(validate.isValidate) {
@@ -115,6 +117,7 @@ class EditPeople extends Component {
             <TextInputEdited type="text" className="form-control col-md-8" placeholder="Mobile" name="mobile" ref="mobile" value={this.state.people.mobile || ''} validate="phone" />
 
             <Select ref="status" name="status" label="Status" options={[ {'Active': "TRUE"}, {'Inactive': "FALSE"} ]} selected={this.state.people.active || ''} />
+            <CheckBox ref="auto_add_to_task" name="auto_add_to_task" text="Auto add to task" checked={this.state.people.auto_add_to_task || false} />
 
             <div className="form-group row">
               <div className="offset-sm-3 col-sm-21">

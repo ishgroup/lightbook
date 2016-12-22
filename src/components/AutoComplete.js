@@ -71,6 +71,11 @@ class AutoComplete extends Component {
 
   onFocus() {
     this.item.select();
+    if(this.item.value.length > 0) {
+      this.setState({
+        showList: true
+      });
+    }
   }
 
   onKeyUp() {
