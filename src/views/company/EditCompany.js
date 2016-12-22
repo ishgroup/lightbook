@@ -60,7 +60,7 @@ class EditCompany extends Component {
       CompanyModel.edit(this, newrow, function(that, response) {
         alert("Company updated successfully");
 
-        this.setState({
+        that.setState({
           disabledUpdateBtn: false
         });
       });
@@ -80,7 +80,7 @@ class EditCompany extends Component {
       });
 
       CompanyModel.delete(this, this.state.company.id, function(that, response) {
-        this.setState({
+        that.setState({
           disabledRemoveBtn: false
         });
 

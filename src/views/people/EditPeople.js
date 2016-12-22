@@ -55,7 +55,7 @@ class EditPeople extends Component {
       });
 
       PeopleModel.edit(this, newrow, function(that, response) {
-        this.setState({
+        that.setState({
           disabledUpdateBtn: false
         });
       });
@@ -71,7 +71,7 @@ class EditPeople extends Component {
       });
 
       PeopleModel.delete(this, this.state.people.id, function(that, response) {
-        this.setState({
+        that.setState({
           disabledRemoveBtn: false
         });
 

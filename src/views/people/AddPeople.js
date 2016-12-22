@@ -46,7 +46,7 @@ class AddPeople extends Component {
         document.getElementsByClassName('ContactForm')[0].reset();
         alert('People added successfully.');
 
-        this.setState({
+        that.setState({
           disabledAddBtn: false
         });
       });

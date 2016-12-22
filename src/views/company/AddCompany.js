@@ -54,7 +54,7 @@ class AddCompany extends Component {
 
         alert('Company added successfully.');
 
-        this.setState({
+        that.setState({
           disabledAddBtn: false
         });
       });
