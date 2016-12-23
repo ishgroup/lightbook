@@ -20,8 +20,9 @@ class AddPeople extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    const validate = new Validate();
+    e.persist();
 
+    const validate = new Validate();
     const phone = Util.numberList(this.refs.phone.item.value);
     const mobile = Util.numberList(this.refs.mobile.item.value);
 
@@ -45,8 +46,8 @@ class AddPeople extends Component {
       });
 
       PeopleModel.add(this, newrow, function(that, response) {
-        document.getElementsByClassName('ContactForm')[0].reset();
         alert('People added successfully.');
+        e.target.reset();
 
         that.setState({
           disabledAddBtn: false

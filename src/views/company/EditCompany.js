@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import TextInputEdited from '../../components/TextInputEdited';
 import Util from '../../components/Util';
 import Validate from '../../components/Validate';
+import Select from '../../components/Select';
 import CompanyModel from '../../model/CompanyModel';
 
 class EditCompany extends Component {
@@ -31,25 +32,21 @@ class EditCompany extends Component {
     const id = this.state.company.id;
 
     const validate = new Validate();
-
-    const name     = validate.field('Name', this.refs.name.item).required().value();
-    //const email    = validate.field('Email', this.refs.email.item).required().value();
-    const address  = this.refs.address.item.value;
-    const suburb   = this.refs.suburb.item.value;
-    const postal   = this.refs.postal.item.value;
-    //const country  = this.refs.country.item.value;
-
     const phone = Util.numberList(this.refs.phone.item.value);
+    const fax = Util.numberList(this.refs.fax.item.value);
 
     const newrow = {
       id: id,
-      name: name,
-      //email: email,
+      name: validate.field('Name', this.refs.name.item).required().value(),
+      abn: this.refs.abn.item.value,
+      active: this.refs.status.value,
       phone: phone,
-      address: address,
-      suburb: suburb,
-      postal: postal,
-      //country: country
+      fax: fax,
+      street: this.refs.street.item.value,
+      suburb: this.refs.suburb.item.value,
+      postalCode: this.refs.postalCode.item.value,
+      st: this.refs.st.item.value,
+      notes: this.refs.notes.item.value
     };
 
     if(validate.isValidate) {
@@ -104,13 +101,17 @@ class EditCompany extends Component {
         {this.state.company.name !== undefined ?
           <form onSubmit={this.handleSubmit.bind(this)} className="ContactForm edit-company" noValidate="true">
 
-            <TextInputEdited type="text" className="form-control" placeholder="Name" name="name" ref="name" value={this.state.company.name} />
-            <TextInputEdited type="text" className="form-control" placeholder="Email" name="email" ref="email" value={this.state.company.email} validate="email" />
-            <TextInputEdited type="text" className="form-control" placeholder="Phone" name="phone" ref="phone" value={this.state.company.phone} validate="phone" />
-            <TextInputEdited type="text" className="form-control" placeholder="Address" name="address" ref="address" value={this.state.company.address} />
-            <TextInputEdited type="text" className="form-control" placeholder="Suburb" name="suburb" ref="suburb" value={this.state.company.suburb} />
-            <TextInputEdited type="text" className="form-control" placeholder="Postal" name="postal" ref="postal" value={this.state.company.postal} />
-            <TextInputEdited type="text" className="form-control" placeholder="country" name="country" ref="country" value={this.state.company.country} />
+            <TextInputEdited type="text" placeholder="Name" name="name" ref="name" value={this.state.company.name} />
+            <TextInputEdited type="text" placeholder="Abn" name="abn" ref="abn" value={this.state.company.abn} />
+            <TextInputEdited type="text" placeholder="Phone" name="phone" ref="phone" value={this.state.company.phone} validate="phone" />
+            <TextInputEdited type="text" placeholder="Fax" name="fax" ref="fax" value={this.state.company.fax} validate="phone" />
+            <TextInputEdited type="text" placeholder="Street" name="street" ref="street" value={this.state.company.street} />
+            <TextInputEdited type="text" placeholder="Suburb" name="suburb" ref="suburb" value={this.state.company.suburb} />
+            <TextInputEdited type="text" placeholder="Postal Code" name="postalCode" ref="postalCode" value={this.state.company.postalCode} />
+            <TextInputEdited type="text" placeholder="St" name="st" ref="st" value={this.state.company.st} />
+            <TextInputEdited type="text" placeholder="Notes" name="notes" ref="notes" value={this.state.company.notes} />
+
+            <Select label="Status" name="status" ref="status" options={[ {'Active': 'true'}, {'Inactive': 'false'} ]} selected={this.state.company.active} />
 
             <div className="form-group row">
               <div className="offset-sm-3 col-sm-21">

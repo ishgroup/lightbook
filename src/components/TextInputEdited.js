@@ -26,6 +26,12 @@ class TextInputEdited extends Component {
   onBlur() {
     this.setState({
       activeInput: false
+    });
+  }
+
+  onFocus() {
+    this.setState({
+      activeInput: true
     })
   }
 
@@ -53,7 +59,7 @@ class TextInputEdited extends Component {
         <label htmlFor={"input-" + this.props.name}  className="col-sm-3 col-form-label text-sm-right">{this.props.placeholder}</label>
         <div className={'col-sm-21 input-box'+ (this.state.activeInput ? ' input-active' : '')}>
           <div className={'input-edited' + inputTextEmpty} onClick={this.hasTextEdited.bind(this)}>{textValue}</div>
-          <input type={this.props.type} name={this.props.name} id={'input-' + this.props.name} value={this.state.value !== 'null' ? this.state.value : ""} ref={(item) => { this.item = item } } className={'input-tag ' + this.props.className} placeholder={this.props.placeholder} onChange={this.handleChange.bind(this)} onBlur={this.onBlur.bind(this)} />
+          <input type={this.props.type} name={this.props.name} id={'input-' + this.props.name} value={this.state.value !== 'null' ? this.state.value : ""} ref={(item) => { this.item = item } } className={'input-tag form-control ' + (this.props.className || "")} placeholder={this.props.placeholder} onChange={this.handleChange.bind(this)} onBlur={this.onBlur.bind(this)} onFocus={this.onFocus.bind(this)} />
         </div>
       </div>
     );

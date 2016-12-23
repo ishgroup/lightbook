@@ -14,12 +14,15 @@ class ViewCompany extends Component {
         </div>
 
         <Row label="Name" item={this.props.company.name} />
-        <Row label="Email" item={this.props.company.email} link="mailto" />
+        <Row label="Abn" item={this.props.company.abn} />
+        <Row label="Status" item={this.props.company.active === 'true' ? 'Active' : 'Inactive'} />
         <Row label="Phone" item={this.props.company.phone} link="tel" />
-        <Row label="Address" item={this.props.company.address} />
+        <Row label="Fax" item={this.props.company.fax} link="tel" />
+        <Row label="Street" item={this.props.company.street} />
         <Row label="Suburb" item={this.props.company.suburb} />
-        <Row label="Postal" item={this.props.company.postal} />
-        <Row label="Country" item={this.props.company.country} />
+        <Row label="Postal Code" item={this.props.company.postalCode} />
+        <Row label="St" item={this.props.company.st} />
+        <Row label="Notes" item={this.props.company.notes} />
 
         <div className="form-group row">
           <div className="offset-sm-3 col-sm-21">

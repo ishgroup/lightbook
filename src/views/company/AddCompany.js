@@ -3,6 +3,7 @@ import Util from '../../components/Util';
 import CompanyModel from '../../model/CompanyModel';
 import Validate from '../../components/Validate';
 import FormField from '../../components/FormField';
+import Select from '../../components/Select';
 
 class AddCompany extends Component {
   constructor(props) {
@@ -16,25 +17,23 @@ class AddCompany extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
+    e.persist();
 
     const validate = new Validate();
-    const name     = validate.field('Name', this.refs.name.item).required().value();
-    //const email    = validate.field('Email', this.refs.email.item).required().value();
-    const address  = this.refs.address.item.value;
-    const suburb   = this.refs.suburb.item.value;
-    const postal   = this.refs.postal.item.value;
-    //const country  = this.refs.country.item.value;
-
     const phone = Util.numberList(this.refs.phone.item.value);
+    const fax = Util.numberList(this.refs.fax.item.value);
 
     const newrow = {
-      name: name,
-      // email: email,
+      name: validate.field('Name', this.refs.name.item).required().value(),
+      abn: this.refs.abn.item.value,
+      active: this.refs.status.value,
       phone: phone,
-      address: address,
-      suburb: suburb,
-      postal: postal,
-      // country: country
+      fax: fax,
+      street: this.refs.street.item.value,
+      suburb: this.refs.suburb.item.value,
+      postalCode: this.refs.postalCode.item.value,
+      st: this.refs.st.item.value,
+      notes: this.refs.notes.item.value
     };
 
     if(validate.isValidate) {
@@ -44,15 +43,8 @@ class AddCompany extends Component {
       });
 
       CompanyModel.add(this, newrow, function(that, response) {
-        that.refs.name.item.value = '';
-        that.refs.email.item.value = '';
-        that.refs.phone.item.value = '';
-        that.refs.address.item.value = '';
-        that.refs.suburb.item.value = '';
-        that.refs.postal.item.value = '';
-        that.refs.country.item.value = '';
-
         alert('Company added successfully.');
+        e.target.reset();
 
         that.setState({
           disabledAddBtn: false
@@ -73,12 +65,15 @@ class AddCompany extends Component {
       <div className="well">
         <form onSubmit={this.handleSubmit} className="ContactForm" noValidate="true">
           <FormField label="Name" name="name" ref="name" />
-          <FormField label="Email" name="email" ref="email" />
+          <FormField label="Abn" name="abn" ref="abn" />
           <FormField label="Phone" name="phone" ref="phone" />
-          <FormField label="Address" name="address" ref="address" />
+          <FormField label="Fax" name="fax" ref="fax" />
+          <FormField label="Street" name="street" ref="street" />
           <FormField label="Suburb" name="suburb" ref="suburb" />
-          <FormField label="Postal" name="postal" ref="postal" />
-          <FormField label="Country" name="country" ref="country" />
+          <FormField label="Postal Code" name="postalCode" ref="postalCode" />
+          <FormField label="St" name="st" ref="st" />
+          <FormField label="Notes" name="notes" ref="notes" />
+          <Select label="Status" name="status" ref="status" options={[ {'Active': 'true'}, {'Inactive': 'false'} ]} selected={'true'} />
 
           <div className="form-group row">
             <div className="offset-sm-3 col-sm-21">
