@@ -23,7 +23,9 @@ class LdapService:
         'c': 'country',
         'l': 'suburb',
         'postalAddress': 'address',
-        'postalCode': 'postal'
+        'postalCode': 'postalCode',
+        'street': 'street',
+        'st': 'state'
     }
     SHORT_INFO = {
         'people': {

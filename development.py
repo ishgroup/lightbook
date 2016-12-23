@@ -500,7 +500,23 @@ def view_company(company_id):
     return jsonify({
         "status": "success",
         "output": {
-            "company": "****"
+            "company": {
+                "id": "1",
+                "name": "Ish Pty. Ltd",
+                "abn": "12345678",
+                "active": "true",
+                "phone": [
+                    "12345679"
+                ],
+                "fax": [
+                    "12345679"
+                ],
+                "street": "30 Wilson St",
+                "suburb": "Newtown",
+                "postalCode": "2042",
+                "st": "NSW",
+                "notes": "something exciting"
+            }
         }
     })
 
@@ -513,14 +529,19 @@ def add_company():
             "company": {
                 "id": "1",
                 "name": "Ish Pty. Ltd",
-                "email": "ish@ish.com.au",
+                "abn": "12345678",
+                "active": "true",
                 "phone": [
                     "12345679"
                 ],
-                "address": "",
-                "suburb": "",
-                "postal": "",
-                "country": ""
+                "fax": [
+                    "12345679"
+                ],
+                "street": "30 Wilson St",
+                "suburb": "Newtown",
+                "postalCode": "2042",
+                "st": "NSW",
+                "notes": "something exciting"
             }
         }
     })
@@ -535,35 +556,13 @@ def search_company(search):
                 {
                     "id": "1",
                     "name": "Ish Pty. Ltd",
-                    "phone": [
-                        "12345679"
-                    ],
-                    "address": "",
-                    "suburb": "",
-                    "postal": "",
-                    "country": ""
-                },
                 {
                     "id": "2",
                     "name": "Other corp",
-                    "phone": [
-                        "12345679"
-                    ],
-                    "address": "",
-                    "suburb": "",
-                    "postal": "",
-                    "country": ""
                 },
                 {
                     "id": "3",
                     "name": "Glooge",
-                    "phone": [
-                        "12345679"
-                    ],
-                    "address": "",
-                    "suburb": "",
-                    "postal": "",
-                    "country": ""
                 }
             ]
         }
