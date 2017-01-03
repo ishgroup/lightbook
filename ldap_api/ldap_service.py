@@ -120,7 +120,7 @@ class LdapService:
             ldap_filter = ldap.filter.filter_format('|(cn~=%s)(cn=%s*)(sn=%s*)', [name, name, name])
 
         if not get_disabled:
-            ldap_filter = '(&%s(active=TRUE))' % ldap_filter
+            ldap_filter = '(&(active=TRUE)(%s))' % ldap_filter
 
         paged_control = SimplePagedResultsControl(True, size=LdapService.SEARCH_LIMIT, cookie='')
         ldap_response = self.ldap_connection.search_ext_s(
