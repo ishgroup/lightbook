@@ -85,17 +85,19 @@ class LdapService:
         ldap_response = self.__find_company(company_id)
         return extract_value_from_array(company_from_ldap(ldap_response[1])) if ldap_response else None
 
-    def get_people(self, company_id):
+    def get_people(self, company_id, only_disabled=False):
         """
         Get all the people attached to this company
         :param company_id: the company unique identifier
+        :param only_disabled: if True return only disabled people
         :return: list of people sorted by name
         """
         company = self.__find_company(company_id)
         if company is None:
             return None
         company_name = company[1].get('cn')[0]
-        ldap_filter = ldap.filter.filter_format('(&(o=%s)(active=TRUE))', [company_name])
+        active = 'FALSE' if only_disabled else 'TRUE'
+        ldap_filter = ldap.filter.filter_format('(&(o=%s)(active=%s))', [company_name, active])
         ldap_response = self.ldap_connection.search_ext_s(LdapService.LDAP_BASES['people'],
                                                           ldap.SCOPE_SUBTREE, ldap_filter)
 

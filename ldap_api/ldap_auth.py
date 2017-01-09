@@ -3,7 +3,7 @@ from functools import wraps
 from settings import SiteSettings
 import ldap
 import ldap.filter
-from ldap_api import LdapService
+from ldap_service import LdapService
 
 config = SiteSettings()
 LOGIN_BASE = 'ou=Employees,ou=People,dc=ish,dc=com,dc=au'

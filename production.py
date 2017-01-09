@@ -148,7 +148,8 @@ def search_entry(search):
 @app.route('/data/company/<int:company_id>/people')
 @requires_auth
 def company_people(company_id):
-  result = ldap().get_people(company_id)
+  only_disabled = request.args.get('only_disabled') is not None
+  result = ldap().get_people(company_id, only_disabled)
 
   if result is None:
     return jsonify({
