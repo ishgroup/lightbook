@@ -9,8 +9,13 @@ class PeopleModel {
     BaseModel.patch(that, '/data/people/update/' + people.id , people, callback);
   }
 
-  static getList(that, id, callback) {
-    BaseModel.fetch(that, '/data/company/'+ id +'/people', callback);
+  static getList(that, params, callback) {
+    let url = '/data/company/'+ params.id +'/people';
+
+    if(params.status !== undefined && params.status === 'inactive')
+      url += '?only_disabled';
+
+    BaseModel.fetch(that, url, callback);
   }
 
   static getPeople(that, id, callback) {

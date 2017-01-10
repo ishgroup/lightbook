@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import { Link } from 'react-router';
+
 import People from './People';
 import EditPeople from './EditPeople';
 import PeopleModel from '../../model/PeopleModel';
@@ -16,7 +18,7 @@ class ListPeople extends Component {
     };
 
     if(this.props.params.id !== undefined) {
-      PeopleModel.getList(this, this.props.params.id, function(that, response) {
+      PeopleModel.getList(this, this.props.params, function(that, response) {
         if(response.data.peoples !== undefined) {
           that.setState({
             peoplelist: response.data.peoples,
@@ -96,7 +98,14 @@ class ListPeople extends Component {
           </div>
           : '' }
         {_plist.length !== 0 ?
-          <ListView list={_plist} onRemove={this.handlePeopleRemove} onEdits={this.handlePeopleEditOpen.bind(this)} block={this} item={ListPeople.renderPeople} />
+          <div className="clearfix">
+            {this.props.params.status === undefined ?
+              <p><Link to={"/company/" + this.props.params.id + "/inactive"} className="btn btn-outline-primary">View inactive users</Link></p>
+            : ''}
+
+            <ListView list={_plist} onRemove={this.handlePeopleRemove} onEdits={this.handlePeopleEditOpen.bind(this)} block={this} item={ListPeople.renderPeople} />
+          </div>
+
         : (!this.state.showLoader ?
             <div className="alert alert-info" role="alert">
               People not found under this company.
