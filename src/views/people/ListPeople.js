@@ -7,17 +7,28 @@ import EditPeople from './EditPeople';
 import PeopleModel from '../../model/PeopleModel';
 import ListView from '../../components/ListView';
 import Util from '../../components/Util';
+import Toggle from '../../components/Toggle';
+import ViewCompany from '../company/ViewCompany';
+import CompanyModel from '../../model/CompanyModel';
 
 class ListPeople extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      company: null,
       peoplelist: [],
-      showLoader: true
+      showLoader: true,
+      viewToggle: false
     };
 
     if(this.props.params.id !== undefined) {
+      CompanyModel.getCompany(this, this.props.params.id, function(that, response) {
+        that.setState({
+          company: response.data.output.company
+        });
+      });
+
       PeopleModel.getList(this, this.props.params, function(that, response) {
         if(response.data.peoples !== undefined) {
           that.setState({
@@ -87,6 +98,15 @@ class ListPeople extends Component {
     return <People people={item} onPeopleDelete={block.handleRemove.bind(block)} onPeopleEdit={block.handleEditOpen.bind(block)} />;
   }
 
+  handleViewToggle(e) {
+    e.preventDefault();
+    Toggle.Slide(this.state.viewToggle, 'view-company-'+ this.state.company.id);
+
+    this.setState({
+      viewToggle: ! this.state.viewToggle
+    });
+  }
+
   render() {
     const _plist = this.state.peoplelist;
 
@@ -99,8 +119,17 @@ class ListPeople extends Component {
           : '' }
         {_plist.length !== 0 ?
           <div className="clearfix">
-            {this.props.params.status === undefined ?
-              <p><Link to={"/company/" + this.props.params.id + "/inactive"} className="btn btn-outline-primary">View inactive users</Link></p>
+            <p>
+              <Link to={"/company/" + this.props.params.id} className="btn btn-outline-primary" onClick={this.handleViewToggle.bind(this)}>View Company</Link>&nbsp;
+              {this.props.params.status === undefined ?
+                <Link to={"/company/" + this.props.params.id + "/inactive"} className="btn btn-outline-primary">View inactive users</Link>
+              : ''}
+            </p>
+
+            {this.state.company !== null ?
+              <div className={"view-company col-xs-24" + (this.state.viewToggle ? " slide-down" : '')} id={"view-company-" + this.state.company.id}>
+                <ViewCompany company={this.state.company} />
+              </div>
             : ''}
 
             <ListView list={_plist} onRemove={this.handlePeopleRemove} onEdits={this.handlePeopleEditOpen.bind(this)} block={this} item={ListPeople.renderPeople} />

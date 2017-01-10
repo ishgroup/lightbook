@@ -14,8 +14,9 @@ class Company extends Component {
 
     this.state = {
       viewToggle: false,
-      company: [],
-      showLoader: false
+      company: (this.props.autoFetch === true ? this.props.company : []),
+      showLoader: false,
+      isAutoFetched: (this.props.autoFetch || false)
     }
   }
 
@@ -40,7 +41,7 @@ class Company extends Component {
   handleViewToggle() {
     let _toggleState = this.state.viewToggle;
 
-    if(this.isFetch !== false && _toggleState === false) {
+    if(this.isFetch !== false && _toggleState === false && !this.state.isAutoFetched) {
       this.setLoader(true);
       CompanyModel.getCompany(this, this.props.company.id, function(that, response) {
         that.setState({
@@ -62,6 +63,12 @@ class Company extends Component {
     this.isFetch = false;
   }
 
+  onCheckPage(e) {
+    if(this.props.onSamePage !== undefined && this.props.onSamePage === true) {
+      e.preventDefault();
+    }
+  }
+
   render() {
     const _company = this.state.company.length !== 0 ? this.state.company : [];
 
@@ -69,8 +76,8 @@ class Company extends Component {
       <div className="row">
         <div className="col-xs-24" onClick={this.handleViewToggle.bind(this)}>
           <div className="row">
-            <div className="col-xs-18">
-              <Link to={"company/" + this.props.company.id} className="link-people">
+            <div className="col-xs-24">
+              <Link to={"company/" + this.props.company.id} className="link-people" onClick={this.onCheckPage.bind(this)}>
                 {this.props.company.name}
               </Link>
             </div>

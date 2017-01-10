@@ -7,11 +7,13 @@ class ViewCompany extends Component {
   render() {
     return (
       <div className="row-view">
-        <div className="form-group row">
-          <div className="col-xs-24">
-            {this.props.children}
+        {this.props.children ?
+          <div className="form-group row">
+            <div className="col-xs-24">
+              {this.props.children}
+            </div>
           </div>
-        </div>
+        : ''}
 
         <Row label="Name" item={this.props.company.name} />
         <Row label="Abn" item={this.props.company.abn} />

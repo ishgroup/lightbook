@@ -19,8 +19,8 @@ ReactDOM.render((
          <Route name="Add Company" path="add-company" component={AddCompany} />
          <Route name="Search" path="search" component={LightbookApp} />
          <Route name="List of People" path="company/:id" component={ListPeople} />
-         <Route name="List of People" path="company/:id(/:status)" component={ListInactivePeople} />
          <Route name="Edit Company" path="company/:id/edit" component={EditCompany} />
+         <Route name="List of People" path="company/:id/:status" component={ListInactivePeople} />
          <Route name="Edit People" path="people/:id/edit" component={EditPeople} />
       </Route>
    </Router>
