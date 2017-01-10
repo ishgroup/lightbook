@@ -39,20 +39,25 @@ class Select extends Component {
   }
 
   handleChange() {
+    let items = [];
     if(this.item.type === 'select-one') {
+      items.push(this.item.value);
+
       this.setState({
         selected: this.item.value
       });
     } else {
-      let selectedItems = [];
-
       for (var item of this.item.selectedOptions) {
-        selectedItems.push(item.value);
+        items.push(item.value);
       }
 
       this.setState({
-        selected: selectedItems
+        selected: items
       });
+    }
+
+    if(this.props.onChange !== undefined) {
+      this.props.onChange(items);
     }
   }
 

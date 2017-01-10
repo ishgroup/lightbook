@@ -16,14 +16,16 @@ class EditPeople extends Component {
       people: {},
       disabledUpdateBtn: false,
       disabledRemoveBtn: false,
-      showLoader: true
+      showLoader: true,
+      enabledAutoAddToTask: true
     };
 
     if(this.props.params.id !== undefined) {
       PeopleModel.getPeople(this, this.props.params.id, function(that, response) {
         that.setState({
           people: response.data.output.people,
-          showLoader: false
+          showLoader: false,
+          enabledAutoAddToTask: (response.data.output.people.active === 'TRUE' ? true : false)
         });
       });
     }
@@ -47,9 +49,12 @@ class EditPeople extends Component {
       phone: phone,
       notes: this.refs.notes.item.value,
       mobile: mobile,
-      active: this.refs.status.value,
-      auto_add_to_task: this.refs.auto_add_to_task.value
+      active: this.refs.status.value
     };
+
+    if(this.refs.auto_add_to_task !== undefined) {
+      newrow['auto_add_to_task'] = this.refs.auto_add_to_task.value;
+    }
 
     if(validate.isValidate) {
       this.setState({
@@ -85,6 +90,18 @@ class EditPeople extends Component {
     }
   }
 
+  onStatusChange(item) {
+    if(item[0] === "FALSE") {
+      this.setState({
+        enabledAutoAddToTask: false
+      });
+    } else {
+      this.setState({
+        enabledAutoAddToTask: true
+      });
+    }
+  }
+
   goBack() {
     this.props.router.goBack();
   }
@@ -116,8 +133,10 @@ class EditPeople extends Component {
             <TextInputEdited type="text" className="form-control col-md-8" placeholder="Notes" name="notes" ref="notes" value={this.state.people.notes || ''} />
             <TextInputEdited type="text" className="form-control col-md-8" placeholder="Mobile" name="mobile" ref="mobile" value={this.state.people.mobile || ''} validate="phone" />
 
-            <Select ref="status" name="status" label="Status" options={[ {'Active': "TRUE"}, {'Inactive': "FALSE"} ]} selected={this.state.people.active || ''} />
-            <CheckBox ref="auto_add_to_task" name="auto_add_to_task" text="Auto add to task" checked={this.state.people.auto_add_to_task || false} />
+            <Select ref="status" name="status" label="Status" options={[ {'Active': "TRUE"}, {'Inactive': "FALSE"} ]} selected={this.state.people.active || ''} onChange={this.onStatusChange.bind(this)} />
+            {this.state.enabledAutoAddToTask ?
+              <CheckBox ref="auto_add_to_task" name="auto_add_to_task" text="Auto add to task" checked={this.state.people.auto_add_to_task || false} />
+            : ''}
 
             <div className="form-group row">
               <div className="offset-sm-3 col-sm-21">
