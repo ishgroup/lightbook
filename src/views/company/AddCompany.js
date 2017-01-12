@@ -73,7 +73,7 @@ class AddCompany extends Component {
           <FormField label="Postal Code" name="postalCode" ref="postalCode" />
           <FormField label="St" name="st" ref="st" />
           <FormField label="Notes" name="notes" ref="notes" />
-          <Select label="Status" name="status" ref="status" options={[ {'Active': 'true'}, {'Inactive': 'false'} ]} selected={'true'} />
+          <Select label="Status" name="status" ref="status" options={[ {'Active': 'TRUE'}, {'Inactive': 'FALSE'} ]} selected={'TRUE'} />
 
           <div className="form-group row">
             <div className="offset-sm-3 col-sm-21">

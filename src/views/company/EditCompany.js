@@ -111,7 +111,7 @@ class EditCompany extends Component {
             <TextInputEdited type="text" placeholder="St" name="st" ref="st" value={this.state.company.st} />
             <TextInputEdited type="text" placeholder="Notes" name="notes" ref="notes" value={this.state.company.notes} />
 
-            <Select label="Status" name="status" ref="status" options={[ {'Active': 'true'}, {'Inactive': 'false'} ]} selected={this.state.company.active} />
+            <Select label="Status" name="status" ref="status" options={[ {'Active': 'TRUE'}, {'Inactive': 'FALSE'} ]} selected={this.state.company.active} />
 
             <div className="form-group row">
               <div className="offset-sm-3 col-sm-21">
