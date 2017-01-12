@@ -123,7 +123,8 @@ class ListPeople extends Component {
               <Link to={"/company/" + this.props.params.id} className="btn btn-outline-primary" onClick={this.handleViewToggle.bind(this)}>View Company</Link>&nbsp;
               {this.props.params.status === undefined ?
                 <Link to={"/company/" + this.props.params.id + "/inactive"} className="btn btn-outline-primary">View inactive users</Link>
-              : ''}
+              : <Link to={"/company/" + this.props.params.id} className="btn btn-outline-primary">View active users</Link>
+              }
             </p>
 
             {this.state.company !== null ?
