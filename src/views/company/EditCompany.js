@@ -45,7 +45,7 @@ class EditCompany extends Component {
       street: this.refs.street.item.value,
       suburb: this.refs.suburb.item.value,
       postalCode: this.refs.postalCode.item.value,
-      st: this.refs.st.item.value,
+      st: this.refs.state.item.value,
       notes: this.refs.notes.item.value
     };
 
@@ -108,7 +108,7 @@ class EditCompany extends Component {
             <TextInputEdited type="text" placeholder="Street" name="street" ref="street" value={this.state.company.street} />
             <TextInputEdited type="text" placeholder="Suburb" name="suburb" ref="suburb" value={this.state.company.suburb} />
             <TextInputEdited type="text" placeholder="Postal Code" name="postalCode" ref="postalCode" value={this.state.company.postalCode} />
-            <TextInputEdited type="text" placeholder="St" name="st" ref="st" value={this.state.company.st} />
+            <TextInputEdited type="text" placeholder="State" name="state" ref="state" value={this.state.company.st} />
             <TextInputEdited type="text" placeholder="Notes" name="notes" ref="notes" value={this.state.company.notes} />
 
             <Select label="Status" name="status" ref="status" options={[ {'Active': 'TRUE'}, {'Inactive': 'FALSE'} ]} selected={this.state.company.active} />

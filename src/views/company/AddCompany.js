@@ -32,7 +32,7 @@ class AddCompany extends Component {
       street: this.refs.street.item.value,
       suburb: this.refs.suburb.item.value,
       postalCode: this.refs.postalCode.item.value,
-      st: this.refs.st.item.value,
+      st: this.refs.state.item.value,
       notes: this.refs.notes.item.value
     };
 
@@ -71,7 +71,7 @@ class AddCompany extends Component {
           <FormField label="Street" name="street" ref="street" />
           <FormField label="Suburb" name="suburb" ref="suburb" />
           <FormField label="Postal Code" name="postalCode" ref="postalCode" />
-          <FormField label="St" name="st" ref="st" />
+          <FormField label="State" name="state" ref="state" />
           <FormField label="Notes" name="notes" ref="notes" />
           <Select label="Status" name="status" ref="status" options={[ {'Active': 'TRUE'}, {'Inactive': 'FALSE'} ]} selected={'TRUE'} />
 

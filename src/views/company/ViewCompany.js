@@ -23,7 +23,7 @@ class ViewCompany extends Component {
         <Row label="Street" item={this.props.company.street} />
         <Row label="Suburb" item={this.props.company.suburb} />
         <Row label="Postal Code" item={this.props.company.postalCode} />
-        <Row label="St" item={this.props.company.st} />
+        <Row label="State" item={this.props.company.st} />
         <Row label="Notes" item={this.props.company.notes} />
 
         <div className="form-group row">
