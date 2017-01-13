@@ -14,7 +14,8 @@ class AutoComplete extends Component {
       itemList: [],
       showList: true,
       showLoader: false,
-      isTextChanged: false
+      isTextChanged: false,
+      isSearched: false
     }
   }
 
@@ -46,6 +47,7 @@ class AutoComplete extends Component {
 
   doSearch() {
     let searchString = this.item.value;
+
     this.setState({
       filterString: searchString,
       isTextChanged: true
@@ -82,6 +84,10 @@ class AutoComplete extends Component {
     if(this.state.isTextChanged === true) {
       const searchString = this.state.filterString;
 
+      if(this.props.onKeyUp !== undefined) {
+        this.props.onKeyUp(searchString);
+      }
+
       if(this.props.url !== undefined && this.props.url !== '' && searchString !== '' && this.props.output) {
         this.setState({
           showLoader: true
@@ -91,7 +97,9 @@ class AutoComplete extends Component {
           if(response.data.output !== undefined) {
             that.setState({
               itemList: response.data.output,
-              showLoader: false
+              showLoader: false,
+              showList: true,
+              isSearched: true
             });
           }
         });
@@ -101,6 +109,9 @@ class AutoComplete extends Component {
         });
       }
     }
+
+    if(this.state.filterString.length === 0)
+      this.hideList();
 
     this.setState({
       isTextChanged: false
@@ -113,6 +124,10 @@ class AutoComplete extends Component {
       showList: false,
       selectedItem: this
     });
+
+    if(that.props.onClick !== undefined) {
+      that.props.onClick(this.name);
+    }
   }
 
   getList(items) {
@@ -134,6 +149,14 @@ class AutoComplete extends Component {
           </div>
         );
       }
+    } else if(this.state.showList && this.state.filterString.length > 0 && !this.state.showLoader && this.state.isSearched) {
+      return (
+        <div id="search-lists-no-match" className="search-lists">
+          <ul id="searched-items-no-match" className="searched-items">
+            <li>No match found</li>
+          </ul>
+        </div>
+      );
     }
   }
 

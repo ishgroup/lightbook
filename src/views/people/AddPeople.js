@@ -14,7 +14,8 @@ class AddPeople extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
 
     this.state = {
-      disabledAddBtn: false
+      disabledAddBtn: false,
+      selectedCompany: ''
     };
   }
 
@@ -39,6 +40,12 @@ class AddPeople extends Component {
       auto_add_to_task: this.refs.auto_add_to_task.value
     };
 
+    if(validate.isValidate && this.state.selectedCompany === '') {
+      validate.isValidate = false;
+      alert('Please select a company from company list.');
+      this.refs.company.item.focus();
+    }
+
     if(validate.isValidate) {
 
       this.setState({
@@ -62,6 +69,18 @@ class AddPeople extends Component {
     this.props.router.goBack();
   }
 
+  onAutoCompleteClick(text) {
+    this.setState({
+      selectedCompany: text
+    });
+  }
+
+  onAutoCompleteKeyUp(text) {
+    this.setState({
+      selectedCompany: ''
+    });
+  }
+
   render() {
     return (
       <div className="well">
@@ -73,7 +92,7 @@ class AddPeople extends Component {
           <div className="form-group row">
             <label htmlFor="input-search" className="col-sm-3 col-form-label text-sm-right">Company</label>
             <div className="col-sm-21">
-              <AutoComplete id="input-search" placeholder="Company" url={Config.getUrl('searchCompanies')} ref="company" output="companies" />
+              <AutoComplete id="input-search" placeholder="Company" url={Config.getUrl('searchCompanies')} ref="company" output="companies" onClick={this.onAutoCompleteClick.bind(this)} onKeyUp={this.onAutoCompleteKeyUp.bind(this)} />
             </div>
           </div>
 

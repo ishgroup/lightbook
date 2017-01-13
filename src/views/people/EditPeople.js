@@ -17,7 +17,8 @@ class EditPeople extends Component {
       disabledUpdateBtn: false,
       disabledRemoveBtn: false,
       showLoader: true,
-      enabledAutoAddToTask: true
+      enabledAutoAddToTask: true,
+      selectedCompany: ''
     };
 
     if(this.props.params.id !== undefined) {
@@ -25,7 +26,8 @@ class EditPeople extends Component {
         that.setState({
           people: response.data.output.people,
           showLoader: false,
-          enabledAutoAddToTask: (response.data.output.people.active === 'TRUE' ? true : false)
+          enabledAutoAddToTask: (response.data.output.people.active === 'TRUE' ? true : false),
+          selectedCompany: response.data.output.people.company
         });
       });
     }
@@ -54,6 +56,12 @@ class EditPeople extends Component {
 
     if(this.refs.auto_add_to_task !== undefined) {
       newrow['auto_add_to_task'] = this.refs.auto_add_to_task.value;
+    }
+
+    if(validate.isValidate && this.state.selectedCompany === '') {
+      validate.isValidate = false;
+      alert('Please select a company from company list.');
+      this.refs.company.item.focus();
     }
 
     if(validate.isValidate) {
@@ -106,6 +114,18 @@ class EditPeople extends Component {
     this.props.router.goBack();
   }
 
+  onAutoCompleteClick(text) {
+    this.setState({
+      selectedCompany: text
+    });
+  }
+
+  onAutoCompleteKeyUp(text) {
+    this.setState({
+      selectedCompany: ''
+    });
+  }
+
   render() {
 
     return (
@@ -124,7 +144,7 @@ class EditPeople extends Component {
             <div className="form-group row">
               <label htmlFor="input-search" className="col-sm-3 col-form-label text-sm-right">Company</label>
               <div className="col-sm-21">
-                <AutoComplete id="input-search" value={this.state.people.company || ''} placeholder="Company" url={Config.getUrl('searchCompanies')} ref="company" output="companies" />
+                <AutoComplete id="input-search" value={this.state.people.company || ''} placeholder="Company" url={Config.getUrl('searchCompanies')} ref="company" output="companies" onClick={this.onAutoCompleteClick.bind(this)} onKeyUp={this.onAutoCompleteKeyUp.bind(this)} />
               </div>
             </div>
 
