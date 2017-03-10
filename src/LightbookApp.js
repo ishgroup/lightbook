@@ -23,11 +23,11 @@ class LightbookApp extends Component {
       filteredData: [],
       showAddForm: false,
       showSearchForm: true,
-      showLoader: ((_has_search.q !== undefined && _has_search.q.length > 2))
+      showLoader: ((_has_search.q !== undefined && _has_search.q.length > 1))
     };
 
     if(_has_search.q !== undefined) {
-      if(_has_search.q.length > 2) {
+      if(_has_search.q.length > 1) {
         SearchModel.search(this, _has_search.q,
           function(that, response) {
             that.setState({
