@@ -112,6 +112,21 @@ class ListPeople extends Component {
 
     return (
       <div className="people-list">
+        <p>
+          <Link to={"/company/" + this.props.params.id} className="btn btn-outline-primary" onClick={this.handleViewToggle.bind(this)}>View Company</Link>&nbsp;
+          {this.props.params.status === undefined ?
+            <Link to={"/company/" + this.props.params.id + "/inactive"} className="btn btn-outline-primary">View inactive users</Link>
+          : <Link to={"/company/" + this.props.params.id} className="btn btn-outline-primary">View active users</Link>
+          }
+        </p>
+
+        {this.state.company !== null ?
+          <div className={"view-company col-xs-24" + (this.state.viewToggle ? " slide-down" : '')} id={"view-company-" + this.state.company.id}>
+            <ViewCompany company={this.state.company} />
+          </div>
+        : ''}
+        <div className="clearfix" />
+        <p style={(this.state.viewToggle ? {display: "block"} : {display: "none"})}>&nbsp;</p>
         {this.state.showLoader ?
           <div className="alert alert-info" role="alert">
             {Util.loaderImage()}&nbsp;Please wait while fetching person(s).
@@ -119,20 +134,6 @@ class ListPeople extends Component {
           : '' }
         {_plist.length !== 0 ?
           <div className="clearfix">
-            <p>
-              <Link to={"/company/" + this.props.params.id} className="btn btn-outline-primary" onClick={this.handleViewToggle.bind(this)}>View Company</Link>&nbsp;
-              {this.props.params.status === undefined ?
-                <Link to={"/company/" + this.props.params.id + "/inactive"} className="btn btn-outline-primary">View inactive users</Link>
-              : <Link to={"/company/" + this.props.params.id} className="btn btn-outline-primary">View active users</Link>
-              }
-            </p>
-
-            {this.state.company !== null ?
-              <div className={"view-company col-xs-24" + (this.state.viewToggle ? " slide-down" : '')} id={"view-company-" + this.state.company.id}>
-                <ViewCompany company={this.state.company} />
-              </div>
-            : ''}
-
             <ListView list={_plist} onRemove={this.handlePeopleRemove} onEdits={this.handlePeopleEditOpen.bind(this)} block={this} item={ListPeople.renderPeople} />
           </div>
 
