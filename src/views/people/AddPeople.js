@@ -53,7 +53,7 @@ class AddPeople extends Component {
       });
 
       PeopleModel.add(this, newrow, function(that, response) {
-        alert('People added successfully.');
+        alert('Person added successfully.');
         e.target.reset();
 
         that.setState({
