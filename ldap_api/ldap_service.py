@@ -116,11 +116,13 @@ class LdapService:
         :param get_disabled: true if we are going to find non-active users as well
         :return:
         """
-        if ' ' in name:
+        if base == 'companies':
+            ldap_filter = ldap.filter.filter_format('cn=%s*', [name])
+        elif ' ' in name:
             ldap_filter = ldap.filter.filter_format('|(cn~=%s)(cn=%s*)', [name, name])
         else:
             ldap_filter = ldap.filter.filter_format('|(cn~=%s)(cn=%s*)(sn=%s*)', [name, name, name])
-
+        
         if not get_disabled:
             ldap_filter = '(&(active=TRUE)(%s))' % ldap_filter
 
