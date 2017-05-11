@@ -125,12 +125,21 @@ def get_persons():
             {
                 "id": "1",
                 "name": "Chintan Kotadia",
-                "username": "chintankotadia13@gmail.com",
+                "username": "chintankotadia",
+                "email": [
+                    "chintankotadia99@gmail.com"
+                ],
                 "company": "ish",
                 "company_role": "html/css coder",
-                "phone": "49874646",
+                "phone": [
+                    "9199 1234", 
+                    "1234"
+                ], 
                 "notes": "My notes",
-                "mobile": "9497654654"
+                "mobile": [
+                    "9497654654",
+                    "123456789"
+                ]
             },
             {
                 "id": "2",
