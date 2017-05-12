@@ -35,12 +35,35 @@ class TextInputEdited extends Component {
     })
   }
 
+  static linkHtml = (item, type) => {
+    return <a href={ type + ":" + item.replace(/\s/g, "") } className="mr-1">{item.trim()}</a>;
+  }
+
+  static linkTo = (item, type) => {
+    let rowItem = [];
+		if(typeof item === "string" && item.indexOf(",") === -1) {
+			rowItem.push([TextInputEdited.linkHtml(item, type)]);
+		} else {
+		  if(item.indexOf(",") !== -1) {
+				item.split(",").forEach(function (value) {
+					rowItem.push([TextInputEdited.linkHtml(value, type)]);
+				});
+      } else {
+				item.forEach(function (value) {
+					rowItem.push([TextInputEdited.linkHtml(value, type)]);
+				});
+			}
+		}
+
+		return rowItem;
+  }
+
   static getText(validate, text) {
     if(validate !== undefined && text !== '' && text !== 'null' && text !== undefined) {
       if(validate === 'email')
-        return <a href={"mailto:"+ text}>{text}</a>;
+        return this.linkTo(text, "mailto");
       if(validate === 'phone')
-        return <a href={"tel:"+ text}>{text}</a>;
+        return this.linkTo(text, "tel");
     } else
       return text;
   }

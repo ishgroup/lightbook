@@ -24,18 +24,16 @@ class AddPeople extends Component {
     e.persist();
 
     const validate = new Validate();
-    const phone = Util.numberList(this.refs.phone.item.value);
-    const mobile = Util.numberList(this.refs.mobile.item.value);
 
     const newrow = {
       name: validate.field('Name', this.refs.name.item).required().value(),
-      email: validate.field('Email', this.refs.email.item).required().value(),
+      email: Util.numberList(validate.field('Email', this.refs.email.item).required().value()),
       username: validate.field('Username', this.refs.username.item).required().value(),
       company: validate.field('Company', this.refs.company.item).required().value(),
       company_role: this.refs.company_role.item.value,
-      phone: phone,
+      phone: Util.numberList(this.refs.phone.item.value),
       notes: this.refs.notes.item.value,
-      mobile: mobile,
+      mobile: Util.numberList(this.refs.mobile.item.value),
       active: this.refs.status.value,
       auto_add_to_task: this.refs.auto_add_to_task.value
     };

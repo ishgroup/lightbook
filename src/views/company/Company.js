@@ -26,10 +26,10 @@ class Company extends Component {
 
     this.isFetch = true;
 
-    this.setState({
+    this.state = {
       viewToggle: false,
       showLoader: false
-    });
+    };
   }
 
   setLoader(value) {
