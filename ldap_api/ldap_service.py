@@ -40,7 +40,7 @@ class LdapService:
         }
     }
     ONLY_ONE_VALUE_FIELDS = ['id', 'name', 'username', 'active', 'company', 'abn', 'company_role']
-    INVERSE_ENTRY_MAPPING = {value: key for key, value in ENTRY_MAPPING.items()}
+    INVERSE_ENTRY_MAPPING = {value: key for key, value in list(ENTRY_MAPPING.items())}
     LDAP_BASES = {
         'people': 'ou=Customers,ou=People,dc=ish,dc=com,dc=au',
         'companies': 'ou=Companies,dc=ish,dc=com,dc=au',
@@ -103,8 +103,7 @@ class LdapService:
 
         if ldap_response is None:
             return []
-        people = map(lambda x: extract_value_from_array(remap_dict(x[1], LdapService.SHORT_INFO['people'])),
-                     ldap_response)
+        people = [extract_value_from_array(remap_dict(x[1], LdapService.SHORT_INFO['people'])) for x in ldap_response]
 
         return sorted(people, key=lambda k: k['name'].lower())
 
@@ -132,8 +131,7 @@ class LdapService:
 
         if ldap_response is None:
             return []
-        return map(lambda x: extract_value_from_array(remap_dict(x[1], LdapService.SHORT_INFO[base])),
-                   ldap_response)
+        return [extract_value_from_array(remap_dict(x[1], LdapService.SHORT_INFO[base])) for x in ldap_response]
 
     def modify_person(self, person_id, attributes):
         person = self.__find_person(person_id)
@@ -360,12 +358,12 @@ class LdapService:
         dn = entry[0]
         ldap_attributes = remap_dict(attributes, LdapService.INVERSE_ENTRY_MAPPING)
         ldap_attributes = filter_blank_attributes(ldap_attributes, entry[1])
-        modify_list = map(lambda x: make_operation(x), ldap_attributes.items())
+        modify_list = [make_operation(x) for x in list(ldap_attributes.items())]
         self.ldap_connection.modify_s(dn, modify_list)
 
     def __add_entry(self, dn, ldap_attributes):
         ldap_attributes = filter_blank_attributes(ldap_attributes)
-        modify_list = map(lambda x: (clear_param(x[0]), clear_param(x[1])), ldap_attributes.items())
+        modify_list = [(clear_param(x[0]), clear_param(x[1])) for x in list(ldap_attributes.items())]
         return self.ldap_connection.add_s(dn, modify_list)
 
 
@@ -373,7 +371,7 @@ def make_operation(attribute):
     key = clear_param(attribute[0])
     value = clear_param(attribute[1])
 
-    if type(value) in (list, str, unicode) and len(value) == 0:
+    if type(value) in (list, str, str) and len(value) == 0:
         return ldap.MOD_DELETE, key, None
     else:
         return ldap.MOD_REPLACE, key, value
@@ -383,7 +381,7 @@ def skip_attribute(key, value, current_attributes):
     if value is None:
         return True
 
-    if type(value) in (str, unicode, list) and len(value) == 0 and current_attributes.get(key) is None:
+    if type(value) in (str, str, list) and len(value) == 0 and current_attributes.get(key) is None:
         return True
 
     return False
@@ -392,7 +390,7 @@ def skip_attribute(key, value, current_attributes):
 def filter_blank_attributes(new_attributes, old_attributes=None):
     if old_attributes is None:
         old_attributes = {}
-    return {k: v for k, v in new_attributes.items() if not skip_attribute(k, v, old_attributes)}
+    return {k: v for k, v in list(new_attributes.items()) if not skip_attribute(k, v, old_attributes)}
 
 
 def company_from_ldap(ldap_dict):
@@ -411,8 +409,8 @@ def clear_param(param, first_level=True):
     if not first_level:
         return None
     if type(param) is list:
-        return map(lambda x: clear_param(x), param)
-    elif type(param) is unicode:
+        return [clear_param(x) for x in param]
+    elif type(param) is str:
         return param.encode('ascii', 'ignore')
     elif type(param) is str:
         return param
@@ -423,7 +421,7 @@ def clear_param(param, first_level=True):
 
 
 def remap_dict(source_dict, mapping):
-    return {mapping[key]: value for key, value in source_dict.items() if key in mapping}
+    return {mapping[key]: value for key, value in list(source_dict.items()) if key in mapping}
 
 
 def get_first(iterable, default=None):
