@@ -1,5 +1,3 @@
-#!/usr/bin/env /usr/local/bin/python2
-
 from flask import Flask, jsonify
 import logging
 

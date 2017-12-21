@@ -1,5 +1,3 @@
-#!/usr/bin/env /usr/local/bin/python2
-
 import sys
 import logging
 from gevent import monkey, wsgi
