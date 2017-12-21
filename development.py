@@ -563,6 +563,7 @@ def search_company(search):
                 {
                     "id": "1",
                     "name": "Ish Pty. Ltd",
+                },
                 {
                     "id": "2",
                     "name": "Other corp",
