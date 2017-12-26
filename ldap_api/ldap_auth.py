@@ -6,7 +6,6 @@ import ldap.filter
 from .ldap_service import LdapService
 
 config = SiteSettings()
-LOGIN_BASE = 'ou=Employees,ou=People,dc=ish,dc=com,dc=au'
 
 def requires_auth(f):
     @wraps(f)
@@ -38,7 +37,7 @@ def authenticate(username, password):
 
         # now find the employee
         ldap_filter = ldap.filter.filter_format('(uid=%s)', [username])
-        ldap_response = unauthenticated_conn.search_ext_s(LOGIN_BASE, ldap.SCOPE_SUBTREE, ldap_filter)
+        ldap_response = unauthenticated_conn.search_ext_s(config.get_ldap_base(), ldap.SCOPE_SUBTREE, ldap_filter)
         if not ldap_response:
             raise OSError("Your login was not correct.")
 

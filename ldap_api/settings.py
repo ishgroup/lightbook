@@ -12,6 +12,9 @@ class SiteSettings:
     def get_ldap_url(self):
         return self.config.get('ldap_url')
 
+    def get_ldap_base(self):
+        return self.config.get('ldap_base')
+
     def get_bind_ip(self):
         return self.config.get('bind_ip', 'localhost')
 

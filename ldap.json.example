@@ -1,5 +1,6 @@
 {
   "ldap_url": "ldap://ldap.domain.com",
   "bind_ip": "1.1.1.1",
-  "bind_port": 5050
+  "bind_port": 5050,
+  "ldap_base": "ou=Employees,ou=People,dc=ish,dc=com,dc=au"
 }
