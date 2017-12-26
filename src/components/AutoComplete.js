@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import BaseModel from '../model/BaseModel';
 import Util from './Util';
 
@@ -174,9 +175,9 @@ class AutoComplete extends Component {
 }
 
 AutoComplete.propTypes = {
-  output: React.PropTypes.string.isRequired,
-  id: React.PropTypes.string.isRequired,
-  url: React.PropTypes.string.isRequired
+  output: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
+  url: PropTypes.string.isRequired
 };
 
 export default AutoComplete;

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 class Modal extends Component {
 
@@ -62,7 +63,7 @@ class Modal extends Component {
 
 export class ModalHeader extends Component {
   propTypes: {
-    title: React.PropTypes.string.isRequired
+    title: PropTypes.string.isRequired
   };
 
   render() {
