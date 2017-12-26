@@ -6,7 +6,7 @@ class Config {
 
   static baseUrl() {
     if(Config.isDevelopment())
-      return 'http://localhost:5000';
+      return 'http://localhost:3000';
     else
       return Config.getEnv('BACKEND_URL');
   }
