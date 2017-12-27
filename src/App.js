@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router';
+import { Switch, Route } from 'react-router';
+import { NavLink } from 'react-router-dom';
 
 import './assets/css/styles.css';
 
@@ -7,21 +8,33 @@ import Icon from 'react-fa';
 import Container from './components/Container';
 import IshLogo from './assets/img/ish-logo.png';
 
-class App extends Component {
 
+import LightbookApp from './LightbookApp';
+import AddPeople from './views/people/AddPeople';
+import ListPeople from './views/people/ListPeople';
+import ListInactivePeople from './views/people/ListInactivePeople';
+import EditPeople from './views/people/EditPeople';
+import AddCompany from './views/company/AddCompany';
+import EditCompany from './views/company/EditCompany';
+
+class App extends Component {
   render() {
 
     let pageTitle = 'Lightbook';
-    let routes = this.props.routes;
+    const pathName = this.props.location.pathname.replace('/', "");
 
-    if(routes.length >= 2) {
-      let pagePart = routes[routes.length - 1];
-      if(pagePart.name !== undefined) {
-        document.title = pagePart.name +' - ' + pageTitle;
+    if(pathName.length > 0) {
+      const pathPart = pathName.split('-');
+      if(pathPart.length > 0) {
+        pageTitle = pathPart.map(function(s) {
+          return s[0].toUpperCase() + s.slice(1);
+        }).join(" ") + " - " + pageTitle;
       } else {
-        document.title = pageTitle;
+        pageTitle = pathPart + " - " + pageTitle;
       }
     }
+
+    document.title = pageTitle;
 
     return (
       <div className="App clearfix">
@@ -29,26 +42,38 @@ class App extends Component {
           <header id="header" className="row">
             <nav className="navbar navbar-dark bg-inverse">
               <div className="nav navbar-nav">
-                <Link to="/" className="navbar-brand"><img src={IshLogo} alt="ish" />ish customer directory</Link>
+                <NavLink to="/" className="navbar-brand" activeClassName="active"><img src={IshLogo} alt="ish" />ish customer directory</NavLink>
                 <div className="float-xs-right">
                   <li className="nav-item">
-                    <Link to="add-people" className="nav-link" activeClassName="active">
+                    <NavLink to="/add-people" className="nav-link" activeClassName="active">
                       <Icon name="user-plus" />
-                    </Link>
+                    </NavLink>
                   </li>
                   <li className="nav-item">
-                    <Link to="add-company" className="nav-link" activeClassName="active">
+                    <NavLink to="/add-company" className="nav-link" activeClassName="active">
                       <Icon name="building-o" />
-                    </Link>
+                    </NavLink>
                   </li>
                   <li className="nav-item">
-                    <Link to="search" className="nav-link" activeClassName="active"><Icon name="search" /></Link>
+                    <NavLink to="/search" className="nav-link" activeClassName="active"><Icon name="search" /></NavLink>
                   </li>
                 </div>
               </div>
             </nav>
           </header>
-          {this.props.children}
+
+
+          <Switch>
+            <Route exact path="/" name="Lightbook" component={LightbookApp} />
+             <Route name="Add People" path="/add-people" component={AddPeople} />
+             <Route name="Add Company" path="/add-company" component={AddCompany} />
+             <Route name="Search" path="/search" component={LightbookApp} />
+             <Route name="List of People" path="/company/:id" component={ListPeople} />
+             <Route name="Edit Company" path="/company/:id/edit" component={EditCompany} />
+             <Route name="List of People" path="/company/:id/:status" component={ListInactivePeople} />
+             <Route name="Edit People" path="/people/:id/edit" component={EditPeople} />
+          </Switch>
+
         </Container>
       </div>
     );

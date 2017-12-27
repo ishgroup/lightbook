@@ -10,8 +10,8 @@ class Select extends Component {
     }
   }
 
-  option(value, item) {
-    return <option value={value[item] || ""}>{item}</option>;
+  option(value, item, index) {
+    return <option value={value[item] || ""} key={index}>{item}</option>;
   }
 
   groupOptions(items=[], label = "") {
@@ -26,12 +26,12 @@ class Select extends Component {
     const that = this;
     let children = [];
 
-    value.forEach(function(value) {
+    value.forEach(function(value, index) {
       let items = Object.keys(value).map(function(item) {
         if(Array.isArray(value[item])) {
           return that.groupOptions(that.getOptions(value[item]), item);
         } else {
-          return that.option(value, item);
+          return that.option(value, item, index);
         }
       });
       children.push([items]);

@@ -1,8 +1,7 @@
 
-
 class Config {
 
-  static urls = {};
+  static urls;
 
   static baseUrl() {
     if(Config.isDevelopment())
@@ -24,6 +23,7 @@ class Config {
   }
 
   static getUrl(url) {
+    Config.urls = {};
     Config.urls['searchCompanies'] = '/data/companies/search';
     return Config.urls[url];
   }

@@ -71,7 +71,7 @@ class EditCompany extends Component {
   }
 
   handleRemoveCompany() {
-    if(confirm('Are you sure you want to delete this company?')) {
+    if(window.confirm('Are you sure you want to delete this company?')) {
       this.setState({
         disabledRemoveBtn: true
       });

@@ -1,7 +1,13 @@
 class Validate {
-  isValidate = true;
-  item = '';
-  name = '';
+  isValidate;
+  item;
+  name;
+
+  constructor() {
+    this.isValidate = true;
+    this.item = '';
+    this.name = '';
+  }
 
   field(name, item) {
     this.name = name;

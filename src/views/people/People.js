@@ -6,7 +6,7 @@ import ViewPeople from './ViewPeople';
 import PeopleModel from '../../model/PeopleModel';
 
 class People extends Component {
-  isFetch = true;
+  isFetch;
 
   constructor(props) {
     super(props);
@@ -17,6 +17,8 @@ class People extends Component {
       people: [],
       showLoader: false
     }
+
+    this.isFetch = true;
   }
 
   componentWillReceiveProps(nextProps) {

@@ -35,11 +35,11 @@ class TextInputEdited extends Component {
     })
   }
 
-  static linkHtml = (item, type) => {
+  static linkHtml(item, type) {
     return <a href={ type + ":" + item.replace(/\s/g, "") } className="mr-1">{item.trim()}</a>;
   }
 
-  static linkTo = (item, type) => {
+  static linkTo(item, type) {
     let rowItem = [];
 		if(typeof item === "string" && item.indexOf(",") === -1) {
 			rowItem.push([TextInputEdited.linkHtml(item, type)]);

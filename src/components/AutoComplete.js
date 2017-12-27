@@ -4,7 +4,7 @@ import BaseModel from '../model/BaseModel';
 import Util from './Util';
 
 class AutoComplete extends Component {
-  checkMounted = false;
+  checkMounted;
 
   constructor(props) {
     super(props);
@@ -18,6 +18,8 @@ class AutoComplete extends Component {
       isTextChanged: false,
       isSearched: false
     }
+
+    this.checkMounted = false;
   }
 
   componentWillUnmount() {

@@ -9,12 +9,20 @@ import ListView from './components/ListView';
 import SearchBox from './components/SearchBox';
 import Util from './components/Util';
 
+import createHashHistory from 'history/createHashHistory';
+
+const history = createHashHistory();
+
 class LightbookApp extends Component {
 
   constructor(props) {
     super(props);
 
-    const _has_search = this.props.location.query;
+    const search_string = new URLSearchParams(history.location.search).get('q');
+    let _has_search = {};
+
+    if(search_string !== null)
+      _has_search = {q: search_string};
 
     this.state = {
       peoplelist: [],
@@ -63,7 +71,7 @@ class LightbookApp extends Component {
   }
 
   handlePeopleRemove(people) {
-    if(!confirm('Are you sure you want to delete this people?'))
+    if(!window.confirm('Are you sure you want to delete this people?'))
       return false;
 
     let index = -1;
@@ -79,7 +87,7 @@ class LightbookApp extends Component {
   }
 
   handleCompanyRemove(company) {
-    if(!confirm('Are you sure you want to delete this company?'))
+    if(!window.confirm('Are you sure you want to delete this company?'))
       return false;
 
     let index = -1;
@@ -109,7 +117,7 @@ class LightbookApp extends Component {
     const filteredData = [];
     const _queryText = filterString.toLowerCase();
 
-    this.block.props.router.replace('search?q='+ filterString);
+    history.push({ pathname: "/search?q=" + filterString });
 
     this.block.setLoader(true);
 
@@ -131,7 +139,7 @@ class LightbookApp extends Component {
     });
 
     if(_queryText.length === 0) {
-      this.block.props.router.replace('search');
+      history.push({ pathname: "/search" });
       this.block.setState({
         companylist: [],
         peoplelist: []

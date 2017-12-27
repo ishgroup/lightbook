@@ -77,7 +77,7 @@ class EditPeople extends Component {
   }
 
   handleRemovePeople() {
-    if(confirm('Are you sure you want to delete this person?')) {
+    if(window.confirm('Are you sure you want to delete this person?')) {
       this.setState({
         disabledRemoveBtn: true
       });

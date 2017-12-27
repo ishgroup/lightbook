@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import People from './People';
 import EditPeople from './EditPeople';
@@ -55,7 +55,7 @@ class ListPeople extends Component {
   }
 
   handlePeopleRemove(people) {
-    if(!confirm('Are you sure you want to delete this people?'))
+    if(!window.confirm('Are you sure you want to delete this people?'))
       return false;
 
     let index = -1;

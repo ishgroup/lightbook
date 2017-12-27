@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import ViewCompany from './ViewCompany';
 import CompanyModel from '../../model/CompanyModel';
 import Util from '../../components/Util';
 import Toggle from '../../components/Toggle';
 
 class Company extends Component {
-  isFetch = true;
+  isFetch;
 
   constructor(props) {
     super(props);
@@ -18,6 +18,7 @@ class Company extends Component {
       showLoader: false,
       isAutoFetched: (this.props.autoFetch || false)
     }
+    this.isFetch = true;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -26,10 +27,10 @@ class Company extends Component {
 
     this.isFetch = true;
 
-    this.state = {
+    this.setState({
       viewToggle: false,
       showLoader: false
-    };
+    });
   }
 
   setLoader(value) {

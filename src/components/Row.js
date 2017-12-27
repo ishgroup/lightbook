@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 class Row extends Component {
-	linkHtml = (item, type) => {
+	linkHtml(item, type) {
 		return <a href={ type + ":" + item.replace(/ /g, "") } className="mr-1">{item.trim()}</a>;
 	}
 

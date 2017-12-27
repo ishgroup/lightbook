@@ -4,9 +4,10 @@ class SearchBox extends Component {
   constructor(props) {
     super(props);
 
-    let searchQuery = this.props.block.props.location.query.q;
+    let searchQuery = new URLSearchParams(this.props.block.props.location.search).get('q');
+
     this.state = {
-      filterString: searchQuery !== undefined ? searchQuery : '',
+      filterString: searchQuery !== null ? searchQuery : '',
       isTextChanged: false
     }
   }
