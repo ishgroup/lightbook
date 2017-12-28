@@ -21,8 +21,8 @@ class EditPeople extends Component {
       selectedCompany: ''
     };
 
-    if(this.props.params.id !== undefined) {
-      PeopleModel.getPeople(this, this.props.params.id, function(that, response) {
+    if(this.props.match.params.id !== undefined) {
+      PeopleModel.getPeople(this, this.props.match.params.id, function(that, response) {
         that.setState({
           people: response.data.output.people,
           showLoader: false,
@@ -108,7 +108,7 @@ class EditPeople extends Component {
   }
 
   goBack() {
-    this.props.router.goBack();
+    this.props.history.goBack();
   }
 
   onAutoCompleteClick(text) {

@@ -18,15 +18,15 @@ class ListView extends Component {
     this.props.onEdits(item);
   }
 
-  static renderContent(block, item) {
-    return block.props.item(block, item);
+  static renderContent(block, item, index) {
+    return block.props.item(block, item, index);
   }
 
   render() {
     const lists = [];
     const that = this;
-    this.props.list.forEach(function(list) {
-      lists.push([ListView.renderContent(that, list)]);
+    this.props.list.forEach(function(list, index) {
+      lists.push([ListView.renderContent(that, list, index)]);
     });
 
     return (

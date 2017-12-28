@@ -138,9 +138,9 @@ class AutoComplete extends Component {
       let item = [];
 
       const that = this;
-      items.forEach(function(value) {
+      items.forEach(function(value, index) {
         const activeItem = (value === that.state.selectedItem ? ' active-item' : '');
-        item.push([<li onClick={that.setItem.bind(value, that)} className={"auto-list-item" + activeItem} ><span>{value.name}</span></li>]);
+        item.push([<li onClick={that.setItem.bind(value, that)} className={"auto-list-item" + activeItem} key={index}><span>{value.name}</span></li>]);
       });
 
       if(this.state.showList) {

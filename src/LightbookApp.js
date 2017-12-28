@@ -195,12 +195,12 @@ class LightbookApp extends Component {
     });
   }
 
-  static renderPeople(block, item) {
-    return <People people={item} onPeopleDelete={block.handleRemove.bind(block)} onPeopleEdit={block.handleEditOpen.bind(block)} />;
+  static renderPeople(block, item, index) {
+    return <People people={item} onPeopleDelete={block.handleRemove.bind(block)} onPeopleEdit={block.handleEditOpen.bind(block)} key={index} />;
   }
 
-  static renderCompany(block, item) {
-    return <Company company={item} onCompanyDelete={block.handleRemove.bind(block)} onCompanyEdit={block.handleEditOpen.bind(block)} />;
+  static renderCompany(block, item, index) {
+    return <Company company={item} onCompanyDelete={block.handleRemove.bind(block)} onCompanyEdit={block.handleEditOpen.bind(block)} key={index} />;
   }
 
   handleCompanyEditOpen(item) {

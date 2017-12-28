@@ -56,7 +56,7 @@ class AddCompany extends Component {
   }
 
   goBack() {
-    this.props.router.goBack();
+    this.props.history.goBack();
   }
 
   render() {

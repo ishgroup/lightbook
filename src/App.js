@@ -8,7 +8,6 @@ import Icon from 'react-fa';
 import Container from './components/Container';
 import IshLogo from './assets/img/ish-logo.png';
 
-
 import LightbookApp from './LightbookApp';
 import AddPeople from './views/people/AddPeople';
 import ListPeople from './views/people/ListPeople';
@@ -62,15 +61,14 @@ class App extends Component {
             </nav>
           </header>
 
-
           <Switch>
             <Route exact path="/" name="Lightbook" component={LightbookApp} />
+             <Route name="Search" path="/search" component={LightbookApp} />
              <Route name="Add People" path="/add-people" component={AddPeople} />
              <Route name="Add Company" path="/add-company" component={AddCompany} />
-             <Route name="Search" path="/search" component={LightbookApp} />
-             <Route name="List of People" path="/company/:id" component={ListPeople} />
              <Route name="Edit Company" path="/company/:id/edit" component={EditCompany} />
              <Route name="List of People" path="/company/:id/:status" component={ListInactivePeople} />
+             <Route name="List of People" path="/company/:id" component={ListPeople} />
              <Route name="Edit People" path="/people/:id/edit" component={EditPeople} />
           </Switch>
 

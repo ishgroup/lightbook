@@ -2,7 +2,11 @@ import React, { Component } from "react";
 
 class Row extends Component {
 	linkHtml(item, type) {
-		return <a href={ type + ":" + item.replace(/ /g, "") } className="mr-1">{item.trim()}</a>;
+		let key = item.replace(/(\D)*|(\s)*/g, "");
+		if (type === "mailto")
+			key = item.replace(/\s/g, "");
+
+		return <a href={ type + ":" + key } className="mr-1" key={key}>{item.trim()}</a>;
 	}
 
 	render() {
@@ -27,7 +31,7 @@ class Row extends Component {
 		}
 
 		return (
-			<div>
+			<React.Fragment>
 				{(this.props.item && this.props.item !== 'null') ?
 					<div className="form-group row">
 						<div className={lClass}>{this.props.label}:</div>
@@ -36,7 +40,7 @@ class Row extends Component {
 						</div>
 					</div>
 				: ''}
-			</div>
+			</React.Fragment>
 		);
 	}
 }

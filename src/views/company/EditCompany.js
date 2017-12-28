@@ -16,8 +16,8 @@ class EditCompany extends Component {
       showLoader: true
     };
 
-    if(this.props.params.id !== undefined) {
-      CompanyModel.getCompany(this, this.props.params.id, function(that, response) {
+    if(this.props.match.params.id !== undefined) {
+      CompanyModel.getCompany(this, this.props.match.params.id, function(that, response) {
         that.setState({
           company: response.data.output.company,
           showLoader: false
@@ -67,7 +67,7 @@ class EditCompany extends Component {
   }
 
   goBack() {
-    this.props.router.goBack();
+    this.props.history.goBack();
   }
 
   handleRemoveCompany() {

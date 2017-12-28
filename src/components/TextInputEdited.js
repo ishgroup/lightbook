@@ -36,7 +36,11 @@ class TextInputEdited extends Component {
   }
 
   static linkHtml(item, type) {
-    return <a href={ type + ":" + item.replace(/\s/g, "") } className="mr-1">{item.trim()}</a>;
+    let key = item.replace(/(\D)*|(\s)*/g, "");
+    if (type === "mailto")
+      key = item.replace(/\s/g, "");
+
+    return <a href={ type + ":" + key } className="mr-1" key={key}>{item.trim()}</a>;
   }
 
   static linkTo(item, type) {

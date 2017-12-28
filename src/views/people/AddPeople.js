@@ -64,7 +64,7 @@ class AddPeople extends Component {
   }
 
   goBack() {
-    this.props.router.goBack();
+    this.props.history.goBack();
   }
 
   onAutoCompleteClick(text) {

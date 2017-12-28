@@ -19,17 +19,18 @@ class ListPeople extends Component {
       company: null,
       peoplelist: [],
       showLoader: true,
-      viewToggle: false
+      viewToggle: false,
+      params: this.props.match.params
     };
 
-    if(this.props.params.id !== undefined) {
-      CompanyModel.getCompany(this, this.props.params.id, function(that, response) {
+    if(this.state.params.id !== undefined) {
+      CompanyModel.getCompany(this, this.state.params.id, function(that, response) {
         that.setState({
           company: response.data.output.company
         });
       });
 
-      PeopleModel.getList(this, this.props.params, function(that, response) {
+      PeopleModel.getList(this, this.state.params, function(that, response) {
         if(response.data.peoples !== undefined) {
           that.setState({
             peoplelist: response.data.peoples,
@@ -94,8 +95,8 @@ class ListPeople extends Component {
     });
   }
 
-  static renderPeople(block, item) {
-    return <People people={item} onPeopleDelete={block.handleRemove.bind(block)} onPeopleEdit={block.handleEditOpen.bind(block)} />;
+  static renderPeople(block, item, index) {
+    return <People people={item} onPeopleDelete={block.handleRemove.bind(block)} onPeopleEdit={block.handleEditOpen.bind(block)} key={index} />;
   }
 
   handleViewToggle(e) {
@@ -113,10 +114,10 @@ class ListPeople extends Component {
     return (
       <div className="people-list">
         <p>
-          <Link to={"/company/" + this.props.params.id} className="btn btn-outline-primary" onClick={this.handleViewToggle.bind(this)}>View Company</Link>&nbsp;
-          {this.props.params.status === undefined ?
-            <Link to={"/company/" + this.props.params.id + "/inactive"} className="btn btn-outline-primary">View inactive users</Link>
-          : <Link to={"/company/" + this.props.params.id} className="btn btn-outline-primary">View active users</Link>
+          <Link to={"/company/" + this.state.params.id} className="btn btn-outline-primary" onClick={this.handleViewToggle.bind(this)}>View Company</Link>&nbsp;
+          {this.state.params.status === undefined ?
+            <Link to={"/company/" + this.state.params.id + "/inactive"} className="btn btn-outline-primary">View inactive users</Link>
+          : <Link to={"/company/" + this.state.params.id} className="btn btn-outline-primary">View active users</Link>
           }
         </p>
 
