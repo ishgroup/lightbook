@@ -36,11 +36,7 @@ class TextInputEdited extends Component {
   }
 
   static linkHtml(item, type) {
-    let key = item.replace(/(\D)*|(\s)*/g, "");
-    if (type === "mailto")
-      key = item.replace(/\s/g, "");
-
-    return <a href={ type + ":" + key } className="mr-1" key={key}>{item.trim()}</a>;
+    return item.trim();
   }
 
   static linkTo(item, type) {
@@ -59,7 +55,7 @@ class TextInputEdited extends Component {
 			}
 		}
 
-		return rowItem;
+		return rowItem.join(", ");
   }
 
   static getText(validate, text) {
