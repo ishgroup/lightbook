@@ -43,8 +43,17 @@ class AddCompany extends Component {
       });
 
       CompanyModel.add(this, newrow, function(that, response) {
-        alert('Company added successfully.');
-        e.target.reset();
+
+        if(response.data.output.validate_company !== undefined) {
+          let messages = response.data.output.messages.map(function(message) {
+            return Object.values(message);
+          }).join("\n");
+
+          alert(messages);
+        } else {
+          alert('Company added successfully.');
+          e.target.reset();
+        }
 
         that.setState({
           disabledAddBtn: false

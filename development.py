@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import logging
 from flask_cors import CORS, cross_origin
 
@@ -180,26 +180,38 @@ def get_persons():
 @app.route('/data/people/add', methods=['POST', 'OPTIONS'])
 @cross_origin()
 def add_person():
-    return jsonify({
-        "status": "success",
-        "output": {
-            "people": {
-                "company": "Niche Publishing",
-                "company_role": "null",
-                "id": "317",
-                "mobile": "null",
-                "name": "Joanne Davies",
-                "notes": "null",
-                "phone": [
-                    "0243695933 homeoffice",
-                    "0395255566 melbheadoff",
-                    "0243690357 homefax"
-                ],
-                "username": "Joanne_157",
-                "auto_add_to_task": True
+    data = request.get_json();
+    messages = __validate_people(data)
+
+    if len(messages) > 0:
+        return jsonify({
+            "status": "success",
+            "output": {
+                "validate_people": True,
+                "messages": messages
             }
-        }
-    })
+        })
+    else:
+        return jsonify({
+            "status": "success",
+            "output": {
+                "people": {
+                    "company": "Niche Publishing",
+                    "company_role": "null",
+                    "id": "317",
+                    "mobile": "null",
+                    "name": "Joanne Davies",
+                    "notes": "null",
+                    "phone": [
+                        "0243695933 homeoffice",
+                        "0395255566 melbheadoff",
+                        "0243690357 homefax"
+                    ],
+                    "username": "Joanne_157",
+                    "auto_add_to_task": True
+                }
+            }
+        })
 
 
 @app.route('/data/people/view/<int:person_id>')
@@ -543,29 +555,63 @@ def view_company(company_id):
 @app.route('/data/company/add', methods=['POST', 'OPTIONS'])
 @cross_origin()
 def add_company():
-    return jsonify({
-        "status": "success",
-        "output": {
-            "company": {
-                "id": "1",
-                "name": "Ish Pty. Ltd",
-                "abn": "12345678",
-                "active": "true",
-                "phone": [
-                    "12345679"
-                ],
-                "fax": [
-                    "12345679"
-                ],
-                "street": "30 Wilson St",
-                "suburb": "Newtown",
-                "postalCode": "2042",
-                "st": "NSW",
-                "notes": "something exciting"
-            }
-        }
-    })
+    data = request.get_json()
+    messages = __validate_company(data)
 
+    if len(messages) > 0:
+        return jsonify({
+            "status": "success",
+            "output": {
+                "validate_company": True,
+                "messages": messages
+            }
+        })
+    else:
+        return jsonify({
+            "status": "success",
+            "output": {
+                "company": {
+                    "id": "1",
+                    "name": "Ish Pty. Ltd",
+                    "abn": "12345678",
+                    "active": "true",
+                    "phone": [
+                        "12345679"
+                    ],
+                    "fax": [
+                        "12345679"
+                    ],
+                    "street": "30 Wilson St",
+                    "suburb": "Newtown",
+                    "postalCode": "2042",
+                    "st": "NSW",
+                    "notes": "something exciting"
+                }
+            }
+        })
+
+def __validate_company(company):
+    company_name = company['name']
+    messages = []
+
+    if company_name == 'Ish Pty. Ltd':
+        messages.append({ 'name': 'Company `'+ company_name +'` is exists.' })
+
+    return messages
+
+def __validate_people(people):
+    username = people['username']
+    email = people['email'][0]
+
+    messages = []
+
+    if email == 'chintankotadia13@gmail.com':
+        messages.append({ 'email': 'Email `'+ email +'` is exists' })
+
+    if username == 'chintan':
+        messages.append({ 'username': 'Username `'+ username +'` is exists.' })
+
+    return messages
 
 @app.route('/data/companies/search/<search>')
 @cross_origin()
