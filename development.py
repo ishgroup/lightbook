@@ -1,10 +1,12 @@
 from flask import Flask, jsonify
 import logging
+from flask_cors import CORS, cross_origin
 
 logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__, static_folder='build', static_url_path='')
 
+cors = CORS(app, resources={r"/data/*": {"origins": "*"}})
 
 @app.route('/')
 def root():
@@ -12,7 +14,8 @@ def root():
     return app.send_static_file('index.html')
 
 
-@app.route('/data/search/get/<search>')
+@app.route('/data/search/get/<search>', methods=['GET', 'OPTIONS'])
+@cross_origin()
 def search_entry(search):
     return jsonify({
         "status": "success",
@@ -116,6 +119,7 @@ def search_entry(search):
 
 
 @app.route('/peoples', methods=['GET', 'OPTIONS'])
+@cross_origin()
 def get_persons():
     return jsonify({
         "status": "success",
@@ -130,9 +134,9 @@ def get_persons():
                 "company": "ish",
                 "company_role": "html/css coder",
                 "phone": [
-                    "9199 1234", 
+                    "9199 1234",
                     "1234"
-                ], 
+                ],
                 "notes": "My notes",
                 "mobile": [
                     "9497654654",
@@ -174,6 +178,7 @@ def get_persons():
 
 
 @app.route('/data/people/add', methods=['POST', 'OPTIONS'])
+@cross_origin()
 def add_person():
     return jsonify({
         "status": "success",
@@ -198,6 +203,7 @@ def add_person():
 
 
 @app.route('/data/people/view/<int:person_id>')
+@cross_origin()
 def view_person(person_id):
     return jsonify({
         "status": "success",
@@ -224,6 +230,7 @@ def view_person(person_id):
 
 
 @app.route('/data/people/update/<int:person_id>', methods=['PATCH', 'OPTIONS'])
+@cross_origin()
 def update_person(person_id):
     return jsonify({
         "status": "success",
@@ -235,6 +242,7 @@ def update_person(person_id):
 
 
 @app.route('/data/people/delete/<int:person_id>', methods=['DELETE', 'OPTIONS'])
+@cross_origin()
 def delete_person(person_id):
     return jsonify({
         'status': "success",
@@ -245,6 +253,7 @@ def delete_person(person_id):
 
 
 @app.route('/data/company/<int:company_id>/people')
+@cross_origin()
 def company_people(company_id):
     return jsonify({
         "status": "success",
@@ -482,6 +491,7 @@ def company_people(company_id):
 
 
 @app.route('/data/companies/update/<int:company_id>', methods=['PATCH', 'OPTIONS'])
+@cross_origin()
 def update_company(company_id):
     return jsonify({
         "status": "success",
@@ -493,6 +503,7 @@ def update_company(company_id):
 
 
 @app.route('/data/companies/delete/<int:company_id>', methods=['DELETE', 'OPTIONS'])
+@cross_origin()
 def delete_company(company_id):
     return jsonify({
         'status': "success",
@@ -503,6 +514,7 @@ def delete_company(company_id):
 
 
 @app.route('/data/company/view/<int:company_id>')
+@cross_origin()
 def view_company(company_id):
     return jsonify({
         "status": "success",
@@ -529,6 +541,7 @@ def view_company(company_id):
 
 
 @app.route('/data/company/add', methods=['POST', 'OPTIONS'])
+@cross_origin()
 def add_company():
     return jsonify({
         "status": "success",
@@ -555,6 +568,7 @@ def add_company():
 
 
 @app.route('/data/companies/search/<search>')
+@cross_origin()
 def search_company(search):
     return jsonify({
         'status': 'success',
