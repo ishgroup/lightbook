@@ -67,7 +67,7 @@ class LdapService:
             return None
 
         result = extract_value_from_array(person_from_ldap(ldap_response[1]))
-        result['auto_add_to_task'] = self.__get_auto_add_to_task(ldap_response)
+        result['auto_add_to_task'] = self.__get_auto_add_to_task(convert_to_bytes(ldap_response))
 
         if result.get('company'):
             company = self.__find_company_entry_by_name(result.get('company'))
@@ -458,3 +458,13 @@ def hash_password(password):
 
 def decode_dict(source, charset):
     return {key: [value.decode(charset) for value in word] for key, word in source.items()}
+def convert_to_bytes(var):
+    if isinstance(var,tuple) or isinstance(var,list):
+        return[convert_to_bytes(item) for item in var]
+    elif isinstance(var,dict):
+        return {convert_to_bytes(key):convert_to_bytes(value) for key,value in var.items()}
+    elif isinstance(var,str):
+        return var.encode()
+    elif isinstance(var,bytes):
+        return var
+

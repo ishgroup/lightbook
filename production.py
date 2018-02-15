@@ -15,6 +15,16 @@ config = SiteSettings()
 def ldap():
   return g.get('ldap_service', None)
 
+def convert_to_str(var):
+    if isinstance(var,tuple) or isinstance(var,list):
+        return[convert_to_str(item) for item in var]
+    elif isinstance(var,dict):
+        return {convert_to_str(key):convert_to_str(value) for key,value in var.items()}
+    elif isinstance(var,str):
+        return var
+    elif isinstance(var,bytes):
+        return var.decode('utf-8')
+
 logging.basicConfig(level=logging.DEBUG)
 
 if not debug_mode:
@@ -51,7 +61,7 @@ def view_person(person_id):
   return jsonify({
     "status": "success",
     "output": {
-      "people": ldap().get_person(person_id)
+      "people": convert_to_str(ldap().get_person(person_id))
     }
   })
 
@@ -212,3 +222,4 @@ if __name__ == '__main__':
     monkey.patch_all()
     server = wsgi.WSGIServer((config.get_bind_ip(), config.get_bind_port()), app)
     server.serve_forever()
+
