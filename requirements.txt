@@ -1,4 +1,4 @@
-python-ldap==3.0.0b2
+pyldap==2.4.45
 Flask==0.12.2
 gevent==1.2.2
 logstash_formatter==0.5.16
