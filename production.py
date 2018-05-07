@@ -188,7 +188,7 @@ def add_person():
   return jsonify({
     "status": "success",
     "output": {
-      "people": ldap().add_person(request.get_json())
+      "people": convert_to_str(ldap().add_person(request.get_json()))
     }
   })
 

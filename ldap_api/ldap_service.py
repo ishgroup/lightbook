@@ -211,7 +211,7 @@ class LdapService:
                 person_id = self.__next_id('uid')
                 dn = 'uidNumber={},{}'.format(person_id, LdapService.LDAP_BASES['people'])
 
-                self.__add_entry(dn, ldap_attributes)
+                self.__add_entry(convert_to_str(dn), ldap_attributes)
                 break
             except ldap.ALREADY_EXISTS:
                 create_attempts += 1
@@ -367,8 +367,8 @@ class LdapService:
 
     def __add_entry(self, dn, ldap_attributes):
         ldap_attributes = filter_blank_attributes(ldap_attributes)
-        modify_list = [(clear_param(x[0]), clear_param(x[1])) for x in list(ldap_attributes.items())]
-        return self.ldap_connection.add_s(dn, modify_list)
+        modify_list = [(convert_to_str(clear_param(x[0])), clear_param(x[1])) for x in list(ldap_attributes.items())]
+        return self.ldap_connection.add_s(convert_to_str(dn), modify_list)
 
 
 def make_operation(attribute):
@@ -451,9 +451,10 @@ def hash_password(password):
     :return:
     """
     salt = os.urandom(4)
-    sha = hashlib.sha1(password)
+    sha = hashlib.sha1(password.encode('utf-8'))
     sha.update(salt)
-    digest_salt_b64 = '{}{}'.format(sha.digest(), salt).encode('base64').strip()
+    import base64
+    digest_salt_b64 = base64.b64encode('{}{}'.format(sha.digest(), salt).encode('utf-8')).strip()
     return '{{SSHA}}{}'.format(digest_salt_b64)
 
 def decode_dict(source, charset):
@@ -461,7 +462,7 @@ def decode_dict(source, charset):
 
 def convert_to_str(var):
     if isinstance(var,tuple) or isinstance(var,list):
-        return[convert_to_str(item) for item in var]
+        return tuple(convert_to_str(item) for item in var)
     elif isinstance(var,dict):
         return {convert_to_str(key):convert_to_str(value) for key,value in var.items()}
     elif isinstance(var,str):
