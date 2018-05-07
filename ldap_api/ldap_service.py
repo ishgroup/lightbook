@@ -97,13 +97,13 @@ class LdapService:
             return None
         company_name = company[1].get('cn')[0]
         active = 'FALSE' if only_disabled else 'TRUE'
-        ldap_filter = ldap.filter.filter_format('(&(o=%s)(active=%s))', [company_name, active])
+        ldap_filter = ldap.filter.filter_format('(&(o=%s)(active=%s))', [convert_to_str(company_name), active])
         ldap_response = self.ldap_connection.search_ext_s(LdapService.LDAP_BASES['people'],
                                                           ldap.SCOPE_SUBTREE, ldap_filter)
 
         if ldap_response is None:
             return []
-        people = map_ldap_response(ldap_response, 'people')
+        people = self.map_ldap_response(ldap_response, 'people')
 
         return sorted(people, key=lambda k: k['name'].lower())
 
@@ -458,6 +458,17 @@ def hash_password(password):
 
 def decode_dict(source, charset):
     return {key: [value.decode(charset) for value in word] for key, word in source.items()}
+
+def convert_to_str(var):
+    if isinstance(var,tuple) or isinstance(var,list):
+        return[convert_to_str(item) for item in var]
+    elif isinstance(var,dict):
+        return {convert_to_str(key):convert_to_str(value) for key,value in var.items()}
+    elif isinstance(var,str):
+        return var
+    elif isinstance(var,bytes):
+        return var.decode('utf-8')
+
 def convert_to_bytes(var):
     if isinstance(var,tuple) or isinstance(var,list):
         return[convert_to_bytes(item) for item in var]
