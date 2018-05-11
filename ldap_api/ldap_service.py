@@ -1,5 +1,6 @@
-import os
 import hashlib
+import os
+
 import ldap
 import ldap.filter
 from ldap.controls import SimplePagedResultsControl
@@ -121,7 +122,7 @@ class LdapService:
             ldap_filter = ldap.filter.filter_format('|(cn~=%s)(cn=%s*)', [name, name])
         else:
             ldap_filter = ldap.filter.filter_format('|(cn~=%s)(cn=%s*)(sn=%s*)', [name, name, name])
-        
+
         if not get_disabled:
             ldap_filter = '(&(active=TRUE)(%s))' % ldap_filter
 
@@ -131,12 +132,15 @@ class LdapService:
 
         if ldap_response is None:
             return []
-        return self.map_ldap_response(ldap_response,base)
-    def map_ldap_response(self,ldap_response, base):
+        return self.map_ldap_response(ldap_response, base)
+
+    def map_ldap_response(self, ldap_response, base):
         result = []
         for entry in ldap_response:
-            result.append(extract_value_from_array(remap_dict(decode_dict(entry[1],'utf-8'), LdapService.SHORT_INFO[base])))
+            result.append(
+                extract_value_from_array(remap_dict(decode_dict(entry[1], 'utf-8'), LdapService.SHORT_INFO[base])))
         return result
+
     def modify_person(self, person_id, attributes):
         person = self.__find_person(person_id)
         if person is None:
@@ -436,11 +440,13 @@ def get_first(iterable, default=None):
 
 
 def extract_value_from_array(attributes_dict):
-    attributes_dict = {key:[value.decode('utf-8') if isinstance(value, bytes) else value for value in word] for key, word in attributes_dict.items()}
+    attributes_dict = {key: [value.decode('utf-8') if isinstance(value, bytes) else value for value in word] for
+                       key, word
+                       in attributes_dict.items()}
     for key in LdapService.ONLY_ONE_VALUE_FIELDS:
         value = attributes_dict.get(key)
         if value is not None and len(value) == 1:
-            attributes_dict[key] = value[0].strip(' ') 
+            attributes_dict[key] = value[0].strip(' ')
     return attributes_dict
 
 
@@ -457,26 +463,28 @@ def hash_password(password):
     digest_salt_b64 = base64.b64encode('{}{}'.format(sha.digest(), salt).encode('utf-8')).strip()
     return '{{SSHA}}{}'.format(digest_salt_b64)
 
+
 def decode_dict(source, charset):
     return {key: [value.decode(charset) for value in word] for key, word in source.items()}
 
+
 def convert_to_str(var):
-    if isinstance(var,tuple) or isinstance(var,list):
+    if isinstance(var, tuple) or isinstance(var, list):
         return tuple(convert_to_str(item) for item in var)
-    elif isinstance(var,dict):
-        return {convert_to_str(key):convert_to_str(value) for key,value in var.items()}
-    elif isinstance(var,str):
+    elif isinstance(var, dict):
+        return {convert_to_str(key): convert_to_str(value) for key, value in var.items()}
+    elif isinstance(var, str):
         return var
-    elif isinstance(var,bytes):
+    elif isinstance(var, bytes):
         return var.decode('utf-8')
 
-def convert_to_bytes(var):
-    if isinstance(var,tuple) or isinstance(var,list):
-        return[convert_to_bytes(item) for item in var]
-    elif isinstance(var,dict):
-        return {convert_to_bytes(key):convert_to_bytes(value) for key,value in var.items()}
-    elif isinstance(var,str):
-        return var.encode()
-    elif isinstance(var,bytes):
-        return var
 
+def convert_to_bytes(var):
+    if isinstance(var, tuple) or isinstance(var, list):
+        return [convert_to_bytes(item) for item in var]
+    elif isinstance(var, dict):
+        return {convert_to_bytes(key): convert_to_bytes(value) for key, value in var.items()}
+    elif isinstance(var, str):
+        return var.encode()
+    elif isinstance(var, bytes):
+        return var

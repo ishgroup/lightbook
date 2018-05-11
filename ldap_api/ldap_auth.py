@@ -1,11 +1,14 @@
-from flask import request, g, Response
 from functools import wraps
-from .settings import SiteSettings
+
 import ldap
 import ldap.filter
+from flask import request, g, Response
+
 from .ldap_service import LdapService
+from .settings import SiteSettings
 
 config = SiteSettings()
+
 
 def requires_auth(f):
     @wraps(f)
