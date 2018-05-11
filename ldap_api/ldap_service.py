@@ -74,7 +74,7 @@ class LdapService:
             if company:
                 result['company_id'] = company[1]['uniqueIdentifier'][0]
 
-        return result
+        return convert_to_str(result)
 
     def get_company(self, company_id):
         """
@@ -83,7 +83,7 @@ class LdapService:
         :return: the company if it exists, or none if it doesn't
         """
         ldap_response = self.__find_company(company_id)
-        return extract_value_from_array(company_from_ldap(ldap_response[1])) if ldap_response else None
+        return convert_to_str(extract_value_from_array(company_from_ldap(ldap_response[1]))) if ldap_response else None
 
     def get_people(self, company_id, only_disabled=False):
         """
@@ -105,7 +105,7 @@ class LdapService:
             return []
         people = self.map_ldap_response(ldap_response, 'people')
 
-        return sorted(people, key=lambda k: k['name'].lower())
+        return convert_to_str(sorted(people, key=lambda k: k['name'].lower()))
 
     def search(self, name, base, get_disabled=False):
         """
@@ -165,7 +165,7 @@ class LdapService:
             return None
 
         self.__modify_ldap_entry(company, attributes)
-        return self.get_company(company_id)
+        return convert_to_str(self.get_company(company_id))
 
     def delete_company(self, company_id):
         dn = 'uniqueIdentifier={},{}'.format(company_id, LdapService.LDAP_BASES['companies'])
@@ -211,7 +211,7 @@ class LdapService:
                 person_id = self.__next_id('uid')
                 dn = 'uidNumber={},{}'.format(person_id, LdapService.LDAP_BASES['people'])
 
-                self.__add_entry(convert_to_str(dn), ldap_attributes)
+                self.__add_entry(dn, ldap_attributes)
                 break
             except ldap.ALREADY_EXISTS:
                 create_attempts += 1

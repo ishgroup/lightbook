@@ -15,15 +15,6 @@ config = SiteSettings()
 def ldap():
   return g.get('ldap_service', None)
 
-def convert_to_str(var):
-    if isinstance(var,tuple) or isinstance(var,list):
-        return[convert_to_str(item) for item in var]
-    elif isinstance(var,dict):
-        return {convert_to_str(key):convert_to_str(value) for key,value in var.items()}
-    elif isinstance(var,str):
-        return var
-    elif isinstance(var,bytes):
-        return var.decode('utf-8')
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -61,7 +52,7 @@ def view_person(person_id):
   return jsonify({
     "status": "success",
     "output": {
-      "people": convert_to_str(ldap().get_person(person_id))
+      "people": ldap().get_person(person_id)
     }
   })
 
@@ -188,7 +179,7 @@ def add_person():
   return jsonify({
     "status": "success",
     "output": {
-      "people": convert_to_str(ldap().add_person(request.get_json()))
+      "people": ldap().add_person(request.get_json())
     }
   })
 
