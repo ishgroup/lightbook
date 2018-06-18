@@ -382,7 +382,7 @@ def make_operation(attribute):
     if type(value) in (list, str, str) and len(value) == 0:
         return ldap.MOD_DELETE, key, None
     else:
-        return ldap.MOD_REPLACE, key, value
+        return ldap.MOD_REPLACE, convert_to_str(key), value
 
 
 def skip_attribute(key, value, current_attributes):
@@ -477,6 +477,8 @@ def convert_to_str(var):
         return var
     elif isinstance(var, bytes):
         return var.decode('utf-8')
+    else:
+        return var
 
 
 def convert_to_bytes(var):
