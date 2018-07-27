@@ -74,6 +74,7 @@ class AddCompany extends Component {
       <div className="well">
         <form onSubmit={this.handleSubmit} className="ContactForm" noValidate="true">
           <FormField label="Name" name="name" ref="name" />
+          <FormField label="Company code" name="company" ref="company" />
           <FormField label="Abn" name="abn" ref="abn" />
           <FormField label="Phone" name="phone" ref="phone" />
           <FormField label="Fax" name="fax" ref="fax" />

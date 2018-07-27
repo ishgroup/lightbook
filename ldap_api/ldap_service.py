@@ -230,7 +230,6 @@ class LdapService:
     def add_company(self, attributes):
         ldap_attributes = remap_dict(attributes, LdapService.INVERSE_ENTRY_MAPPING)
         ldap_attributes['objectClass'] = LdapService.OBJECT_CLASSES['companies']
-        ldap_attributes['o'] = ldap_attributes['cn']
         create_attempts = 0
 
         if 'active' not in ldap_attributes:

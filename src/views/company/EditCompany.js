@@ -38,6 +38,7 @@ class EditCompany extends Component {
     const newrow = {
       id: id,
       name: validate.field('Name', this.refs.name.item).required().value(),
+      company: validate.field('company', this.refs.company.item).required().value(),
       abn: this.refs.abn.item.value,
       active: this.refs.status.value,
       phone: phone,
@@ -102,6 +103,7 @@ class EditCompany extends Component {
           <form onSubmit={this.handleSubmit.bind(this)} className="ContactForm edit-company" noValidate="true">
 
             <TextInputEdited type="text" placeholder="Name" name="name" ref="name" value={this.state.company.name} />
+            <TextInputEdited type="text" placeholder="Company code" name="company" ref="company" value={this.state.company.company} />
             <TextInputEdited type="text" placeholder="Abn" name="abn" ref="abn" value={this.state.company.abn} />
             <TextInputEdited type="text" placeholder="Phone" name="phone" ref="phone" value={this.state.company.phone} validate="phone" />
             <TextInputEdited type="text" placeholder="Fax" name="fax" ref="fax" value={this.state.company.fax} validate="phone" />

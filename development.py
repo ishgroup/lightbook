@@ -533,7 +533,8 @@ def view_company(company_id):
         "output": {
             "company": {
                 "id": "1",
-                "name": "Ish Pty. Ltd",
+                "name": "Ish Pty Ltd",
+                "company": "ish",
                 "abn": "12345678",
                 "active": "true",
                 "phone": [
@@ -573,6 +574,7 @@ def add_company():
                 "company": {
                     "id": "1",
                     "name": "Ish Pty. Ltd",
+                    "company": "ish",
                     "abn": "12345678",
                     "active": "true",
                     "phone": [

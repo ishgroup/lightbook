@@ -16,6 +16,7 @@ class ViewCompany extends Component {
         : ''}
 
         <Row label="Name" item={this.props.company.name} />
+        <Row label="Company code" item={this.props.company.company} />
         <Row label="Abn" item={this.props.company.abn} />
         <Row label="Status" item={this.props.company.active === 'TRUE' ? 'Active' : 'Inactive'} />
         <Row label="Phone" item={this.props.company.phone} link="tel" />
