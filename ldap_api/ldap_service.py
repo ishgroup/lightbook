@@ -156,9 +156,9 @@ class LdapService:
             if company_name:
                 if attributes['auto_add_to_task']:
                     attributes.pop('auto_add_to_task')
-                    self.__set_notify_for(person[0], company_name)
+                    self.__add_user_to_group(person[0], company_name, 'notify')
                 else:
-                    self.__unset_notify_for(person[0], company_name)
+                    self.__remove_user_from_group(person[0], company_name, 'notify')
 
         self.__modify_ldap_entry(person, attributes)
         return self.get_person(person_id)
@@ -173,7 +173,7 @@ class LdapService:
 
     def delete_company(self, company_id):
         dn = 'uniqueIdentifier={},{}'.format(company_id, LdapService.LDAP_BASES['companies'])
-        notify = self.__find_notify(dn)
+        notify = self.__find_group(dn, 'notify')
         if notify:
             self.ldap_connection.delete_s(notify[0])
 
@@ -223,7 +223,7 @@ class LdapService:
                     raise
 
         if need_auto_add_to_task:
-            self.__set_notify_for(dn, attributes['company'])
+            self.__add_user_to_group(dn, attributes['company'], notify)
 
         return self.get_person(person_id)
 
@@ -263,68 +263,82 @@ class LdapService:
             return False
 
         company_dn = company[0]
-        notify = self.__find_notify(company_dn)
+        notify = self.__find_group(company_dn, 'notify')
         if notify is None:
             return False
 
         role_occupants = notify[1]['roleOccupant']
         return user_dn in role_occupants
 
-    def __set_notify_for(self, user_dn, company_name):
+    def __add_user_to_group(self, user_dn, company_name, group_name):
         company = self.__find_company_entry_by_name(company_name)
         if company is None:
             return None
 
         company_dn = company[0]
-        notify = self.__find_notify(company_dn)
-        if notify is None:
-            return self.__create_notify(user_dn, company_dn)
+        group = self.__find_group(company_dn, group_name)
+        if group is None:
+            return self.__create_group(user_dn, company_dn, group_name)
 
-        role_occupants = notify[1]['roleOccupant']
+        role_occupants = group[1]['roleOccupant']
         if user_dn in role_occupants:
             return True
 
         role_occupants.append(user_dn)
 
         modify_list = [(ldap.MOD_REPLACE, clear_param('roleOccupant'), clear_param(role_occupants))]
-        dn = notify[0]
+        dn = group[0]
         return self.ldap_connection.modify_s(dn, modify_list)
 
-    def __unset_notify_for(self, user_dn, company_name):
+    def __remove_user_from_group(self, user_dn, company_name, group_name):
         company = self.__find_company_entry_by_name(company_name)
         if company is None:
             return True
 
         company_dn = company[0]
-        notify = self.__find_notify(company_dn)
-        if notify is None:
+        group = self.__find_group(company_dn, group_name)
+        if group is None:
             return True
 
-        role_occupants = notify[1]['roleOccupant']
+        role_occupants = group[1]['roleOccupant']
         if user_dn not in role_occupants:
             return True
 
         role_occupants.remove(user_dn)
 
         if len(role_occupants) == 0:
-            return self.ldap_connection.delete_s(notify[0])
+            return self.ldap_connection.delete_s(group[0])
 
         modify_list = [(ldap.MOD_REPLACE, clear_param('roleOccupant'), clear_param(role_occupants))]
-        dn = notify[0]
+        dn = group[0]
         return self.ldap_connection.modify_s(dn, modify_list)
 
-    def __create_notify(self, user_dn, company_dn):
-        dn = 'cn=notify,{}'.format(company_dn)
+    def __create_group(self, user_dn, company_dn, group_name):
+        """
+        Create a group of users for this company
+        :param user_dn:
+        :param company_dn:
+        :param group_name:
+        :return:
+        """
+        dn = 'cn={},{}'.format(group_name, company_dn)
         ldap_attributes = {
             'objectClass': LdapService.OBJECT_CLASSES['role'],
             'roleOccupant': user_dn
         }
         return self.__add_entry(dn, ldap_attributes)
 
-    def __find_notify(self, company_dn):
-        ldap_filter = '(cn=notify)'
+    def __find_group(self, company_dn, group_name):
+        """
+        Return the group of users for the company
+        :param company_dn:
+        :param group_name:
+        :return:
+        """
+        ldap_filter = '(cn={})'.format(group_name)
         response = self.ldap_connection.search_s(company_dn, ldap.SCOPE_SUBTREE, ldap_filter)
         return get_first(response)
+
 
     def __find_company_entry_by_name(self, name):
         ldap_filter = ldap.filter.filter_format('(cn=%s)', [name])
