@@ -25,6 +25,7 @@ class AddCompany extends Component {
 
     const newrow = {
       name: validate.field('Name', this.refs.name.item).required().value(),
+      company: validate.field('Company code', this.refs.company.item).required().value(),
       abn: this.refs.abn.item.value,
       active: this.refs.status.value,
       phone: phone,
