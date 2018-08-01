@@ -35,5 +35,6 @@
     "build": "npm run sass && npm run react",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  }
+  },
+  "homepage": "/"
 }
