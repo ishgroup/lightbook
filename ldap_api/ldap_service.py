@@ -68,7 +68,8 @@ class LdapService:
             return None
 
         result = extract_value_from_array(person_from_ldap(ldap_response[1]))
-        result['auto_add_to_task'] = self.__get_auto_add_to_task(convert_to_bytes(ldap_response))
+        result['auto_add_to_task'] = self.__get_group(convert_to_bytes(ldap_response), 'notify')
+        result['approvers'] = self.__get_group(convert_to_bytes(ldap_response), 'approvers')
 
         if result.get('company'):
             company = self.__find_company_entry_by_name(result.get('company'))
@@ -160,6 +161,19 @@ class LdapService:
                 else:
                     self.__remove_user_from_group(person[0], company_name, 'notify')
 
+        if 'approvers' in attributes:
+            company_name = None
+            if 'company' in attributes:
+                company_name = attributes['company']
+            elif 'o' in person[1]:
+                company_name = person[1]['o'][0]
+
+            if company_name:
+                if attributes['approvers']:
+                    attributes.pop('approvers')
+                    self.__add_user_to_group(person[0], company_name, 'approvers')
+                else:
+                    self.__remove_user_from_group(person[0], company_name, 'approvers')
         self.__modify_ldap_entry(person, attributes)
         return self.get_person(person_id)
 
@@ -176,6 +190,10 @@ class LdapService:
         notify = self.__find_group(dn, 'notify')
         if notify:
             self.ldap_connection.delete_s(notify[0])
+
+        approvers = self.__find_group(dn, 'approvers')
+        if approvers:
+            self.ldap_connection.delete_s(approvers[0])
 
         self.ldap_connection.delete_s(dn)
         return True if self.get_company(company_id) is None else False
@@ -204,6 +222,12 @@ class LdapService:
             if 'company' in attributes:
                 need_auto_add_to_task = True
 
+        add_to_approvers = False
+        if 'approvers' in attributes and attributes['approvers']:
+            attributes.pop('approvers')
+            if 'company' in attributes:
+                add_to_approvers = True
+
         if 'active' not in ldap_attributes:
             ldap_attributes['active'] = 'TRUE'
 
@@ -223,8 +247,10 @@ class LdapService:
                     raise
 
         if need_auto_add_to_task:
-            self.__add_user_to_group(dn, attributes['company'], notify)
+            self.__add_user_to_group(dn, attributes['company'], 'notify')
 
+        if add_to_approvers:
+            self.__add_user_to_group(dn, attributes['company'], 'approvers')
         return self.get_person(person_id)
 
     def add_company(self, attributes):
@@ -251,7 +277,7 @@ class LdapService:
 
     # private
 
-    def __get_auto_add_to_task(self, person):
+    def __get_group(self, person, group):
         user_dn = person[0]
         if 'o' not in person[1]:
             return False
@@ -263,7 +289,7 @@ class LdapService:
             return False
 
         company_dn = company[0]
-        notify = self.__find_group(company_dn, 'notify')
+        notify = self.__find_group(company_dn, group)
         if notify is None:
             return False
 

@@ -55,6 +55,10 @@ class EditPeople extends Component {
       newrow['auto_add_to_task'] = this.refs.auto_add_to_task.value;
     }
 
+    if(this.refs.approvers !== undefined) {
+          newrow['approvers'] = this.refs.auto_add_to_task.value;
+        }
+
     if(validate.isValidate && this.state.selectedCompany === '') {
       validate.isValidate = false;
       alert('Please select a company from company list.');
@@ -153,6 +157,9 @@ class EditPeople extends Component {
             <Select ref="status" name="status" label="Status" options={[ {'Active': "TRUE"}, {'Inactive': "FALSE"} ]} selected={this.state.people.active || ''} onChange={this.onStatusChange.bind(this)} />
             {this.state.enabledAutoAddToTask ?
               <CheckBox ref="auto_add_to_task" name="auto_add_to_task" text="Auto add to task" checked={this.state.people.auto_add_to_task || false} />
+            : ''}
+            {this.state.enabledAutoAddToTask ?
+                          <CheckBox ref="approvers" name="approvers" text="Allow user to approve quotes" checked={this.state.people.approvers || false} />
             : ''}
 
             <div className="form-group row">

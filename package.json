@@ -5,6 +5,7 @@
   "devDependencies": {
     "axios": "^0.17.1",
     "file-loader": "^1.1.6",
+    "grunt": "^1.0.3",
     "node-sass": "^4.7.2",
     "react-scripts": "^1.0.17",
     "sass-loader": "^6.0.6",
@@ -35,5 +36,18 @@
     "build": "npm run sass && npm run react",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "homepage": "http:///",
+  "description": "Corporate addressbook using an LDAP backend.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ishgroup/lightbook.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ishgroup/lightbook/issues"
   }
 }

@@ -38,7 +38,7 @@ class EditCompany extends Component {
     const newrow = {
       id: id,
       name: validate.field('Name', this.refs.name.item).required().value(),
-      company: validate.field('company', this.refs.company.item).required().value(),
+      company: this.refs.company.item.value,
       abn: this.refs.abn.item.value,
       active: this.refs.status.value,
       phone: phone,

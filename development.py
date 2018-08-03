@@ -208,7 +208,8 @@ def add_person():
                         "0243690357 homefax"
                     ],
                     "username": "Joanne_157",
-                    "auto_add_to_task": True
+                    "auto_add_to_task": True,
+                    "approvers": True
                 }
             }
         })
@@ -235,7 +236,8 @@ def view_person(person_id):
                     "0243690357 homefax"
                 ],
                 "username": "Joanne_157",
-                "auto_add_to_task": False
+                "auto_add_to_task": False,
+                "approvers": True
             }
         }
     })
