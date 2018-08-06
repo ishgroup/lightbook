@@ -18,6 +18,7 @@ class EditPeople extends Component {
       disabledRemoveBtn: false,
       showLoader: true,
       enabledAutoAddToTask: true,
+      enabledAutoAddToApprovers: true,
       selectedCompany: ''
     };
 
@@ -27,6 +28,7 @@ class EditPeople extends Component {
           people: response.data.output.people,
           showLoader: false,
           enabledAutoAddToTask: (response.data.output.people.active === 'TRUE' ? true : false),
+          enabledAutoAddToApprovers: (response.data.output.people.active === 'TRUE' ? true : false),
           selectedCompany: response.data.output.people.company
         });
       });
@@ -56,7 +58,7 @@ class EditPeople extends Component {
     }
 
     if(this.refs.approvers !== undefined) {
-          newrow['approvers'] = this.refs.auto_add_to_task.value;
+          newrow['approvers'] = this.refs.approvers.value;
         }
 
     if(validate.isValidate && this.state.selectedCompany === '') {
@@ -104,10 +106,16 @@ class EditPeople extends Component {
       this.setState({
         enabledAutoAddToTask: false
       });
+       this.setState({
+               enabledAutoAddToApprovers: false
+             });
     } else {
       this.setState({
         enabledAutoAddToTask: true
       });
+       this.setState({
+               enabledAutoAddToApprovers: true
+             });
     }
   }
 
@@ -158,8 +166,8 @@ class EditPeople extends Component {
             {this.state.enabledAutoAddToTask ?
               <CheckBox ref="auto_add_to_task" name="auto_add_to_task" text="Auto add to task" checked={this.state.people.auto_add_to_task || false} />
             : ''}
-            {this.state.enabledAutoAddToTask ?
-                          <CheckBox ref="approvers" name="approvers" text="Allow user to approve quotes" checked={this.state.people.approvers || false} />
+            {this.state.enabledAutoAddToApprovers ?
+                          <CheckBox ref="approvers" name="approvers" text="Allow user to approve quotes" checked={this.state.people.approvers || false}/>
             : ''}
 
             <div className="form-group row">

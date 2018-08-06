@@ -68,8 +68,8 @@ class LdapService:
             return None
 
         result = extract_value_from_array(person_from_ldap(ldap_response[1]))
-        result['auto_add_to_task'] = self.__get_group(convert_to_bytes(ldap_response), 'notify')
-        result['approvers'] = self.__get_group(convert_to_bytes(ldap_response), 'approvers')
+        result['auto_add_to_task'] = self.__get_group((ldap_response), 'notify')
+        result['approvers'] = self.__get_group((ldap_response), 'approvers')
 
         if result.get('company'):
             company = self.__find_company_entry_by_name(result.get('company'))
@@ -282,7 +282,7 @@ class LdapService:
         if 'o' not in person[1]:
             return False
 
-        company_name = person[1]['o'][0]
+        company_name = convert_to_str(person[1]['o'][0])
         company = self.__find_company_entry_by_name(company_name)
 
         if company is None:
@@ -293,7 +293,7 @@ class LdapService:
         if notify is None:
             return False
 
-        role_occupants = notify[1]['roleOccupant']
+        role_occupants = convert_to_str(notify[1]['roleOccupant'])
         return user_dn in role_occupants
 
     def __add_user_to_group(self, user_dn, company_name, group_name):
@@ -311,10 +311,15 @@ class LdapService:
             return True
 
         role_occupants.append(user_dn)
-
         modify_list = [(ldap.MOD_REPLACE, clear_param('roleOccupant'), clear_param(role_occupants))]
+        modify_list = [(item[0], convert_to_str(item[1]), convert_to_bytes(item[2])) for item in modify_list]
+
         dn = group[0]
-        return self.ldap_connection.modify_s(dn, modify_list)
+        try:
+            result = self.ldap_connection.modify_s(dn, modify_list)
+        except ldap.TYPE_OR_VALUE_EXISTS:
+            pass
+
 
     def __remove_user_from_group(self, user_dn, company_name, group_name):
         company = self.__find_company_entry_by_name(company_name)
@@ -326,16 +331,18 @@ class LdapService:
         if group is None:
             return True
 
-        role_occupants = group[1]['roleOccupant']
+        role_occupants = convert_to_str(group[1]['roleOccupant'])
         if user_dn not in role_occupants:
             return True
-
-        role_occupants.remove(user_dn)
+        tmp_role_occupants = list(role_occupants)
+        tmp_role_occupants.remove(user_dn)
+        role_occupants = tuple(tmp_role_occupants)
 
         if len(role_occupants) == 0:
             return self.ldap_connection.delete_s(group[0])
 
         modify_list = [(ldap.MOD_REPLACE, clear_param('roleOccupant'), clear_param(role_occupants))]
+        modify_list = [(item[0], convert_to_str(item[1]), convert_to_bytes(item[2])) for item in modify_list]
         dn = group[0]
         return self.ldap_connection.modify_s(dn, modify_list)
 
@@ -464,7 +471,7 @@ def clear_param(param, first_level=True):
     elif type(param) is int:
         return clear_param(str(param))
     else:
-        return None
+        return param
 
 
 def remap_dict(source_dict, mapping):
@@ -521,11 +528,15 @@ def convert_to_str(var):
 
 
 def convert_to_bytes(var):
-    if isinstance(var, tuple) or isinstance(var, list):
-        return [convert_to_bytes(item) for item in var]
+    if isinstance(var, list):
+        return list([convert_to_bytes(item) for item in var])
+    elif isinstance(var, tuple):
+        return tuple((convert_to_bytes(item) for item in var))
     elif isinstance(var, dict):
         return {convert_to_bytes(key): convert_to_bytes(value) for key, value in var.items()}
     elif isinstance(var, str):
         return var.encode()
     elif isinstance(var, bytes):
+        return var
+    else:
         return var
