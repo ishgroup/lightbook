@@ -101,6 +101,14 @@ body {
     text-decoration: none;
     color: $black;
   }
+  .list-rows .row .row .col-xs-18 {
+    span {
+      vertical-align: middle;
+      &.badge {
+        margin-left: 5px;
+      }
+    }
+  }
 }
 .form-group {
   .input-box {

@@ -55,6 +55,34 @@ $brand-warning:             #f0ad4e !default;
 $brand-danger:              #d9534f !default;
 $brand-inverse:             $gray-dark !default;
 
+$brand-secondary: #6c757d !default;
+$gray-100: #f8f9fa !default;
+$gray-800: #343a40 !default;
+$gray-900: #212529 !default;
+
+
+$theme-colors: () !default;
+// stylelint-disable-next-line scss/dollar-variable-default
+$theme-colors: map-merge(
+  (
+    "primary":    $brand-primary,
+    "secondary":  $brand-secondary,
+    "success":    $brand-success,
+    "info":       $brand-info,
+    "warning":    $brand-warning,
+    "danger":     $brand-danger,
+    "light":      $gray-100,
+    "dark":       $gray-800
+  ),
+  $theme-colors
+);
+
+// The yiq lightness value that determines when the lightness of color changes from "dark" to "light". Acceptable values are between 0 and 255.
+$yiq-contrasted-threshold:  150 !default;
+
+// Customize the light and dark text colors for use in our YIQ color contrast function.
+$yiq-text-dark:             $gray-900 !default;
+$yiq-text-light:            $white !default;
 
 // Options
 //
@@ -176,6 +204,10 @@ $font-size-base: 1rem !default;
 $font-size-lg:   1.25rem !default;
 $font-size-sm:   .875rem !default;
 $font-size-xs:   .75rem !default;
+
+$font-weight-light: 300 !default;
+$font-weight-normal: 400 !default;
+$font-weight-bold: 700 !default;
 
 $line-height-base: 1.5 !default;
 
@@ -855,3 +887,17 @@ $pre-bg:                      #f7f7f9 !default;
 $pre-color:                   $gray-dark !default;
 $pre-border-color:            #ccc !default;
 $pre-scrollable-max-height:   340px !default;
+
+
+// Badges
+
+$badge-font-size:                   75% !default;
+$badge-font-weight:                 $font-weight-bold !default;
+$badge-padding-y:                   .25em !default;
+$badge-padding-x:                   .4em !default;
+$badge-border-radius:               $border-radius !default;
+
+$badge-pill-padding-x:              .6em !default;
+// Use a higher than normal value to ensure completely rounded edges when
+// customizing padding or font-size on labels.
+$badge-pill-border-radius:          10rem !default;

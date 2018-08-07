@@ -6,6 +6,7 @@
  */
 
 // Core variables and mixins
+@import "functions";
 @import "custom";
 @import "variables";
 @import "mixins";
@@ -43,6 +44,7 @@
 @import "list-group";
 @import "responsive-embed";
 @import "close";
+@import "badges";
 
 // Components w/ JavaScript
 @import "modal";
