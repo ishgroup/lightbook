@@ -106,7 +106,9 @@ class LdapService:
         if ldap_response is None:
             return []
         people = self.map_ldap_response(ldap_response, 'people')
-
+        for person in people:
+            person['auto_add_to_task'] = self.__get_group(self.__find_person(int(person['id'])), 'notify')
+            person['approvers'] = self.__get_group(self.__find_person(int(person['id'])), 'approvers')
         return convert_to_str(sorted(people, key=lambda k: k['name'].lower()))
 
     def search(self, name, base, get_disabled=False):

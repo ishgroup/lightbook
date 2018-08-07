@@ -78,6 +78,8 @@ class People extends Component {
                 {this.props.people.name}
               </span>
               {this.props.people.company !== undefined ? <span className="company">{this.props.people.company}</span> : ''}
+              {this.props.people.auto_add_to_task === true ? <span class="badge badge-primary"> Auto-add </span> : ''}
+              {this.props.people.approvers === true ? <span class="badge badge-secondary"> Approver </span> : ''}
             </div>
           </div>
           {this.state.showLoader ? Util.loaderImage() : ''}

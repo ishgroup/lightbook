@@ -66,52 +66,72 @@ def search_entry(search):
                 {
                     "id": "289",
                     "name": "Eilish",
-                    "company": 'ish'
+                    "company": 'ish',
+                    "auto_add_to_task": False,
+                    "approvers": True
                 },
                 {
                     "id": "512",
                     "name": "Andrew Bishop",
-                    "company": 'ish'
+                    "company": 'ish',
+                    "auto_add_to_task": False,
+                    "approvers": True
                 },
                 {
                     "id": "518",
                     "name": "Chris Fisher",
-                    "company": 'ish'
+                    "company": 'ish',
+                    "auto_add_to_task": False,
+                    "approvers": True
                 },
                 {
                     "id": "574",
                     "name": "Sudhir Mishra",
-                    "company": 'ish'
+                    "company": 'ish',
+                    "auto_add_to_task": False,
+                    "approvers": True
                 },
                 {
                     "id": "1681",
                     "name": "Bob Bishop",
-                    "company": 'other'
+                    "company": 'other',
+                    "auto_add_to_task": False,
+                    "approvers": True
                 },
                 {
                     "id": "1682",
                     "name": "Barry Bishop",
-                    "company": 'other'
+                    "company": 'other',
+                    "auto_add_to_task": False,
+                    "approvers": True
                 },
                 {
                     "id": "1696",
                     "name": "Daryn Chisholm",
-                    "company": 'other'
+                    "company": 'other',
+                    "auto_add_to_task": False,
+                    "approvers": True
                 },
                 {
                     "id": "1802",
                     "name": "Robert Fisher",
-                    "company": 'other'
+                    "company": 'other',
+                    "auto_add_to_task": False,
+                    "approvers": True
                 },
                 {
                     "id": "1816",
                     "name": "Rishi Lalseta",
-                    "company": 'other'
+                    "company": 'other',
+                    "auto_add_to_task": False,
+                    "approvers": True
                 },
                 {
                     "id": "1821",
                     "name": "Vishal Charan",
-                    "company": 'other'
+                    "company": 'other',
+                    "auto_add_to_task": False,
+                    "approvers": True
                 }
             ]
         }
@@ -274,231 +294,345 @@ def company_people(company_id):
         "peoples": [
             {
                 "id": "4",
-                "name": "Rex Chan"
+                "name": "Rex Chan",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "7",
-                "name": "Natalie Morton (wrong)"
+                "name": "Natalie Morton (wrong)",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "8",
-                "name": "Lisa Malouf"
+                "name": "Lisa Malouf",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "9",
-                "name": "Matthias Moeser"
+                "name": "Matthias Moeser",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "15",
-                "name": "Grant Newton"
+                "name": "Grant Newton",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "16",
-                "name": "Brad Wilson"
+                "name": "Brad Wilson",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "17",
-                "name": "Erlend Simonsen"
+                "name": "Erlend Simonsen",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "188",
-                "name": "Marek Wawrzyczny"
+                "name": "Marek Wawrzyczny",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "2093",
-                "name": "Marcin Skladaniec"
+                "name": "Marcin Skladaniec",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "10809",
-                "name": "Christian Llagas"
+                "name": "Christian Llagas",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "10868",
-                "name": "Monique Dykstra"
+                "name": "Monique Dykstra",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "10954",
-                "name": "Michael Keogh"
+                "name": "Michael Keogh",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "10955",
-                "name": "Imogen Searle"
+                "name": "Imogen Searle",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11000",
-                "name": "Angel Cheung"
+                "name": "Angel Cheung",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11158",
-                "name": "Ben You"
+                "name": "Ben You",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11167",
-                "name": "Ilieash Bulbul"
+                "name": "Ilieash Bulbul",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11178",
-                "name": "Barry Wazzy"
+                "name": "Barry Wazzy",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11195",
-                "name": "Charlotte Tanner (ish)"
+                "name": "Charlotte Tanner (ish)",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11244",
-                "name": "Simon Josephson"
+                "name": "Simon Josephson",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11246",
-                "name": "Juan Hawa"
+                "name": "Juan Hawa",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11287",
-                "name": "Ronald Kuwawi"
+                "name": "Ronald Kuwawi",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11298",
-                "name": "Peter Dissegna"
+                "name": "Peter Dissegna",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11317",
-                "name": "Lorenzo"
+                "name": "Lorenzo",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11334",
-                "name": "Dzmitry Kazimirchyk"
+                "name": "Dzmitry Kazimirchyk",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11340",
-                "name": "Liu Fengyun"
+                "name": "Liu Fengyun",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11345",
-                "name": "Viacheslav Davidovich"
+                "name": "Viacheslav Davidovich",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11352",
-                "name": "Megan Weber (old)"
+                "name": "Megan Weber (old)",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11379",
-                "name": "Andrey Koyro (old)"
+                "name": "Andrey Koyro (old)",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11384",
-                "name": "Bogdan Zubakin"
+                "name": "Bogdan Zubakin",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11404",
-                "name": "Daniel Solsona"
+                "name": "Daniel Solsona",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11453",
-                "name": "Chintan Kotadia (old)"
+                "name": "Chintan Kotadia (old)",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11470",
-                "name": "liufengyunchina"
+                "name": "liufengyunchina",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11480",
-                "name": "David Roddick"
+                "name": "David Roddick",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11559",
-                "name": "Miranda Gracie"
+                "name": "Miranda Gracie",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11582",
-                "name": "Vikrant Chaudhary"
+                "name": "Vikrant Chaudhary",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11662",
-                "name": "George Filipovich (old)"
+                "name": "George Filipovich (old)",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11673",
-                "name": "Phanindra Srungavarapu"
+                "name": "Phanindra Srungavarapu",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11695",
-                "name": "Artyom Kravchenko (old)"
+                "name": "Artyom Kravchenko (old)",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11757",
-                "name": "Stephen McIlwaine (old)"
+                "name": "Stephen McIlwaine (old)",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11794",
-                "name": "Juan Garcia (old)"
+                "name": "Juan Garcia (old)",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11799",
-                "name": "Midhun Sukumaran"
+                "name": "Midhun Sukumaran",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11800",
-                "name": "Vikrant Shete"
+                "name": "Vikrant Shete",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11872",
-                "name": "juan test"
+                "name": "juan test",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11883",
-                "name": "Andrey Narut (old)"
+                "name": "Andrey Narut (old)",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11884",
-                "name": "Cheryl Sykes"
+                "name": "Cheryl Sykes",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "11917",
-                "name": "Evgeny Rugalev"
+                "name": "Evgeny Rugalev",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "12070",
-                "name": "John Havel"
+                "name": "John Havel",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "12130",
-                "name": "Sathyapriya Perumal"
+                "name": "Sathyapriya Perumal",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "12235",
-                "name": "Sasha Shestak"
+                "name": "Sasha Shestak",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "12245",
-                "name": "Zaid Akram"
+                "name": "Zaid Akram",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "12272",
-                "name": "Savva Kolbachev"
+                "name": "Savva Kolbachev",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "12274",
-                "name": "Andrei Malyshev (Ruby)"
+                "name": "Andrei Malyshev (Ruby)",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "12283",
-                "name": "Darya Schemerova"
+                "name": "Darya Schemerova",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "12304",
-                "name": "Accounts (do not use)"
+                "name": "Accounts (do not use)",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "12339",
-                "name": "Ritesh Thumar"
+                "name": "Ritesh Thumar",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "12355",
-                "name": "Jason Riley (old)"
+                "name": "Jason Riley (old)",
+                "auto_add_to_task": False,
+                "approvers": True
             },
             {
                 "id": "12371",
-                "name": "Megan Testing"
+                "name": "Megan Testing",
+                "auto_add_to_task": False,
+                "approvers": True
             }
         ]
     })
