@@ -26,6 +26,7 @@ class AddCompany extends Component {
     const newrow = {
       name: validate.field('Name', this.refs.name.item).required().value(),
       company: validate.field('Company code', this.refs.company.item).required().value(),
+      sla: this.refs.sla.item.value,
       abn: this.refs.abn.item.value,
       active: this.refs.status.value,
       phone: phone,
@@ -76,6 +77,7 @@ class AddCompany extends Component {
         <form onSubmit={this.handleSubmit} className="ContactForm" noValidate="true">
           <FormField label="Name" name="name" ref="name" />
           <FormField label="Company code" name="company" ref="company" />
+          <FormField label="Service Level" name="sla" ref="sla" />
           <FormField label="Abn" name="abn" ref="abn" />
           <FormField label="Phone" name="phone" ref="phone" />
           <FormField label="Fax" name="fax" ref="fax" />

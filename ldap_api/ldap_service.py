@@ -16,6 +16,7 @@ class LdapService:
         'title': 'company_role',
         'facsimileTelephoneNumber': 'fax',
         'o': 'company',
+        'sla': 'sla',
         'mobile': 'mobile',
         'abn': 'abn',
         'active': 'active',
@@ -414,13 +415,14 @@ class LdapService:
         dn = entry[0]
         ldap_attributes = remap_dict(attributes, LdapService.INVERSE_ENTRY_MAPPING)
         ldap_attributes = filter_blank_attributes(ldap_attributes, entry[1])
-        names = ldap_attributes['cn'].split(' ', 1)
-        if len(names) > 1:
-            ldap_attributes['givenName'] = names[0]
-            ldap_attributes['sn'] = names[1]
-        else:
-            ldap_attributes['sn'] = ldap_attributes['cn']
-            ldap_attributes['givenName'] = ldap_attributes['cn']
+        if 'username' in ldap_attributes: # set given name and surname if entry is a person
+            names = ldap_attributes['cn'].split(' ', 1)
+            if len(names) > 1:
+                ldap_attributes['givenName'] = names[0]
+                ldap_attributes['sn'] = names[1]
+            else:
+                ldap_attributes['sn'] = ldap_attributes['cn']
+                ldap_attributes['givenName'] = ldap_attributes['cn']
         ldap_attributes['displayName'] = ldap_attributes['cn']
         modify_list = [make_operation(x) for x in list(ldap_attributes.items())]
         self.ldap_connection.modify_s(dn, modify_list)

@@ -39,6 +39,7 @@ class EditCompany extends Component {
       id: id,
       name: validate.field('Name', this.refs.name.item).required().value(),
       company: this.refs.company.item.value,
+      sla: this.refs.sla.item.value,
       abn: this.refs.abn.item.value,
       active: this.refs.status.value,
       phone: phone,
@@ -104,6 +105,7 @@ class EditCompany extends Component {
 
             <TextInputEdited type="text" placeholder="Name" name="name" ref="name" value={this.state.company.name} />
             <TextInputEdited type="text" placeholder="Company code" name="company" ref="company" value={this.state.company.company} />
+            <TextInputEdited type="text" placeholder="Service Level" name="sla" ref="sla" value={this.state.company.sla} />
             <TextInputEdited type="text" placeholder="Abn" name="abn" ref="abn" value={this.state.company.abn} />
             <TextInputEdited type="text" placeholder="Phone" name="phone" ref="phone" value={this.state.company.phone} validate="phone" />
             <TextInputEdited type="text" placeholder="Fax" name="fax" ref="fax" value={this.state.company.fax} validate="phone" />
