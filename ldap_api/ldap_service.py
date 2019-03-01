@@ -437,7 +437,7 @@ def make_operation(attribute):
     key = clear_param(attribute[0])
     value = clear_param(attribute[1])
 
-    if type(value) in (list, str, str) and len(value) == 0:
+    if type(value) in (list, str, bytes) and len(value) == 0:
         return ldap.MOD_DELETE, convert_to_str(key), None
     else:
         return ldap.MOD_REPLACE, convert_to_str(key), value
