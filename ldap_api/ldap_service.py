@@ -203,6 +203,15 @@ class LdapService:
 
     def delete_person(self, person_id):
         dn = 'uidNumber={},{}'.format(person_id, LdapService.LDAP_BASES['people'])
+
+        person = self.__find_person(person_id)
+
+        company_name = None
+        if 'o' in person[1]:
+            company_name = person[1]['o'][0]
+            self.__remove_user_from_group(person[0], company_name, 'notify')
+            self.__remove_user_from_group(person[0], company_name, 'approvers')
+
         self.ldap_connection.delete_s(dn)
         return True if self.get_person(person_id) is None else False
 
