@@ -386,8 +386,7 @@ class LdapService:
 
 
     def __find_company_entry_by_name(self, name):
-        ldap_filter = ldap.filter.filter_format('(cn=%s)', [name])
-        response = self.ldap_connection.search_s(LdapService.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE, ldap_filter)
+        response = self.ldap_connection.search_s(LdapService.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE, '(cn={})'.format(name))
         return get_first(response)
 
     def __next_id(self, identifier):
