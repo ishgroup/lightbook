@@ -208,7 +208,7 @@ class LdapService:
 
         company_name = None
         if 'o' in person[1]:
-            company_name = person[1]['o'][0]
+            company_name = convert_to_str(person[1]['o'][0])
             self.__remove_user_from_group(person[0], company_name, 'notify')
             self.__remove_user_from_group(person[0], company_name, 'approvers')
 
@@ -386,7 +386,8 @@ class LdapService:
 
 
     def __find_company_entry_by_name(self, name):
-        response = self.ldap_connection.search_s(LdapService.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE, '(cn={})'.format(name))
+        ldap_filter = ldap.filter.filter_format('(cn=%s)', [name])
+        response = self.ldap_connection.search_s(LdapService.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE, ldap_filter)
         return get_first(response)
 
     def __next_id(self, identifier):
