@@ -11,7 +11,7 @@ Corporate addressbook using an LDAP backend.
 ## Development mode
 
 `# python3 development.py &`
-`# npm run start`
+`# npm start`
 
 Now you can open http://127.0.0.1:3000/ and browse the project. NPM acts as a little web server to deliver the js and html parts to the browser. Python runs on port 5000 to repond to requests for search data, but using sample test json data rather than a real connection to LDAP.
 
