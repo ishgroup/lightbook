@@ -1,7 +1,7 @@
 import hashlib
 import os
 
-import ldap
+import ldap as python_ldap
 import ldap.filter
 from ldap.controls import SimplePagedResultsControl
 
@@ -69,8 +69,8 @@ class LdapService:
             return None
 
         result = extract_value_from_array(person_from_ldap(ldap_response[1]))
-        result['auto_add_to_task'] = self.__get_group((ldap_response), 'notify')
-        result['approvers'] = self.__get_group((ldap_response), 'approvers')
+        result['auto_add_to_task'] = self.__get_group(ldap_response, 'notify')
+        result['approvers'] = self.__get_group(ldap_response, 'approvers')
 
         if result.get('company'):
             company = self.__find_company_entry_by_name(result.get('company'))
@@ -100,9 +100,9 @@ class LdapService:
             return None
         company_name = company[1].get('cn')[0]
         active = 'FALSE' if only_disabled else 'TRUE'
-        ldap_filter = ldap.filter.filter_format('(&(o=%s)(active=%s))', [convert_to_str(company_name), active])
+        ldap_filter = python_ldap.filter.filter_format('(&(o=%s)(active=%s))', [convert_to_str(company_name), active])
         ldap_response = self.ldap_connection.search_ext_s(LdapService.LDAP_BASES['people'],
-                                                          ldap.SCOPE_SUBTREE, ldap_filter)
+                                                          python_ldap.SCOPE_SUBTREE, ldap_filter)
 
         if ldap_response is None:
             return []
@@ -121,24 +121,25 @@ class LdapService:
         :return:
         """
         if base == 'companies':
-            ldap_filter = ldap.filter.filter_format('cn=%s*', [name])
+            ldap_filter = python_ldap.filter.filter_format('cn=%s*', [name])
         elif ' ' in name:
-            ldap_filter = ldap.filter.filter_format('|(cn~=%s)(cn=%s*)', [name, name])
+            ldap_filter = python_ldap.filter.filter_format('|(cn~=%s)(cn=%s*)', [name, name])
         else:
-            ldap_filter = ldap.filter.filter_format('|(cn~=%s)(cn=%s*)(sn=%s*)', [name, name, name])
+            ldap_filter = python_ldap.filter.filter_format('|(cn~=%s)(cn=%s*)(sn=%s*)', [name, name, name])
 
         if not get_disabled:
             ldap_filter = '(&(active=TRUE)(%s))' % ldap_filter
 
         paged_control = SimplePagedResultsControl(True, size=LdapService.SEARCH_LIMIT, cookie='')
         ldap_response = self.ldap_connection.search_ext_s(
-            LdapService.LDAP_BASES[base], ldap.SCOPE_SUBTREE, ldap_filter, serverctrls=[paged_control])
+            LdapService.LDAP_BASES[base], python_ldap.SCOPE_SUBTREE, ldap_filter, serverctrls=[paged_control])
 
         if ldap_response is None:
             return []
         return self.map_ldap_response(ldap_response, base)
 
-    def map_ldap_response(self, ldap_response, base):
+    @staticmethod
+    def map_ldap_response(ldap_response, base):
         result = []
         for entry in ldap_response:
             result.append(
@@ -206,7 +207,6 @@ class LdapService:
 
         person = self.__find_person(person_id)
 
-        company_name = None
         if 'o' in person[1]:
             company_name = convert_to_str(person[1]['o'][0])
             self.__remove_user_from_group(person[0], company_name, 'notify')
@@ -253,7 +253,7 @@ class LdapService:
 
                 self.__add_entry(dn, ldap_attributes)
                 break
-            except ldap.ALREADY_EXISTS:
+            except python_ldap.ALREADY_EXISTS:
                 create_attempts += 1
                 if create_attempts == LdapService.MAX_CREATE_ATTEMPTS:
                     raise
@@ -280,7 +280,7 @@ class LdapService:
                 dn = 'uniqueIdentifier={},{}'.format(company_id, LdapService.LDAP_BASES['companies'])
                 self.__add_entry(dn, ldap_attributes)
                 break
-            except ldap.ALREADY_EXISTS:
+            except python_ldap.ALREADY_EXISTS:
                 create_attempts += 1
                 if create_attempts >= self.MAX_CREATE_ATTEMPTS:
                     raise
@@ -323,15 +323,14 @@ class LdapService:
             return True
 
         role_occupants.append(user_dn)
-        modify_list = [(ldap.MOD_REPLACE, clear_param('roleOccupant'), clear_param(role_occupants))]
+        modify_list = [(python_ldap.MOD_REPLACE, clear_param('roleOccupant'), clear_param(role_occupants))]
         modify_list = [(item[0], convert_to_str(item[1]), convert_to_bytes(item[2])) for item in modify_list]
 
         dn = group[0]
         try:
-            result = self.ldap_connection.modify_s(dn, modify_list)
-        except ldap.TYPE_OR_VALUE_EXISTS:
+            self.ldap_connection.modify_s(dn, modify_list)
+        except python_ldap.TYPE_OR_VALUE_EXISTS:
             pass
-
 
     def __remove_user_from_group(self, user_dn, company_name, group_name):
         company = self.__find_company_entry_by_name(company_name)
@@ -353,7 +352,7 @@ class LdapService:
         if len(role_occupants) == 0:
             return self.ldap_connection.delete_s(group[0])
 
-        modify_list = [(ldap.MOD_REPLACE, clear_param('roleOccupant'), clear_param(role_occupants))]
+        modify_list = [(python_ldap.MOD_REPLACE, clear_param('roleOccupant'), clear_param(role_occupants))]
         modify_list = [(item[0], convert_to_str(item[1]), convert_to_bytes(item[2])) for item in modify_list]
         dn = group[0]
         return self.ldap_connection.modify_s(dn, modify_list)
@@ -381,13 +380,12 @@ class LdapService:
         :return:
         """
         ldap_filter = '(cn={})'.format(group_name)
-        response = self.ldap_connection.search_s(company_dn, ldap.SCOPE_SUBTREE, ldap_filter)
+        response = self.ldap_connection.search_s(company_dn, python_ldap.SCOPE_SUBTREE, ldap_filter)
         return get_first(response)
 
-
     def __find_company_entry_by_name(self, name):
-        ldap_filter = ldap.filter.filter_format('(cn=%s)', [name])
-        response = self.ldap_connection.search_s(LdapService.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE, ldap_filter)
+        ldap_filter = python_ldap.filter.filter_format('(cn=%s)', [name])
+        response = self.ldap_connection.search_s(LdapService.LDAP_BASES['companies'], python_ldap.SCOPE_SUBTREE, ldap_filter)
         return get_first(response)
 
     def __next_id(self, identifier):
@@ -401,22 +399,22 @@ class LdapService:
         # Get the maximum value cached in an LDAP attribute
         result = self.ldap_connection.search_s(
             dn,
-            ldap.SCOPE_BASE,
+            python_ldap.SCOPE_BASE,
             '(objectClass=uidObject)',
             attrlist=['uid'])
         next_value = int(get_first(result)[1]['uid'][0]) + 1
 
         # Store this next value back to LDAP for the next requestz
-        self.ldap_connection.modify_s(dn, [(ldap.MOD_REPLACE, 'uid', clear_param(next_value))])
+        self.ldap_connection.modify_s(dn, [(python_ldap.MOD_REPLACE, 'uid', clear_param(next_value))])
         return next_value
 
     def __find_person(self, uid_number):
-        response = self.ldap_connection.search_s(LdapService.LDAP_BASES['people'], ldap.SCOPE_SUBTREE,
+        response = self.ldap_connection.search_s(LdapService.LDAP_BASES['people'], python_ldap.SCOPE_SUBTREE,
                                                  '(uidNumber=%d)' % uid_number)
         return get_first(response)
 
     def __find_company(self, unique_identifier):
-        response = self.ldap_connection.search_s(LdapService.LDAP_BASES['companies'], ldap.SCOPE_SUBTREE,
+        response = self.ldap_connection.search_s(LdapService.LDAP_BASES['companies'], python_ldap.SCOPE_SUBTREE,
                                                  '(uniqueIdentifier=%d)' % unique_identifier)
         return get_first(response)
 
@@ -424,7 +422,7 @@ class LdapService:
         dn = entry[0]
         ldap_attributes = remap_dict(attributes, LdapService.INVERSE_ENTRY_MAPPING)
         ldap_attributes = filter_blank_attributes(ldap_attributes, entry[1])
-        if 'username' in ldap_attributes: # set given name and surname if entry is a person
+        if 'username' in ldap_attributes:  # set given name and surname if entry is a person
             names = ldap_attributes['cn'].split(' ', 1)
             if len(names) > 1:
                 ldap_attributes['givenName'] = names[0]
@@ -447,9 +445,9 @@ def make_operation(attribute):
     value = clear_param(attribute[1])
 
     if type(value) in (list, str, bytes) and len(value) == 0:
-        return ldap.MOD_DELETE, convert_to_str(key), None
+        return python_ldap.MOD_DELETE, convert_to_str(key), None
     else:
-        return ldap.MOD_REPLACE, convert_to_str(key), value
+        return python_ldap.MOD_REPLACE, convert_to_str(key), value
 
 
 def skip_attribute(key, value, current_attributes):
