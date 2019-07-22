@@ -121,7 +121,7 @@ class LdapService:
         :return:
         """
         if base == 'companies':
-            ldap_filter = python_ldap.filter.filter_format('cn=%s*', [name])
+            ldap_filter = python_ldap.filter.filter_format('cn=*%s*', [name])
         elif ' ' in name:
             ldap_filter = python_ldap.filter.filter_format('|(cn~=%s)(cn=%s*)', [name, name])
         else:
@@ -136,7 +136,7 @@ class LdapService:
 
         if ldap_response is None:
             return []
-        return self.map_ldap_response(ldap_response, base)
+        return self.map_ldap_response(ldap_response, base).sort()
 
     @staticmethod
     def map_ldap_response(ldap_response, base):
