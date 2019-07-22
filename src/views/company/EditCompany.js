@@ -101,7 +101,7 @@ class EditCompany extends Component {
           </div>
           : '' }
         {this.state.company.name !== undefined ?
-          <form onSubmit={this.handleSubmit.bind(this)} className="ContactForm edit-company" noValidate="true">
+          <form onSubmit={this.handleSubmit.bind(this)} className="ContactForm edit-company" noValidate={true}>
 
             <TextInputEdited type="text" placeholder="Name" name="name" ref="name" value={this.state.company.name} />
             <TextInputEdited type="text" placeholder="Company code" name="company" ref="company" value={this.state.company.company} />

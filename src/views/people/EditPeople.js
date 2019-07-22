@@ -145,7 +145,7 @@ class EditPeople extends Component {
           </div>
           : '' }
         {this.state.people.name !== undefined ?
-          <form onSubmit={this.handleSubmit.bind(this)} className="ContactForm edit-people" noValidate="true">
+          <form onSubmit={this.handleSubmit.bind(this)} className="ContactForm edit-people" noValidate={true}>
             <TextInputEdited type="text" className="form-control col-md-8" placeholder="Name" name="name" ref="name" value={this.state.people.name} />
             <TextInputEdited type="text" className="form-control col-md-8" placeholder="Email" name="email" ref="email" value={this.state.people.email || ''} validate="email" />
             <TextInputEdited type="text" className="form-control col-md-8" placeholder="Username" name="username" ref="username" value={this.state.people.username || ''} validate="email" />

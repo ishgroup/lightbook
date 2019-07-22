@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Switch, Route } from 'react-router';
 import { NavLink } from 'react-router-dom';
 
-import './assets/css/styles.css';
+import "./assets/scss/styles.scss";
 
 import Icon from 'react-fa';
 import Container from './components/Container';

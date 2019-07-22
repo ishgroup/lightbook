@@ -9,7 +9,7 @@ import ListView from './components/ListView';
 import SearchBox from './components/SearchBox';
 import Util from './components/Util';
 
-import createHashHistory from 'history/createHashHistory';
+import { createHashHistory } from 'history';
 
 const history = createHashHistory();
 

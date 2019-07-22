@@ -91,7 +91,7 @@ class AddPeople extends Component {
   render() {
     return (
       <div className="well">
-        <form onSubmit={this.handleSubmit} className="ContactForm" noValidate="true">
+        <form onSubmit={this.handleSubmit} className="ContactForm" noValidate={true}>
           <FormField label="Name" name="name" ref="name" />
           <FormField label="Email" name="email" ref="email" />
           <FormField label="Username" name="username" ref="username" />

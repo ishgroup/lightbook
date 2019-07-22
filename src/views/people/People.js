@@ -89,7 +89,7 @@ class People extends Component {
           <ViewPeople people={_people}>
             <h6>
               People View -
-              <a href={"https://squish.ish.com.au/issues/?jql=reporter%20%3D%20"+ _name[0] +"%20and%20resolution%20%3D%20Unresolved"} style={{marginRight: '5px'}} target="_blank">
+              <a href={"https://squish.ish.com.au/issues/?jql=reporter%20%3D%20"+ _name[0] +"%20and%20resolution%20%3D%20Unresolved"} style={{marginRight: '5px'}} target="_blank" rel="noopener noreferrer">
                 <img src={SquishLogo} width="38px" height="25px" alt="Squish Logo" />
               </a>
             </h6>
