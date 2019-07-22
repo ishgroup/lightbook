@@ -41,16 +41,19 @@ class App extends Component {
           <header id="header" className="row">
             <nav className="navbar navbar-dark bg-inverse">
               <div className="nav navbar-nav">
-                <NavLink to="/" className="navbar-brand" activeClassName="active"><img src={IshLogo} alt="ish" />ish customer directory</NavLink>
+                <NavLink to="/" className="navbar-brand" activeClassName="active">
+                  <img src={IshLogo} alt="ish" />
+                  <span className="hidden-xs-down">ish customer directory</span>
+                </NavLink>
                 <div className="float-xs-right">
                   <li className="nav-item">
                     <NavLink to="/add-people" className="nav-link" activeClassName="active">
-                      <Icon name="user-plus" />
+                      <button type="button" className="btn btn-primary btn-sm">Add person</button>
                     </NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink to="/add-company" className="nav-link" activeClassName="active">
-                      <Icon name="building-o" />
+                      <button type="button" className="btn btn-primary btn-sm">Add company</button>
                     </NavLink>
                   </li>
                   <li className="nav-item">
