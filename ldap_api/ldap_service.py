@@ -136,7 +136,8 @@ class LdapService:
 
         if ldap_response is None:
             return []
-        return self.map_ldap_response(ldap_response, base).sort()
+        search_response = self.map_ldap_response(ldap_response, base)
+        return convert_to_str(sorted(search_response, key=lambda k: k['name'].lower()))
 
     @staticmethod
     def map_ldap_response(ldap_response, base):
