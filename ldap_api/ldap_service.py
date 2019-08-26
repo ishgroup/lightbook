@@ -186,6 +186,16 @@ class LdapService:
         company = self.__find_company(company_id)
         if company is None:
             return None
+        company_name = company[1]['cn'][0].decode('utf-8')
+        
+        # find all people from this company and update the company name of each person
+        staff = self.ldap_connection.search_s(LdapService.LDAP_BASES['people'], python_ldap.SCOPE_SUBTREE,
+                                               '(o=%s)' % company_name)
+        if staff:
+            for person in staff:
+                person_attributes = person_from_ldap(person[1])
+                person_attributes['company'] = attributes['name']
+                self.__modify_ldap_entry(person, person_attributes)
 
         self.__modify_ldap_entry(company, attributes)
         return convert_to_str(self.get_company(company_id))
