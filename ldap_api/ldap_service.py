@@ -187,10 +187,11 @@ class LdapService:
         if company is None:
             return None
         company_name = company[1]['cn'][0].decode('utf-8')
-        
+
         # find all people from this company and update the company name of each person
+        ldap_filter = python_ldap.filter.filter_format('(o=%s)', [company_name])
         staff = self.ldap_connection.search_s(LdapService.LDAP_BASES['people'], python_ldap.SCOPE_SUBTREE,
-                                               '(o=%s)' % company_name)
+                                               ldap_filter)
         if staff:
             for person in staff:
                 person_attributes = person_from_ldap(person[1])
