@@ -55,6 +55,10 @@ class LdapService:
         'role': 'organizationalRole'
     }
 
+    GROUPS = {'approvers': 'approvers',
+              'auto_add_to_task': 'notify',
+              'unsubscribed': 'unsubscribed'}
+
     def __init__(self, ldap_connection):
         self.ldap_connection = ldap_connection
 
@@ -69,8 +73,8 @@ class LdapService:
             return None
 
         result = extract_value_from_array(person_from_ldap(ldap_response[1]))
-        result['auto_add_to_task'] = self.__get_group(ldap_response, 'notify')
-        result['approvers'] = self.__get_group(ldap_response, 'approvers')
+        for option, group in self.GROUPS.items():
+            result[option] = self.__get_group(ldap_response, group)
 
         if result.get('company'):
             company = self.__find_company_entry_by_name(result.get('company'))
@@ -108,8 +112,8 @@ class LdapService:
             return []
         people = self.map_ldap_response(ldap_response, 'people')
         for person in people:
-            person['auto_add_to_task'] = self.__get_group(self.__find_person(int(person['id'])), 'notify')
-            person['approvers'] = self.__get_group(self.__find_person(int(person['id'])), 'approvers')
+            for option, group in self.GROUPS.items():
+                person[option] = self.__get_group(self.__find_person(int(person['id'])), group)
         return convert_to_str(sorted(people, key=lambda k: k['name'].lower()))
 
     def search(self, name, base, get_disabled=False):
@@ -151,34 +155,21 @@ class LdapService:
         person = self.__find_person(person_id)
         if person is None:
             return None
+        for option, group in self.GROUPS.items():
+            if option in attributes:
+                company_name = None
+                if 'company' in attributes:
+                    company_name = attributes['company']
+                elif 'o' in person[1]:
+                    company_name = person[1]['o'][0]
 
-        if 'auto_add_to_task' in attributes:
-            company_name = None
-            if 'company' in attributes:
-                company_name = attributes['company']
-            elif 'o' in person[1]:
-                company_name = person[1]['o'][0]
+                if company_name:
+                    if attributes[option]:
+                        attributes.pop(option)
+                        self.__add_user_to_group(person[0], company_name, group)
+                    else:
+                        self.__remove_user_from_group(person[0], company_name, group)
 
-            if company_name:
-                if attributes['auto_add_to_task']:
-                    attributes.pop('auto_add_to_task')
-                    self.__add_user_to_group(person[0], company_name, 'notify')
-                else:
-                    self.__remove_user_from_group(person[0], company_name, 'notify')
-
-        if 'approvers' in attributes:
-            company_name = None
-            if 'company' in attributes:
-                company_name = attributes['company']
-            elif 'o' in person[1]:
-                company_name = person[1]['o'][0]
-
-            if company_name:
-                if attributes['approvers']:
-                    attributes.pop('approvers')
-                    self.__add_user_to_group(person[0], company_name, 'approvers')
-                else:
-                    self.__remove_user_from_group(person[0], company_name, 'approvers')
         self.__modify_ldap_entry(person, attributes)
         return self.get_person(person_id)
 
@@ -221,8 +212,8 @@ class LdapService:
 
         if 'o' in person[1]:
             company_name = convert_to_str(person[1]['o'][0])
-            self.__remove_user_from_group(person[0], company_name, 'notify')
-            self.__remove_user_from_group(person[0], company_name, 'approvers')
+            for group in self.GROUPS.values():
+                self.__remove_user_from_group(person[0], company_name, group)
 
         self.ldap_connection.delete_s(dn)
         return True if self.get_person(person_id) is None else False
@@ -240,17 +231,12 @@ class LdapService:
 
         ldap_attributes['userPassword'] = hash_password(attributes.get('password', ''))
 
-        need_auto_add_to_task = False
-        if 'auto_add_to_task' in attributes and attributes['auto_add_to_task']:
-            attributes.pop('auto_add_to_task')
-            if 'company' in attributes:
-                need_auto_add_to_task = True
-
-        add_to_approvers = False
-        if 'approvers' in attributes and attributes['approvers']:
-            attributes.pop('approvers')
-            if 'company' in attributes:
-                add_to_approvers = True
+        add_group_flags = {}
+        for option, group in self.GROUPS.items():
+            if option in attributes and attributes[option]:
+                attributes.pop(option)
+                if 'company' in attributes:
+                    add_group_flags[group] = True
 
         if 'active' not in ldap_attributes:
             ldap_attributes['active'] = 'TRUE'
@@ -270,11 +256,10 @@ class LdapService:
                 if create_attempts == LdapService.MAX_CREATE_ATTEMPTS:
                     raise
 
-        if need_auto_add_to_task:
-            self.__add_user_to_group(dn, attributes['company'], 'notify')
+        for option, group in self.GROUPS.items():
+            if group in add_group_flags:
+                self.__add_user_to_group(dn, attributes['company'], group)
 
-        if add_to_approvers:
-            self.__add_user_to_group(dn, attributes['company'], 'approvers')
         return self.get_person(person_id)
 
     def add_company(self, attributes):

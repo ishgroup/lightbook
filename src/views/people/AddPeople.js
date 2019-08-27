@@ -36,7 +36,8 @@ class AddPeople extends Component {
       mobile: Util.numberList(this.refs.mobile.item.value),
       active: this.refs.status.value,
       auto_add_to_task: this.refs.auto_add_to_task.value,
-      approvers: this.refs.approvers.value
+      approvers: this.refs.approvers.value,
+      unsubscribed: this.refs.unsubscribed.value
     };
 
     if(validate.isValidate && this.state.selectedCompany === '') {
@@ -111,6 +112,7 @@ class AddPeople extends Component {
           <Select ref="status" name="status" label="Status" options={[ {'Active': "TRUE"}, {'Inactive': "FALSE"} ]} selected={"TRUE"} />
           <CheckBox ref="auto_add_to_task" name="auto_add_to_task" text="Auto add to task" checked={false} />
           <CheckBox ref="approvers" name="approvers" text="Allow user to approve quotes" checked={false} />
+          <CheckBox ref="unsubscribed" name="unsubscribed" text="Do not send email to this user" checked={false} />
 
           <div className="form-group row">
             <div className="offset-sm-3 col-sm-21">

@@ -19,6 +19,7 @@ class EditPeople extends Component {
       showLoader: true,
       enabledAutoAddToTask: true,
       enabledAutoAddToApprovers: true,
+      enabledUnsubscribed: true,
       selectedCompany: ''
     };
 
@@ -29,6 +30,7 @@ class EditPeople extends Component {
           showLoader: false,
           enabledAutoAddToTask: (response.data.output.people.active === 'TRUE' ? true : false),
           enabledAutoAddToApprovers: (response.data.output.people.active === 'TRUE' ? true : false),
+          enabledUnsubscribed: (response.data.output.people.active === 'TRUE' ? true : false),
           selectedCompany: response.data.output.people.company
         });
       });
@@ -60,6 +62,9 @@ class EditPeople extends Component {
     if(this.refs.approvers !== undefined) {
           newrow['approvers'] = this.refs.approvers.value;
         }
+    if(this.refs.unsubscribed !== undefined) {
+              newrow['unsubscribed'] = this.refs.unsubscribed.value;
+            }
 
     if(validate.isValidate && this.state.selectedCompany === '') {
       validate.isValidate = false;
@@ -169,6 +174,9 @@ class EditPeople extends Component {
             {this.state.enabledAutoAddToApprovers ?
                           <CheckBox ref="approvers" name="approvers" text="Allow user to approve quotes" checked={this.state.people.approvers || false}/>
             : ''}
+            {this.state.enabledUnsubscribed ?
+                                      <CheckBox ref="unsubscribed" name="unsubscribed" text="Do not send email to this user" checked={this.state.people.unsubscribed || false}/>
+                        : ''}
 
             <div className="form-group row">
               <div className="offset-sm-3 col-sm-21">
