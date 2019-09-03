@@ -11,8 +11,8 @@ class LdapService:
     MAX_CREATE_ATTEMPTS = 10
     ENTRY_MAPPING = {
         'telephoneNumber': 'phone',
-        'uid': 'username',
-        'cn': 'name',
+        'cn': 'username',
+        'displayName': 'name',
         'title': 'company_role',
         'facsimileTelephoneNumber': 'fax',
         'o': 'company',
