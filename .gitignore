@@ -16,8 +16,8 @@ npm-debug.log
 ldap.json
 *.pyc
 
-# IDE
-.idea
+# Intellij
+.idea/workspace.xml
 
 # configuration
 /ldap.json
