@@ -427,7 +427,6 @@ class LdapService:
             else:
                 ldap_attributes['sn'] = ldap_attributes['cn']
                 ldap_attributes['givenName'] = ldap_attributes['cn']
-        ldap_attributes['displayName'] = ldap_attributes['cn']
         modify_list = [make_operation(x) for x in list(ldap_attributes.items())]
         self.ldap_connection.modify_s(dn, modify_list)
 
