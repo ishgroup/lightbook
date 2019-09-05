@@ -32,13 +32,13 @@ class LdapService:
     SHORT_INFO = {
         'people': {
             'uidNumber': 'id',
-            'cn': 'name',
+            'displayName': 'name',
             'uid': 'username',
             'o': 'company'
         },
         'companies': {
             'uniqueIdentifier': 'id',
-            'cn': 'name'
+            'displayName': 'name'
         }
     }
     ONLY_ONE_VALUE_FIELDS = ['id', 'name', 'username', 'active', 'company', 'abn', 'company_role']
@@ -52,12 +52,12 @@ class LdapService:
     OBJECT_CLASSES = {
         'people': ['ishuser', 'inetOrgPerson'],
         'companies': ['ishOrganisation', 'organization'],
-        'role': 'organizationalRole'
+        'role': 'groupOfNames'
     }
 
-    GROUPS = {'approvers': 'approvers',
-              'auto_add_to_task': 'notify',
-              'unsubscribed': 'unsubscribed'}
+    GROUPS = {'approvers': 'approver',
+              'auto_add_to_task': 'notifier',
+              'unsubscribed': 'unsubscriber'}
 
     def __init__(self, ldap_connection):
         self.ldap_connection = ldap_connection
@@ -92,6 +92,10 @@ class LdapService:
         ldap_response = self.__find_company(company_id)
         return convert_to_str(extract_value_from_array(company_from_ldap(ldap_response[1]))) if ldap_response else None
 
+    def get_entry_by_dn(self, dn):
+        response = self.ldap_connection.search_s(dn, ldap.SCOPE_BASE, '(objectClass=*)')
+        return response[0] if response else None
+
     def get_people(self, company_id, only_disabled=False):
         """
         Get all the people attached to this company
@@ -99,21 +103,25 @@ class LdapService:
         :param only_disabled: if True return only disabled people
         :return: list of people sorted by name
         """
+        people = []
         company = self.__find_company(company_id)
         if company is None:
             return None
-        company_name = company[1].get('cn')[0]
+        ldap_response = self.ldap_connection.search_ext_s(company[0],
+                                                         python_ldap.SCOPE_SUBTREE, '(cn=people)')
+        if not ldap_response:
+            return people
         active = 'FALSE' if only_disabled else 'TRUE'
-        ldap_filter = python_ldap.filter.filter_format('(&(o=%s)(active=%s))', [convert_to_str(company_name), active])
-        ldap_response = self.ldap_connection.search_ext_s(LdapService.LDAP_BASES['people'],
-                                                          python_ldap.SCOPE_SUBTREE, ldap_filter)
+        for member_dn in ldap_response[0][1]['member']:
+            entry = self.get_entry_by_dn(member_dn.decode('utf-8'))
+            print(entry)
+            if entry:
+                person = extract_value_from_array(remap_dict(decode_dict(entry[1], 'utf-8'), LdapService.SHORT_INFO['people']))
+                if entry[1]['active'][0].decode('utf-8') == active:
+                    for option, group in self.GROUPS.items():
+                        person[option] = self.__get_group(entry, group)
+                    people.append(person)
 
-        if ldap_response is None:
-            return []
-        people = self.map_ldap_response(ldap_response, 'people')
-        for person in people:
-            for option, group in self.GROUPS.items():
-                person[option] = self.__get_group(self.__find_person(int(person['id'])), group)
         return convert_to_str(sorted(people, key=lambda k: k['name'].lower()))
 
     def search(self, name, base, get_disabled=False):
@@ -286,24 +294,14 @@ class LdapService:
 
     # private
 
-    def __get_group(self, person, group):
-        user_dn = person[0]
-        if 'o' not in person[1]:
+    def __get_group(self, person, group_name):
+        user_dn, attributes = person
+        search_filter = '(member=%s)' % user_dn
+        ldap_response = self.ldap_connection.search_ext_s(LdapService.LDAP_BASES['companies'], python_ldap.SCOPE_SUBTREE, search_filter)
+        if not ldap_response:
             return False
-
-        company_name = convert_to_str(person[1]['o'][0])
-        company = self.__find_company_entry_by_name(company_name)
-
-        if company is None:
-            return False
-
-        company_dn = company[0]
-        notify = self.__find_group(company_dn, group)
-        if notify is None:
-            return False
-
-        role_occupants = convert_to_str(notify[1]['roleOccupant'])
-        return user_dn in role_occupants
+        group_names = [group['cn'][0].decode('utf-8') for dn, group in ldap_response]
+        return group_name in group_names
 
     def __add_user_to_group(self, user_dn, company_name, group_name):
         company = self.__find_company_entry_by_name(company_name)
@@ -315,12 +313,12 @@ class LdapService:
         if group is None:
             return self.__create_group(user_dn, company_dn, group_name)
 
-        role_occupants = group[1]['roleOccupant']
+        role_occupants = group[1]['member']
         if user_dn in role_occupants:
             return True
 
         role_occupants.append(user_dn)
-        modify_list = [(python_ldap.MOD_REPLACE, clear_param('roleOccupant'), clear_param(role_occupants))]
+        modify_list = [(python_ldap.MOD_REPLACE, clear_param('member'), clear_param(role_occupants))]
         modify_list = [(item[0], convert_to_str(item[1]), convert_to_bytes(item[2])) for item in modify_list]
 
         dn = group[0]
@@ -339,7 +337,7 @@ class LdapService:
         if group is None:
             return True
 
-        role_occupants = convert_to_str(group[1]['roleOccupant'])
+        role_occupants = convert_to_str(group[1]['member'])
         if user_dn not in role_occupants:
             return True
         tmp_role_occupants = list(role_occupants)
@@ -349,7 +347,7 @@ class LdapService:
         if len(role_occupants) == 0:
             return self.ldap_connection.delete_s(group[0])
 
-        modify_list = [(python_ldap.MOD_REPLACE, clear_param('roleOccupant'), clear_param(role_occupants))]
+        modify_list = [(python_ldap.MOD_REPLACE, clear_param('member'), clear_param(role_occupants))]
         modify_list = [(item[0], convert_to_str(item[1]), convert_to_bytes(item[2])) for item in modify_list]
         dn = group[0]
         return self.ldap_connection.modify_s(dn, modify_list)
@@ -365,7 +363,7 @@ class LdapService:
         dn = 'cn={},{}'.format(group_name, company_dn)
         ldap_attributes = {
             'objectClass': LdapService.OBJECT_CLASSES['role'],
-            'roleOccupant': user_dn
+            'member': user_dn
         }
         return self.__add_entry(dn, ldap_attributes)
 
@@ -381,7 +379,7 @@ class LdapService:
         return get_first(response)
 
     def __find_company_entry_by_name(self, name):
-        ldap_filter = python_ldap.filter.filter_format('(|(cn=%s)(displayName=%s))', [name, name])
+        ldap_filter = python_ldap.filter.filter_format('(displayName=%s)', [name])
         response = self.ldap_connection.search_s(LdapService.LDAP_BASES['companies'], python_ldap.SCOPE_SUBTREE, ldap_filter)
         return get_first(response)
 
