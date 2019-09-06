@@ -117,7 +117,6 @@ class LdapService:
         active = 'FALSE' if only_disabled else 'TRUE'
         for member_dn in ldap_response[0][1]['member']:
             entry = self.get_entry_by_dn(member_dn.decode('utf-8'))
-            print(entry)
             if entry:
                 person = extract_value_from_array(remap_dict(decode_dict(entry[1], 'utf-8'), LdapService.SHORT_INFO['people']))
                 if entry[1]['active'][0].decode('utf-8') == active:
@@ -166,6 +165,7 @@ class LdapService:
         person = self.__find_person(person_id)
         if person is None:
             return None
+        old_attributes = convert_to_str(person_from_ldap(person[1]))
         for option, group in self.GROUPS.items():
             if option in attributes:
                 company_name = None
@@ -180,6 +180,10 @@ class LdapService:
                         self.__add_user_to_group(person[0], company_name, group)
                     else:
                         self.__remove_user_from_group(person[0], company_name, group)
+                    # if company name changes remove from old company and add it to new company
+                    if company_name != old_attributes['company'][0]:
+                        self.__add_user_to_group(person[0], company_name, 'people')
+                        self.__remove_user_from_group(person[0], old_attributes['company'][0], 'people')
 
         self.__modify_ldap_entry(person, attributes)
         return self.get_person(person_id)
