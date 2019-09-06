@@ -93,7 +93,10 @@ class LdapService:
         return convert_to_str(extract_value_from_array(company_from_ldap(ldap_response[1]))) if ldap_response else None
 
     def get_entry_by_dn(self, dn):
-        response = self.ldap_connection.search_s(dn, ldap.SCOPE_BASE, '(objectClass=*)')
+        try:
+            response = self.ldap_connection.search_s(dn, ldap.SCOPE_BASE, '(objectClass=*)')
+        except:
+            return None
         return response[0] if response else None
 
     def get_people(self, company_id, only_disabled=False):
@@ -229,13 +232,13 @@ class LdapService:
     def add_person(self, attributes):
         ldap_attributes = remap_dict(attributes, LdapService.INVERSE_ENTRY_MAPPING)
         ldap_attributes['objectClass'] = LdapService.OBJECT_CLASSES['people']
-        names = ldap_attributes['cn'].split(' ', 1)
+        names = ldap_attributes['displayName'].split(' ', 1)
         if len(names) > 1:
             ldap_attributes['givenName'] = names[0]
             ldap_attributes['sn'] = names[1]
         else:
-            ldap_attributes['sn'] = ldap_attributes['cn']
-            ldap_attributes['givenName'] = ldap_attributes['cn']
+            ldap_attributes['sn'] = ldap_attributes['displayName']
+            ldap_attributes['givenName'] = ldap_attributes['displayName']
 
         ldap_attributes['userPassword'] = hash_password(attributes.get('password', ''))
 
@@ -268,6 +271,7 @@ class LdapService:
             if group in add_group_flags:
                 self.__add_user_to_group(dn, attributes['company'], group)
 
+        self.__add_user_to_group(dn, attributes['company'], 'people')
         return self.get_person(person_id)
 
     def add_company(self, attributes):
