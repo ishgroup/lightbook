@@ -4,9 +4,10 @@ from gevent import monkey, pywsgi
 from flask import Flask, jsonify, request
 from logstash_formatter import LogstashFormatterV1
 
-from api import API
-from settings import SiteSettings
-from ldap_auth import requires_auth
+from ldap_api.api import API
+from ldap_api.settings import SiteSettings
+from ldap_api.ldap_auth import requires_auth
+from ldap import LDAPError
 
 debug_mode = '--debug' in sys.argv
 
@@ -26,7 +27,7 @@ if not debug_mode:
         # Just keep going
 
 
-@app.errorhandler(Exception)
+@app.errorhandler(LDAPError)
 def ldap_error_handler(e):
     app.logger.error('Ldap error: %s', e)
 

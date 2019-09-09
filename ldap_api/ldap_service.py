@@ -75,9 +75,8 @@ class LdapService:
             result.append(
                 extract_value_from_array(remap_dict(decode_dict(entry[1], 'utf-8'), LdapService.SHORT_INFO[base])))
         return result
-    # private
 
-    def __get_group(self, person, group_name):
+    def get_group(self, person, group_name):
         user_dn, attributes = person
         search_filter = '(member=%s)' % user_dn
         ldap_response = self.ldap_connection.search_ext_s(LdapService.LDAP_BASES['companies'], python_ldap.SCOPE_SUBTREE, search_filter)
@@ -86,15 +85,15 @@ class LdapService:
         group_names = [group['cn'][0].decode('utf-8') for dn, group in ldap_response]
         return group_name in group_names
 
-    def __add_user_to_group(self, user_dn, company_name, group_name):
-        company = self.__find_company_entry_by_name(company_name)
+    def add_user_to_group(self, user_dn, company_name, group_name):
+        company = self.find_company_entry_by_name(company_name)
         if company is None:
             return None
 
         company_dn = company[0]
-        group = self.__find_group(company_dn, group_name)
+        group = self.find_group(company_dn, group_name)
         if group is None:
-            return self.__create_group(user_dn, company_dn, group_name)
+            return self.create_group(user_dn, company_dn, group_name)
 
         role_occupants = group[1]['member']
         if user_dn in role_occupants:
@@ -110,13 +109,13 @@ class LdapService:
         except python_ldap.TYPE_OR_VALUE_EXISTS:
             pass
 
-    def __remove_user_from_group(self, user_dn, company_name, group_name):
-        company = self.__find_company_entry_by_name(company_name)
+    def remove_user_from_group(self, user_dn, company_name, group_name):
+        company = self.find_company_entry_by_name(company_name)
         if company is None:
             return True
 
         company_dn = company[0]
-        group = self.__find_group(company_dn, group_name)
+        group = self.find_group(company_dn, group_name)
         if group is None:
             return True
 
@@ -135,7 +134,7 @@ class LdapService:
         dn = group[0]
         return self.ldap_connection.modify_s(dn, modify_list)
 
-    def __create_group(self, user_dn, company_dn, group_name):
+    def create_group(self, user_dn, company_dn, group_name):
         """
         Create a group of users for this company
         :param user_dn:
@@ -148,9 +147,9 @@ class LdapService:
             'objectClass': LdapService.OBJECT_CLASSES['role'],
             'member': user_dn
         }
-        return self.__add_entry(dn, ldap_attributes)
+        return self.add_entry(dn, ldap_attributes)
 
-    def __find_group(self, company_dn, group_name):
+    def find_group(self, company_dn, group_name):
         """
         Return the group of users for the company
         :param company_dn:
@@ -161,12 +160,12 @@ class LdapService:
         response = self.ldap_connection.search_s(company_dn, python_ldap.SCOPE_SUBTREE, ldap_filter)
         return get_first(response)
 
-    def __find_company_entry_by_name(self, name):
+    def find_company_entry_by_name(self, name):
         ldap_filter = python_ldap.filter.filter_format('(displayName=%s)', [name])
         response = self.ldap_connection.search_s(LdapService.LDAP_BASES['companies'], python_ldap.SCOPE_SUBTREE, ldap_filter)
         return get_first(response)
 
-    def __next_id(self, identifier):
+    def next_id(self, identifier):
         """
         Get the next uniqueIdentifier available in LDAP
         :param: identifier the type of identifier, either "uid" or "uniqueIdentifier"
@@ -186,17 +185,17 @@ class LdapService:
         self.ldap_connection.modify_s(dn, [(python_ldap.MOD_REPLACE, 'uid', clear_param(next_value))])
         return next_value
 
-    def __find_person(self, uid_number):
+    def find_person(self, uid_number):
         response = self.ldap_connection.search_s(LdapService.LDAP_BASES['people'], python_ldap.SCOPE_SUBTREE,
                                                  '(uidNumber=%d)' % uid_number)
         return get_first(response)
 
-    def __find_company(self, unique_identifier):
+    def find_company(self, unique_identifier):
         response = self.ldap_connection.search_s(LdapService.LDAP_BASES['companies'], python_ldap.SCOPE_SUBTREE,
                                                  '(uniqueIdentifier=%d)' % unique_identifier)
         return get_first(response)
 
-    def __modify_ldap_entry(self, entry, attributes):
+    def modify_ldap_entry(self, entry, attributes):
         dn = entry[0]
         ldap_attributes = remap_dict(attributes, LdapService.INVERSE_ENTRY_MAPPING)
         ldap_attributes = filter_blank_attributes(ldap_attributes, entry[1])
@@ -211,7 +210,7 @@ class LdapService:
         modify_list = [make_operation(x) for x in list(ldap_attributes.items())]
         self.ldap_connection.modify_s(dn, modify_list)
 
-    def __add_entry(self, dn, ldap_attributes):
+    def add_entry(self, dn, ldap_attributes):
         ldap_attributes = filter_blank_attributes(ldap_attributes)
         modify_list = [(convert_to_str(clear_param(x[0])), clear_param(x[1])) for x in list(ldap_attributes.items())]
         return self.ldap_connection.add_s(convert_to_str(dn), modify_list)
