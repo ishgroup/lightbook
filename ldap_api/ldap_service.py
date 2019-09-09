@@ -119,7 +119,7 @@ class LdapService:
             entry = self.get_entry_by_dn(member_dn.decode('utf-8'))
             if entry:
                 person = extract_value_from_array(remap_dict(decode_dict(entry[1], 'utf-8'), LdapService.SHORT_INFO['people']))
-                if entry[1].get('active', 'TRUE')[0].decode('utf-8') == active:
+                if entry[1].get('active', [b'TRUE'])[0].decode('utf-8') == active:
                     for option, group in self.GROUPS.items():
                         person[option] = self.__get_group(entry, group)
                     people.append(person)
