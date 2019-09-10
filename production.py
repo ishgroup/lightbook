@@ -146,7 +146,7 @@ def search_entry(search):
 @requires_auth
 def company_people(company_id):
     only_disabled = request.args.get('only_disabled') is not None
-    result = API.get_people(only_disabled)
+    result = API.get_people(company_id, only_disabled)
 
     if result is None:
         return jsonify({
