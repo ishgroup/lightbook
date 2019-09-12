@@ -117,7 +117,7 @@ class API:
                 ldap_service.add_user_to_group(dn, attributes['company'], group)
 
         ldap_service.add_user_to_group(dn, attributes['company'], 'people')
-        return ldap_service.get_person(person_id)
+        return API.get_person(person_id)
 
     @staticmethod
     def add_company(attributes):
