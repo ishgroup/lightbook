@@ -194,11 +194,11 @@ class LdapService:
 
     def search(self, name, base, get_disabled):
         if base == 'companies':
-            ldap_filter = f'cn=*{name}*'
+            ldap_filter = f'displayName=*{name}*'
         elif ' ' in name:
-            ldap_filter = f'|(cn~={name})(cn={name}*)'
+            ldap_filter = f'|(displayName~={name})(displayName={name}*)'
         else:
-            ldap_filter = f'|(cn~={name})(cn={name}*)(sn={name}*)(mail={name})'
+            ldap_filter = f'|(displayName~={name})(cn={name}*)(sn={name}*)(mail={name})'
 
         if not get_disabled:
             ldap_filter = '(&(active=TRUE)(%s))' % ldap_filter
