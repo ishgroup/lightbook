@@ -28,9 +28,9 @@ class EditPeople extends Component {
         that.setState({
           people: response.data.output.people,
           showLoader: false,
-          enabledAutoAddToTask: (response.data.output.people.active === 'TRUE' ? true : false),
-          enabledAutoAddToApprovers: (response.data.output.people.active === 'TRUE' ? true : false),
-          enabledUnsubscribed: (response.data.output.people.active === 'TRUE' ? true : false),
+          enabledAutoAddToTask: (response.data.output.people.active === true ? true : false),
+          enabledAutoAddToApprovers: (response.data.output.people.active === true ? true : false),
+          enabledUnsubscribed: (response.data.output.people.active === true ? true : false),
           selectedCompany: response.data.output.people.company
         });
       });

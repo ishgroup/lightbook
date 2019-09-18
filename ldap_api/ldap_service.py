@@ -1,9 +1,6 @@
-import hashlib
-import os
+import ldap3
+from ldap3 import BASE, SUBTREE, ALL_ATTRIBUTES, MODIFY_ADD, MODIFY_REPLACE
 
-import ldap as python_ldap
-import ldap.filter
-from ldap.controls import SimplePagedResultsControl
 
 class LdapService:
     SEARCH_LIMIT = 20
@@ -58,112 +55,84 @@ class LdapService:
               'auto_add_to_task': 'notifier',
               'unsubscribed': 'unsubscriber'}
 
-    def __init__(self, ldap_connection):
+    def __init__(self, ldap_connection: ldap3.Connection):
         self.ldap_connection = ldap_connection
 
     def get_entry_by_dn(self, dn):
         try:
-            response = self.ldap_connection.search_s(dn, ldap.SCOPE_BASE, '(objectClass=*)')
+            self.ldap_connection.search(search_base=dn,
+                                        search_scope=ldap3.BASE,
+                                        search_filter='(objectClass=*)',
+                                        attributes=ldap3.ALL_ATTRIBUTES,
+                                        get_operational_attributes=True)
         except:
             return None
-        return response[0] if response else None
+        return self.ldap_connection.response[0] if self.ldap_connection.result['result'] == 0 else None
 
     @staticmethod
     def map_ldap_response(ldap_response, base):
         result = []
         for entry in ldap_response:
             result.append(
-                extract_value_from_array(remap_dict(decode_dict(entry[1], 'utf-8'), LdapService.SHORT_INFO[base])))
+                remap_dict(entry['attributes'], LdapService.SHORT_INFO[base]))
         return result
 
-    def get_group(self, person, group_name):
-        user_dn, attributes = person
-        search_filter = '(member=%s)' % user_dn
-        ldap_response = self.ldap_connection.search_ext_s(LdapService.LDAP_BASES['companies'], python_ldap.SCOPE_SUBTREE, search_filter)
-        if not ldap_response:
-            return False
-        group_names = [group['cn'][0].decode('utf-8') for dn, group in ldap_response]
-        return group_name in group_names
+    def add_user_to_group(self, user_dn, group_dn):
+        self.ldap_connection.search(search_base=group_dn,
+                                    search_scope=BASE,
+                                    search_filter='(objectClass=*)',
+                                    attributes=ALL_ATTRIBUTES)
+        group = self.ldap_connection.response
+        if not group:
+            self.create_group(group_dn, [user_dn])
+            return
+        members = group[0]['attributes']['member']
+        if user_dn in members:
+            return
+        members.append(user_dn)
+        self.ldap_connection.modify(group[0]['dn'],
+                                    {'member': [(MODIFY_REPLACE, members)]
+                                     })
+        if self.ldap_connection.result['result'] != 0:
+            raise Exception(f'add to group failed: reason: {self.ldap_connection.result}')
 
-    def add_user_to_group(self, user_dn, company_name, group_name):
-        company = self.find_company_entry_by_name(company_name)
-        if company is None:
-            return None
-
-        company_dn = company[0]
-        group = self.find_group(company_dn, group_name)
-        if group is None:
-            return self.create_group(user_dn, company_dn, group_name)
-
-        role_occupants = group[1]['member']
-        if user_dn in role_occupants:
+    def remove_user_from_group(self, user_dn, group_dn):
+        self.ldap_connection.search(search_base=group_dn,
+                                    search_scope=BASE,
+                                    search_filter='(objectClass=*)',
+                                    attributes=ALL_ATTRIBUTES)
+        group = self.ldap_connection.response
+        if not group:
             return True
-
-        role_occupants.append(user_dn)
-        modify_list = [(python_ldap.MOD_REPLACE, clear_param('member'), clear_param(role_occupants))]
-        modify_list = [(item[0], convert_to_str(item[1]), convert_to_bytes(item[2])) for item in modify_list]
-
-        dn = group[0]
-        try:
-            self.ldap_connection.modify_s(dn, modify_list)
-        except python_ldap.TYPE_OR_VALUE_EXISTS:
-            pass
-
-    def remove_user_from_group(self, user_dn, company_name, group_name):
-        company = self.find_company_entry_by_name(company_name)
-        if company is None:
+        members = group[0]['attributes']['member']
+        if user_dn not in members:
             return True
+        else:
+            members.remove(user_dn)
+            if len(members) == 0:
+                self.delete_ldap_entry(group_dn)
+                return True
+        self.ldap_connection.modify(group[0]['dn'],
+                                    {'member': [(MODIFY_REPLACE, members)]
+                                     })
+        if self.ldap_connection.result['result'] != 0:
+            raise Exception(f'add to group failed: reason: {self.ldap_connection.result}')
 
-        company_dn = company[0]
-        group = self.find_group(company_dn, group_name)
-        if group is None:
-            return True
-
-        role_occupants = convert_to_str(group[1]['member'])
-        if user_dn not in role_occupants:
-            return True
-        tmp_role_occupants = list(role_occupants)
-        tmp_role_occupants.remove(user_dn)
-        role_occupants = tuple(tmp_role_occupants)
-
-        if len(role_occupants) == 0:
-            return self.ldap_connection.delete_s(group[0])
-
-        modify_list = [(python_ldap.MOD_REPLACE, clear_param('member'), clear_param(role_occupants))]
-        modify_list = [(item[0], convert_to_str(item[1]), convert_to_bytes(item[2])) for item in modify_list]
-        dn = group[0]
-        return self.ldap_connection.modify_s(dn, modify_list)
-
-    def create_group(self, user_dn, company_dn, group_name):
-        """
-        Create a group of users for this company
-        :param user_dn:
-        :param company_dn:
-        :param group_name:
-        :return:
-        """
-        dn = 'cn={},{}'.format(group_name, company_dn)
+    def create_group(self, group_dn, members):
+        objectClass = 'groupOfNames'
         ldap_attributes = {
-            'objectClass': LdapService.OBJECT_CLASSES['role'],
-            'member': user_dn
+            'member': members
         }
-        return self.add_entry(dn, ldap_attributes)
-
-    def find_group(self, company_dn, group_name):
-        """
-        Return the group of users for the company
-        :param company_dn:
-        :param group_name:
-        :return:
-        """
-        ldap_filter = '(cn={})'.format(group_name)
-        response = self.ldap_connection.search_s(company_dn, python_ldap.SCOPE_SUBTREE, ldap_filter)
-        return get_first(response)
+        self.ldap_connection.add(group_dn, objectClass, ldap_attributes)
+        if self.ldap_connection.result['result'] != 0:
+            raise Exception(f'create group failed: reason: {self.ldap_connection.result}')
 
     def find_company_entry_by_name(self, name):
-        ldap_filter = python_ldap.filter.filter_format('(displayName=%s)', [name])
-        response = self.ldap_connection.search_s(LdapService.LDAP_BASES['companies'], python_ldap.SCOPE_SUBTREE, ldap_filter)
-        return get_first(response)
+        self.ldap_connection.search(search_base=LdapService.LDAP_BASES['companies'],
+                                    search_scope=SUBTREE,
+                                    search_filter=f'(displayName={name})',
+                                    attributes=ALL_ATTRIBUTES)
+        return get_first(self.ldap_connection.response)
 
     def next_id(self, identifier):
         """
@@ -174,56 +143,75 @@ class LdapService:
         dn = 'cn=max_{},{}'.format(identifier, LdapService.LDAP_BASES['counts'])
 
         # Get the maximum value cached in an LDAP attribute
-        result = self.ldap_connection.search_s(
-            dn,
-            python_ldap.SCOPE_BASE,
-            '(objectClass=uidObject)',
-            attrlist=['uid'])
-        next_value = int(get_first(result)[1]['uid'][0]) + 1
+        self.ldap_connection.search(
+            search_base=dn,
+            search_scope=ldap3.BASE,
+            search_filter='(objectClass=uidObject)',
+            attributes=['uid'])
+        result = self.ldap_connection.response
+        next_value = int(get_first(result)['attributes']['uid'][0]) + 1
 
         # Store this next value back to LDAP for the next requestz
-        self.ldap_connection.modify_s(dn, [(python_ldap.MOD_REPLACE, 'uid', clear_param(next_value))])
+        changes = {'uid': [MODIFY_REPLACE, next_value]}
+        self.ldap_connection.modify(dn, changes)
         return next_value
 
-    def find_person(self, uid_number):
-        response = self.ldap_connection.search_s(LdapService.LDAP_BASES['people'], python_ldap.SCOPE_SUBTREE,
-                                                 '(uidNumber=%d)' % uid_number)
-        return get_first(response)
+    def find_person(self, uidNumber):
+        person_dn = f"uidNumber={uidNumber},{LdapService.LDAP_BASES['people']}"
+        return self.get_entry_by_dn(person_dn)
 
     def find_company(self, unique_identifier):
-        response = self.ldap_connection.search_s(LdapService.LDAP_BASES['companies'], python_ldap.SCOPE_SUBTREE,
-                                                 '(uniqueIdentifier=%d)' % unique_identifier)
-        return get_first(response)
+        company_dn = f"uidNumber={unique_identifier},{LdapService.LDAP_BASES['companies']}"
+        return self.get_entry_by_dn(company_dn)
 
     def modify_ldap_entry(self, entry, attributes):
-        dn = entry[0]
-        ldap_attributes = remap_dict(attributes, LdapService.INVERSE_ENTRY_MAPPING)
-        ldap_attributes = filter_blank_attributes(ldap_attributes, entry[1])
-        if 'username' in ldap_attributes:  # set given name and surname if entry is a person
-            names = ldap_attributes['cn'].split(' ', 1)
-            if len(names) > 1:
-                ldap_attributes['givenName'] = names[0]
-                ldap_attributes['sn'] = names[1]
+        dn = entry['dn']
+        new_attributes = remap_dict(attributes, LdapService.INVERSE_ENTRY_MAPPING)
+        existing_attributes = entry['attributes']
+        changes = {}
+        for key, value in new_attributes.items():
+            if key in existing_attributes:
+                changes[key] = [(MODIFY_REPLACE, value)]
+            elif type(value) in (list, str, bytes) and len(value) == 0:
+                pass
             else:
-                ldap_attributes['sn'] = ldap_attributes['cn']
-                ldap_attributes['givenName'] = ldap_attributes['cn']
-        modify_list = [make_operation(x) for x in list(ldap_attributes.items())]
-        self.ldap_connection.modify_s(dn, modify_list)
+                changes[key] = [(MODIFY_ADD, value)]
+        self.ldap_connection.modify(dn, changes=changes)
+        if self.ldap_connection.result['result'] != 0:
+            raise Exception(f'update failed: reason: {self.ldap_connection.result}')
 
     def add_entry(self, dn, ldap_attributes):
         ldap_attributes = filter_blank_attributes(ldap_attributes)
-        modify_list = [(convert_to_str(clear_param(x[0])), clear_param(x[1])) for x in list(ldap_attributes.items())]
-        return self.ldap_connection.add_s(convert_to_str(dn), modify_list)
+        self.ldap_connection.add(dn, attributes=ldap_attributes)
+        if self.ldap_connection.result['result'] != 0:
+            print(f'Add ldap entry error {self.ldap_connection.result}')
 
+    def delete_ldap_entry(self, dn):
+        self.ldap_connection.delete(dn)
+        if self.get_entry_by_dn(dn):
+            return False
+        return True
 
-def make_operation(attribute):
-    key = clear_param(attribute[0])
-    value = clear_param(attribute[1])
+    def search(self, name, base, get_disabled):
+        if base == 'companies':
+            ldap_filter = f'cn=*{name}*'
+        elif ' ' in name:
+            ldap_filter = f'|(cn~={name})(cn={name}*)'
+        else:
+            ldap_filter = f'|(cn~={name})(cn={name}*)(sn={name}*)(mail={name})'
 
-    if type(value) in (list, str, bytes) and len(value) == 0:
-        return python_ldap.MOD_DELETE, convert_to_str(key), None
-    else:
-        return python_ldap.MOD_REPLACE, convert_to_str(key), value
+        if not get_disabled:
+            ldap_filter = '(&(active=TRUE)(%s))' % ldap_filter
+
+        self.ldap_connection.search(search_base=LdapService.LDAP_BASES[base], search_scope=ldap3.SUBTREE,
+                                    search_filter=ldap_filter,
+                                    attributes=ldap3.ALL_ATTRIBUTES, paged_size=LdapService.SEARCH_LIMIT,
+                                    paged_cookie='')
+
+        if not self.ldap_connection.response:
+            return []
+        search_response = self.map_ldap_response(self.ldap_connection.response, base)
+        return sorted(search_response, key=lambda k: k['name'].lower())
 
 
 def skip_attribute(key, value, current_attributes):
@@ -242,33 +230,6 @@ def filter_blank_attributes(new_attributes, old_attributes=None):
     return {k: v for k, v in list(new_attributes.items()) if not skip_attribute(k, v, old_attributes)}
 
 
-def company_from_ldap(ldap_dict):
-    company = remap_dict(ldap_dict, LdapService.ENTRY_MAPPING)
-    company['id'] = ldap_dict.get('uniqueIdentifier')
-    return company
-
-
-def person_from_ldap(ldap_dict):
-    person = remap_dict(ldap_dict, LdapService.ENTRY_MAPPING)
-    person['id'] = ldap_dict.get('uidNumber')
-    return person
-
-
-def clear_param(param, first_level=True):
-    if not first_level:
-        return None
-    if type(param) is list:
-        return [clear_param(x) for x in param]
-    elif type(param) is str:
-        return param.encode('ascii', 'ignore')
-    elif type(param) is str:
-        return param
-    elif type(param) is int:
-        return clear_param(str(param))
-    else:
-        return param
-
-
 def remap_dict(source_dict, mapping):
     return {mapping[key]: value for key, value in source_dict.items() if key in mapping}
 
@@ -278,60 +239,3 @@ def get_first(iterable, default=None):
         for item in iterable:
             return item
     return default
-
-
-def extract_value_from_array(attributes_dict):
-    attributes_dict = {key: [value.decode('utf-8') if isinstance(value, bytes) else value for value in word] for
-                       key, word
-                       in attributes_dict.items()}
-    for key in LdapService.ONLY_ONE_VALUE_FIELDS:
-        value = attributes_dict.get(key)
-        if value is not None and len(value) == 1:
-            attributes_dict[key] = value[0].strip(' ')
-    return attributes_dict
-
-
-def hash_password(password):
-    """
-    Take plaintext password and return a hash ready for LDAP
-    :param password:
-    :return:
-    """
-    salt = os.urandom(4)
-    sha = hashlib.sha1(password.encode('utf-8'))
-    sha.update(salt)
-    import base64
-    digest_salt_b64 = base64.b64encode('{}{}'.format(sha.digest(), salt).encode('utf-8')).strip()
-    return '{{SSHA}}{}'.format(digest_salt_b64)
-
-
-def decode_dict(source, charset):
-    return {key: [value.decode(charset) for value in word] for key, word in source.items()}
-
-
-def convert_to_str(var):
-    if isinstance(var, tuple) or isinstance(var, list):
-        return tuple(convert_to_str(item) for item in var)
-    elif isinstance(var, dict):
-        return {convert_to_str(key): convert_to_str(value) for key, value in var.items()}
-    elif isinstance(var, str):
-        return var
-    elif isinstance(var, bytes):
-        return var.decode('utf-8')
-    else:
-        return var
-
-
-def convert_to_bytes(var):
-    if isinstance(var, list):
-        return list([convert_to_bytes(item) for item in var])
-    elif isinstance(var, tuple):
-        return tuple((convert_to_bytes(item) for item in var))
-    elif isinstance(var, dict):
-        return {convert_to_bytes(key): convert_to_bytes(value) for key, value in var.items()}
-    elif isinstance(var, str):
-        return var.encode()
-    elif isinstance(var, bytes):
-        return var
-    else:
-        return var

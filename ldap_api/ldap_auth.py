@@ -1,11 +1,13 @@
 from functools import wraps
 
 import ldap
+import ldap3
 import ldap.filter
 from flask import request, g, Response
 
 from .ldap_service import LdapService
 from .settings import SiteSettings
+from urllib.parse import urlparse
 
 config = SiteSettings()
 
@@ -35,26 +37,29 @@ def authenticate(username, password):
 
     try:
         # first let's create an anonymous LDAP connection
-        unauthenticated_conn = ldap.initialize(url)
-        unauthenticated_conn.simple_bind_s()
-
+        server = urlparse(url).hostname
+        s = ldap3.Server(server, get_info=ldap3.ALL)
+        unauthenticated_conn = ldap3.Connection(s)
+        if not unauthenticated_conn.bind():
+            raise OSError('Connection error.')
         # now find the employee
-        ldap_filter = ldap.filter.filter_format('(uid=%s)', [username])
-        ldap_response = unauthenticated_conn.search_ext_s(config.get_ldap_base(), ldap.SCOPE_SUBTREE, ldap_filter)
-        if not ldap_response:
-            raise OSError("Your login was not correct.")
+        unauthenticated_conn.search(
+            search_base=config.get_ldap_base(),
+            search_scope=ldap3.SUBTREE,
+            search_filter=f'(uid={username})',
+            attributes=ldap3.ALL_ATTRIBUTES
+        )
+        dn = unauthenticated_conn.response[0]['dn']
 
         # now let's bind with this employee
-        dn = ldap_response[0][0]
-        auth_conn = ldap.initialize(url)
-        auth_conn.simple_bind_s(dn, password)
-        if not auth_conn:
-            raise OSError("Your login was not correct.")
-
+        auth_conn = ldap3.Connection(s, user=dn, password=password)
+        if not auth_conn.bind():
+            raise OSError('No such user')
         g.ldap_service = LdapService(auth_conn)
+
         return True
 
-    except (ldap.LDAPError, OSError):
+    except Exception as e:
         return False
 
 
