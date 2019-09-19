@@ -27,15 +27,15 @@ if not debug_mode:
         # Just keep going
 
 
-@app.errorhandler(LDAPError)
-def ldap_error_handler(e):
-    app.logger.error('Ldap error: %s', e)
-
-    return jsonify({
-        'status': 'error',
-        'message': e.args[0]['desc'].encode()
-    }), 200
-
+# @app.errorhandler(Exception)
+# def ldap_error_handler(e):
+#     app.logger.error(f'Ldap error: {e}')
+#
+#     return jsonify({
+#         'status': 'error',
+#         'message': str(e)
+#     }), 200
+#
 
 @app.route('/')
 @requires_auth

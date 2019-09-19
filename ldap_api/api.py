@@ -1,6 +1,6 @@
-from flask import g
-
+from ldap_api import LdapService
 from .entities import Person, Company
+
 
 class API:
 
@@ -22,19 +22,17 @@ class API:
     @staticmethod
     def add_person(attributes):
         p = Person(attr=attributes)
-        p.save_to_ldap()
         return p.attributes
 
     @staticmethod
     def add_company(attributes):
         company = Company(attributes=attributes)
-        company.save_to_ldap()
         return company.attributes
 
     @staticmethod
     def modify_person(person_id, attributes):
         person = Person(person_id)
-        person.attributes = {**person.attributes, **attributes}
+        person.set_attributes(attributes)
         return person.save_to_ldap()
 
     @staticmethod
@@ -55,6 +53,5 @@ class API:
 
     @staticmethod
     def search(name, base, get_disabled=False):
-        ldap_service = g.get('ldap_service', None)
-        return ldap_service.search(name, base, get_disabled)
+        return LdapService.search(name, base, get_disabled)
 

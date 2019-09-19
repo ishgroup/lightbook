@@ -1,11 +1,7 @@
 from functools import wraps
 
-import ldap
 import ldap3
-import ldap.filter
 from flask import request, g, Response
-
-from .ldap_service import LdapService
 from .settings import SiteSettings
 from urllib.parse import urlparse
 
@@ -55,7 +51,7 @@ def authenticate(username, password):
         auth_conn = ldap3.Connection(s, user=dn, password=password)
         if not auth_conn.bind():
             raise OSError('No such user')
-        g.ldap_service = LdapService(auth_conn)
+        g.ldap_connection = auth_conn
 
         return True
 
