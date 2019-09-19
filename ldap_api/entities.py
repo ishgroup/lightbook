@@ -231,6 +231,7 @@ class Company:
         return True if self.ldap_entry else False
 
     def delete_from_ldap(self):
+        # To delete a company, all the people and all the groups need to be deleted first
         return LdapService.delete_ldap_entry(self.dn)
 
 
