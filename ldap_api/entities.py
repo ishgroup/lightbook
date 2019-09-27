@@ -82,6 +82,7 @@ class Person:
             self.company = new_company
         # ADD ldap record to groups:
         if self.company:
+            self.attributes['people'] = True
             for name, group in self.company.groups.items():
                 if self.attributes[name]:
                     group.add_person(self)
@@ -191,7 +192,7 @@ class Company:
         return company
 
     def get_people(self, disabled=False):
-        if not LdapService:
+        if not self.ldap_entry:
             return None
         else:
             people_group_dn = f'cn=people,{self.ldap_entry["dn"]}'
@@ -232,6 +233,8 @@ class Company:
 
     def delete_from_ldap(self):
         # To delete a company, all the people and all the groups need to be deleted first
+        for name, group in self.groups.items():
+            group.delete_from_ldap()
         return LdapService.delete_ldap_entry(self.dn)
 
 
@@ -255,3 +258,15 @@ class Group:
     def add_person(self, person):
         """Add a person to this group and add te group is it doesn't already exist."""
         LdapService.add_user_to_group(person.dn, self.dn)
+
+    def get_members(self):
+        ldap_entry = LdapService.get_entry_by_dn(self.dn)
+        if not ldap_entry:
+            return None
+
+        return ldap_entry['member'] if 'member' in ldap_entry else None
+
+    def delete_from_ldap(self):
+        """Remove a group onlyif it has no members"""
+        if not self.get_members():
+            return LdapService.delete_ldap_entry(self.dn)

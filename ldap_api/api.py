@@ -23,10 +23,10 @@ class API:
     def add_person(attributes):
         p = Person(attr=attributes)
         return p.attributes
-
     @staticmethod
     def add_company(attributes):
         company = Company(attributes=attributes)
+        company.save_to_ldap()
         return company.attributes
 
     @staticmethod
