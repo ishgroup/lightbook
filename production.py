@@ -7,7 +7,6 @@ from logstash_formatter import LogstashFormatterV1
 from ldap_api.api import API
 from ldap_api.settings import SiteSettings
 from ldap_api.ldap_auth import requires_auth
-from ldap import LDAPError
 
 debug_mode = '--debug' in sys.argv
 
