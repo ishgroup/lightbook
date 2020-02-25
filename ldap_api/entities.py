@@ -60,9 +60,10 @@ class Person:
             log.debug(f"Loaded person ldap.")
             if not self.company:
                 self.company = self._get_company()
-                log.debug(f"Loaded person company relationship.")
+                if not self.company:
+                    log.debug(f"Failed to load person company relationship.")
 
-            if self.ldap_entry and self.company.ldap_entry:
+            if self.ldap_entry and self.company and self.company.ldap_entry:
                 log.debug(f"Loaded groups.")
                 self.attributes = self._inverse_mapping()
                 self._parse_groups()
