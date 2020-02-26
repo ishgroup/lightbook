@@ -63,10 +63,11 @@ class Person:
                 if not self.company:
                     log.debug(f"Failed to load person company relationship.")
 
-            if self.ldap_entry and self.company and self.company.ldap_entry:
+            if self.ldap_entry:
                 log.debug(f"Loaded groups.")
                 self.attributes = self._inverse_mapping()
-                self._parse_groups()
+                if self.company and self.company.ldap_entry:
+                    self._parse_groups()
             log.debug(f"Saved attributes.")
 
     def set_attributes(self, attributes):
