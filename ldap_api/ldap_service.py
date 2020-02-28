@@ -1,7 +1,7 @@
 import ldap3
 from flask import g
 from ldap3 import BASE, SUBTREE, ALL_ATTRIBUTES, MODIFY_ADD, MODIFY_REPLACE
-
+from ldap3.utils.conv import escape_filter_chars as eb
 
 class LdapService:
     SEARCH_LIMIT = 20
@@ -124,7 +124,7 @@ class LdapService:
         ldap_connection = g.get('ldap_connection')
         ldap_connection.search(search_base=LdapService.LDAP_BASES['companies'],
                                search_scope=SUBTREE,
-                               search_filter=f'(displayName={name})',
+                               search_filter=f'(displayName={eb(name)})',
                                attributes=ALL_ATTRIBUTES)
         return get_first(ldap_connection.response)
 
@@ -189,6 +189,7 @@ class LdapService:
 
     @staticmethod
     def search(name, base, get_disabled):
+        name = eb(name)
         ldap_connection = g.get('ldap_connection')
         if base == 'companies':
             ldap_filter = f'displayName=*{name}*'
