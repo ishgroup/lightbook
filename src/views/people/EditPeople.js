@@ -167,7 +167,7 @@ class EditPeople extends Component {
             <TextInputEdited type="text" className="form-control col-md-8" placeholder="Notes" name="notes" ref="notes" value={this.state.people.notes || ''} />
             <TextInputEdited type="text" className="form-control col-md-8" placeholder="Mobile" name="mobile" ref="mobile" value={this.state.people.mobile || ''} validate="phone" />
 
-            <Select ref="status" name="status" label="Status" options={[ {'Active': "TRUE"}, {'Inactive': "FALSE"} ]} selected={this.state.people.active || ''} onChange={this.onStatusChange.bind(this)} />
+            <Select ref="status" name="status" label="Status" options={[ {'Active': "true"}, {'Inactive': "false"} ]} selected={this.state.people.active || ''} onChange={this.onStatusChange.bind(this)} />
             {this.state.enabledAutoAddToTask ?
               <CheckBox ref="auto_add_to_task" name="auto_add_to_task" text="Auto add to task" checked={this.state.people.auto_add_to_task || false} />
             : ''}

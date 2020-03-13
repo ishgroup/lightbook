@@ -109,7 +109,7 @@ class AddPeople extends Component {
           <FormField label="Notes" name="notes" ref="notes" />
           <FormField label="Mobile" name="mobile" ref="mobile" />
 
-          <Select ref="status" name="status" label="Status" options={[ {'Active': "TRUE"}, {'Inactive': "FALSE"} ]} selected={"TRUE"} />
+          <Select ref="status" name="status" label="Status" options={[ {'Active': "true"}, {'Inactive': "false"} ]} selected={"true"} />
           <CheckBox ref="auto_add_to_task" name="auto_add_to_task" text="Auto add to task" checked={false} />
           <CheckBox ref="approvers" name="approvers" text="Allow user to approve quotes" checked={false} />
           <CheckBox ref="unsubscribed" name="unsubscribed" text="Do not send email to this user" checked={false} />
